@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#343d96",
+              "on-tertiary": "#003912",
+              "secondary-fixed-dim": "#bdc2ff",
+              "on-tertiary-fixed": "#002108",
+              "inverse-surface": "#e5e2e1",
+              "surface-variant": "#353534",
+              "on-secondary-fixed": "#000767",
+              "inverse-on-surface": "#313030",
+              "surface-container-lowest": "#0e0e0e",
+              "surface-container": "#201f1f",
+              "on-primary-fixed": "#2e1500",
+              "on-tertiary-container": "#00501d",
+              "on-error": "#690005",
+              "on-background": "#e5e2e1",
+              "on-surface": "#e5e2e1",
+              "error": "#ffb4ab",
+              "inverse-primary": "#8f4e00",
+              "on-tertiary-fixed-variant": "#00531e",
+              "on-secondary-container": "#a8afff",
+              "secondary-fixed": "#e0e0ff",
+              "secondary": "#bdc2ff",
+              "on-surface-variant": "#dbc2b0",
+              "error-container": "#93000a",
+              "on-primary": "#4c2700",
+              "background": "#131313",
+              "primary-fixed": "#ffdcc2",
+              "tertiary": "#46ea70",
+              "on-secondary": "#1b247f",
+              "primary-container": "#ff9933",
+              "surface-dim": "#131313",
+              "surface-container-high": "#2a2a2a",
+              "primary": "#ffc08d",
+              "outline-variant": "#554336",
+              "surface": "#131313",
+              "on-primary-fixed-variant": "#6d3a00",
+              "primary-fixed-dim": "#ffb77a",
+              "surface-tint": "#ffb77a",
+              "surface-container-low": "#1c1b1b",
+              "on-primary-container": "#693800",
+              "outline": "#a38d7c",
+              "surface-bright": "#3a3939",
+              "tertiary-fixed": "#69ff87",
+              "surface-container-highest": "#353534",
+              "tertiary-container": "#14cd57",
+              "secondary-container": "#343d96",
+              "tertiary-fixed-dim": "#3ce36a",
+              "on-error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .circuit-bg {
+            background-color: #0D0D0D;
+            background-image: radial-gradient(#ff9933 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest font-body text-on-surface selection:bg-primary-container/30">
+<div class="fixed inset-0 circuit-bg pointer-events-none"></div>
+<header class="fixed top-0 w-full z-50 bg-[#0E0E0E]/40 backdrop-blur-xl flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#FF9933]" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="text-xl font-bold tracking-tight text-[#FF9933] font-headline">CIPHER</span>
+</div>
+<button class="text-[#DBC2B0] hover:bg-[#FF9933]/10 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</header>
+<main class="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-32 px-6 overflow-hidden">
+<div class="w-full max-w-lg space-y-12">
+<div class="space-y-4 text-center">
+<h1 class="font-headline text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface">
+                    Let's Set Up
+                </h1>
+<p class="text-on-surface-variant text-lg max-w-md mx-auto leading-relaxed">
+                    Secure your digital vault with biometric authentication and a secondary recovery PIN.
+                </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+<div class="bg-surface-container-high p-8 rounded-xl flex flex-col items-center space-y-6 shadow-2xl relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary-container/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="relative w-24 h-24 flex items-center justify-center">
+<div class="absolute inset-0 bg-primary-container/20 blur-2xl rounded-full"></div>
+<span class="material-symbols-outlined text-primary-container text-7xl relative z-10" style="font-variation-settings: 'FILL' 0;">fingerprint</span>
+</div>
+<div class="text-center">
+<h3 class="font-semibold text-lg text-on-surface">Biometrics</h3>
+<p class="text-sm text-on-surface-variant">FaceID or TouchID</p>
+</div>
+<button class="w-full py-3 px-4 bg-surface-container-highest text-primary font-semibold rounded-md hover:bg-surface-container-highest transition-all active:scale-95 border border-outline-variant/10">
+                        Enable
+                    </button>
+</div>
+<div class="bg-surface-container-high p-6 rounded-xl space-y-4 shadow-2xl">
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-semibold text-on-surface">Safety PIN</h3>
+<span class="material-symbols-outlined text-primary-container text-sm">shield</span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">1</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">2</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">3</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">4</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">5</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">6</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">7</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">8</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">9</div>
+<div></div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">0</div>
+<div class="aspect-square bg-surface-container-low rounded flex items-center justify-center text-on-surface-variant text-lg font-medium border border-outline-variant/5">
+<span class="material-symbols-outlined text-sm">backspace</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center space-y-8 pt-8">
+<div class="flex gap-2">
+<div class="w-2 h-2 rounded-full bg-outline-variant opacity-40"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant opacity-40"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant opacity-40"></div>
+<div class="w-6 h-2 rounded-full bg-primary-container"></div>
+</div>
+<button class="w-full bg-gradient-to-br from-[#FF9933] to-[#693800] text-[#2E1500] font-semibold text-lg py-5 px-8 rounded-md shadow-lg shadow-primary-container/20 active:scale-95 transition-transform duration-200">
+                    Get Started
+                </button>
+</div>
+</div>
+</main>
+<footer class="md:hidden fixed bottom-0 w-full z-50 rounded-t-2xl bg-[#1C1B1B]/60 backdrop-blur-2xl shadow-[0_-16px_40px_rgba(0,0,0,0.6)] flex justify-around items-center h-20 pb-safe w-full">
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="encrypted">encrypted</span>
+<span class="text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="equalizer">equalizer</span>
+<span class="text-[10px] uppercase tracking-widest mt-1">Audio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="public">public</span>
+<span class="text-[10px] uppercase tracking-widest mt-1">Browser</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#FF9933] drop-shadow-[0_0_8px_rgba(255,153,51,0.4)]" href="#">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-[10px] uppercase tracking-widest mt-1">Profile</span>
+</a>
+</footer>
+</body></html>

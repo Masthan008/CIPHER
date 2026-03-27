@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CIPHER | Vault Authentication</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed-variant": "#343d96",
+                        "on-tertiary": "#003912",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "on-tertiary-fixed": "#002108",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "on-secondary-fixed": "#000767",
+                        "inverse-on-surface": "#313030",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container": "#201f1f",
+                        "on-primary-fixed": "#2e1500",
+                        "on-tertiary-container": "#00501d",
+                        "on-error": "#690005",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "error": "#ffb4ab",
+                        "inverse-primary": "#8f4e00",
+                        "on-tertiary-fixed-variant": "#00531e",
+                        "on-secondary-container": "#a8afff",
+                        "secondary-fixed": "#e0e0ff",
+                        "secondary": "#bdc2ff",
+                        "on-surface-variant": "#dbc2b0",
+                        "error-container": "#93000a",
+                        "on-primary": "#4c2700",
+                        "background": "#131313",
+                        "primary-fixed": "#ffdcc2",
+                        "tertiary": "#46ea70",
+                        "on-secondary": "#1b247f",
+                        "primary-container": "#ff9933",
+                        "surface-dim": "#131313",
+                        "surface-container-high": "#2a2a2a",
+                        "primary": "#ffc08d",
+                        "outline-variant": "#554336",
+                        "surface": "#131313",
+                        "on-primary-fixed-variant": "#6d3a00",
+                        "primary-fixed-dim": "#ffb77a",
+                        "surface-tint": "#ffb77a",
+                        "surface-container-low": "#1c1b1b",
+                        "on-primary-container": "#693800",
+                        "outline": "#a38d7c",
+                        "surface-bright": "#3a3939",
+                        "tertiary-fixed": "#69ff87",
+                        "surface-container-highest": "#353534",
+                        "tertiary-container": "#14cd57",
+                        "secondary-container": "#343d96",
+                        "tertiary-fixed-dim": "#3ce36a",
+                        "on-error-container": "#ffdad6"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .circuit-bg {
+            background-color: #0D0D0D;
+            background-image: radial-gradient(circle at 2px 2px, #1a1a1a 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .shield-pulse {
+            box-shadow: 0 0 0 0 rgba(255, 153, 51, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 153, 51, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(255, 153, 51, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 153, 51, 0); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface font-body selection:bg-primary-container/30 overflow-hidden">
+<!-- TopAppBar Fragment (Suppressed Nav, kept Branding as per Shell Rules for non-transactional but focus needed) -->
+<header class="fixed top-0 w-full z-50 bg-[#0E0E0E]/40 backdrop-blur-xl flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#FF9933]" data-icon="lock">lock</span>
+<h1 class="text-xl font-bold tracking-tight text-[#FF9933] font-headline">CIPHER</h1>
+</div>
+<button class="text-[#DBC2B0] hover:bg-[#FF9933]/10 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</header>
+<main class="min-h-screen flex flex-col items-center justify-center pt-16 pb-12 px-6 circuit-bg relative">
+<!-- Background Glow -->
+<div class="absolute inset-0 bg-gradient-to-b from-primary-container/5 via-transparent to-transparent pointer-events-none"></div>
+<!-- Auth Lens Section -->
+<div class="w-full max-w-sm flex flex-col items-center space-y-10 z-10">
+<!-- Shield Identity -->
+<div class="relative group">
+<div class="w-[100px] h-[100px] bg-surface-container-high rounded-full flex items-center justify-center shield-pulse relative z-10">
+<span class="material-symbols-outlined text-[48px] text-primary-container" data-icon="shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<!-- Asymmetric accent decoration -->
+<div class="absolute -top-2 -right-2 w-4 h-4 bg-tertiary-container rounded-full blur-[2px]"></div>
+</div>
+<div class="text-center space-y-2">
+<h2 class="text-3xl font-headline font-bold tracking-tight text-on-surface">Enter Vault PIN</h2>
+<p class="text-on-surface-variant text-sm font-medium tracking-wide">6-DIGIT ENCRYPTION KEY REQUIRED</p>
+</div>
+<!-- PIN Indicators -->
+<div class="flex space-x-4">
+<!-- Active Indicator -->
+<div class="w-3.5 h-3.5 rounded-full bg-primary-container shadow-[0_0_12px_rgba(255,153,51,0.6)]"></div>
+<!-- Filled Indicator -->
+<div class="w-3.5 h-3.5 rounded-full bg-primary-container shadow-[0_0_8px_rgba(255,153,51,0.4)]"></div>
+<!-- Empty Indicators -->
+<div class="w-3.5 h-3.5 rounded-full bg-surface-container-highest"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-surface-container-highest"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-surface-container-highest"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-surface-container-highest"></div>
+</div>
+<!-- Numpad Grid -->
+<div class="grid grid-cols-3 gap-6 w-full px-4">
+<!-- Row 1 -->
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">1</button>
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">2</button>
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">3</button>
+<!-- Row 2 -->
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">4</button>
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">5</button>
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">6</button>
+<!-- Row 3 -->
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">7</button>
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">8</button>
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">9</button>
+<!-- Row 4 -->
+<button class="w-16 h-16 mx-auto flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="fingerprint">fingerprint</span>
+</button>
+<button class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-2xl font-headline font-bold text-on-surface hover:bg-primary-container/20 active:scale-90 transition-all duration-200">0</button>
+<button class="w-16 h-16 mx-auto flex items-center justify-center text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="backspace">backspace</span>
+</button>
+</div>
+<!-- Transactional Actions -->
+<div class="flex flex-col items-center space-y-6 w-full">
+<button class="text-sm font-label font-medium text-primary-container tracking-widest uppercase hover:underline underline-offset-8 transition-all">
+                    Use Biometric
+                </button>
+<div class="w-12 h-0.5 bg-outline-variant/30 rounded-full"></div>
+<button class="text-sm font-label text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity">
+                    Forgot PIN?
+                </button>
+</div>
+</div>
+<!-- Security Visual Detail (Asymmetric) -->
+<div class="absolute bottom-8 left-8 hidden lg:block">
+<div class="p-4 bg-surface-container-low border border-outline-variant/10 rounded-xl space-y-2">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#46ea70]"></div>
+<span class="text-[10px] font-mono text-on-surface-variant">NODE: SEC-04-VLT</span>
+</div>
+<div class="text-[10px] font-mono text-on-surface-variant/40 leading-tight">
+                    AES-256 SESSION ACTIVE<br/>
+                    IP: 192.168.0.1 (ENCRYPTED)
+                </div>
+</div>
+</div>
+</main>
+<!-- Navigation Shell suppressed for transactional authentication focus -->
+</body></html>

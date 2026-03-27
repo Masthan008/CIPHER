@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CIPHER - Search</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline": "#a38d7c",
+              "inverse-primary": "#8f4e00",
+              "on-error": "#690005",
+              "on-secondary-fixed-variant": "#343d96",
+              "on-primary": "#4c2700",
+              "tertiary": "#46ea70",
+              "on-tertiary-fixed": "#002108",
+              "tertiary-fixed-dim": "#3ce36a",
+              "surface-bright": "#3a3939",
+              "secondary": "#bdc2ff",
+              "on-error-container": "#ffdad6",
+              "tertiary-fixed": "#69ff87",
+              "on-primary-container": "#693800",
+              "inverse-on-surface": "#313030",
+              "surface-container-highest": "#353534",
+              "primary": "#ffc08d",
+              "on-secondary": "#1b247f",
+              "surface-container-low": "#1c1b1b",
+              "surface-container": "#201f1f",
+              "secondary-container": "#343d96",
+              "on-secondary-fixed": "#000767",
+              "surface-variant": "#353534",
+              "primary-fixed-dim": "#ffb77a",
+              "on-primary-fixed-variant": "#6d3a00",
+              "primary-fixed": "#ffdcc2",
+              "on-tertiary-fixed-variant": "#00531e",
+              "on-tertiary": "#003912",
+              "outline-variant": "#554336",
+              "on-primary-fixed": "#2e1500",
+              "on-tertiary-container": "#00501d",
+              "on-surface-variant": "#dbc2b0",
+              "error-container": "#93000a",
+              "surface-tint": "#ffb77a",
+              "on-surface": "#e5e2e1",
+              "tertiary-container": "#14cd57",
+              "error": "#ffb4ab",
+              "surface-dim": "#131313",
+              "secondary-fixed": "#e0e0ff",
+              "on-background": "#e5e2e1",
+              "on-secondary-container": "#a8afff",
+              "surface": "#131313",
+              "background": "#131313",
+              "primary-container": "#ff9933",
+              "surface-container-lowest": "#0e0e0e",
+              "secondary-fixed-dim": "#bdc2ff",
+              "inverse-surface": "#e5e2e1",
+              "surface-container-high": "#2a2a2a"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-caret {
+            caret-color: #FF9933;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#0E0E0E] no-border bg-[#0E0E0E] to bg-[#1C1B1B] tonal shift">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#FF9933]" data-icon="lock">lock</span>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tighter text-[#FF9933] text-2xl font-black text-[#FF9933] tracking-[-0.02em]">CIPHER</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center space-x-8 mr-8">
+<span class="font-['Plus_Jakarta_Sans'] font-semibold text-[#DBC2B0] hover:text-[#FF9933] transition-colors cursor-pointer">Vault</span>
+<span class="font-['Plus_Jakarta_Sans'] font-semibold text-[#FF9933] hover:text-[#FF9933] transition-colors cursor-pointer">Search</span>
+<span class="font-['Plus_Jakarta_Sans'] font-semibold text-[#DBC2B0] hover:text-[#FF9933] transition-colors cursor-pointer">Logs</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant/15 flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="close-up minimalist portrait of a futuristic operative in low light with subtle orange highlights on the face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY31ULI9xpNKwcgH9RpUGnjw1sjPpWuMA1_Ml7PO9W7AazYVZzyHtzSEsPnaPjKTbptYE5kUqEnbrCgIQel6QITVLKNrS_-QSEA1ik7Yg9LcogNDIU8oDNDCA1bDH10GxpXchu9v34-9mM9HytFO4hvyEkdFFlrqqwvFOMOgGCKt6emwkEWtN96huSaTupOUL9-gm78IU7xeo2ljGFd5wlh-GXYwZ3UKDzoIoTZOd2_DMAfxFBWwuBcss9r9aEzYT7ahKIKFX3oHQ"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto">
+<!-- Search Input Section -->
+<section class="mb-12">
+<div class="relative max-w-3xl mx-auto">
+<div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant/50" data-icon="search">search</span>
+</div>
+<input autofocus="" class="w-full h-16 pl-14 pr-6 bg-surface-container-low border-none rounded-xl font-body text-on-surface text-lg placeholder:text-on-surface-variant/30 focus:ring-0 focus:bg-surface-container-high transition-all custom-caret" placeholder="Accessing central node... enter query" type="text"/>
+<div class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary-container to-transparent opacity-50"></div>
+</div>
+</section>
+<!-- Recent Searches -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline font-bold text-lg tracking-tight uppercase text-on-surface-variant/70">Recent Access Queries</h2>
+<button class="text-xs font-semibold text-primary-container hover:underline uppercase tracking-widest">Wipe History</button>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="px-5 py-2 bg-surface-container-high rounded-full border border-outline-variant/10 text-sm font-medium hover:bg-surface-container-highest transition-colors cursor-pointer flex items-center gap-2 group">
+<span class="material-symbols-outlined text-xs text-on-surface-variant group-hover:text-primary" data-icon="history">history</span>
+                    Documents
+                </div>
+<div class="px-5 py-2 bg-surface-container-high rounded-full border border-outline-variant/10 text-sm font-medium hover:bg-surface-container-highest transition-colors cursor-pointer flex items-center gap-2 group">
+<span class="material-symbols-outlined text-xs text-on-surface-variant group-hover:text-primary" data-icon="history">history</span>
+                    Secret Folder
+                </div>
+<div class="px-5 py-2 bg-surface-container-high rounded-full border border-outline-variant/10 text-sm font-medium hover:bg-surface-container-highest transition-colors cursor-pointer flex items-center gap-2 group">
+<span class="material-symbols-outlined text-xs text-on-surface-variant group-hover:text-primary" data-icon="history">history</span>
+                    Recent Video
+                </div>
+<div class="px-5 py-2 bg-surface-container-high rounded-full border border-outline-variant/10 text-sm font-medium hover:bg-surface-container-highest transition-colors cursor-pointer flex items-center gap-2 group">
+<span class="material-symbols-outlined text-xs text-on-surface-variant group-hover:text-primary" data-icon="history">history</span>
+                    Encryption Keys
+                </div>
+</div>
+</section>
+<!-- Search Results / Empty State Grid -->
+<section>
+<h2 class="font-headline font-bold text-lg tracking-tight uppercase text-on-surface-variant/70 mb-8">Encrypted Results</h2>
+<!-- Asymmetric Bento-style Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Media Card (Video) -->
+<div class="md:col-span-8 group cursor-pointer">
+<div class="relative aspect-video bg-surface-container-high rounded-xl overflow-hidden mb-4">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" data-alt="abstract close-up of green glowing computer circuit board components with shallow depth of field and dark shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ-RrzMoo91JquoJGyPYMVtU96P-KcVV4OwG3dj9zs6h5SrjF20XoR2Y_qYn_DMfRqVreu_i11oH0Qc5P1UYqkc89pkayxcnxBRX8PLGzAPm8kkGCs18Soa3O4WKShrYTQElOSd9pa9-Nedx5AzE1czL9qNKCy7AMiSohHLjlJg167gDsy_zJeEpuoWVIpZbH9c6ncKNTpT1HGhbFdP-FnaF1iOEKouakCPph4_qk6wZkaSfipP_D2S1Fp4dPL8InwI8C0NUEs1CY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shadow-2xl">
+<span class="material-symbols-outlined text-3xl" data-icon="play_arrow" data-weight="fill">play_arrow</span>
+</div>
+</div>
+<div class="absolute top-4 right-4 px-2 py-1 bg-surface-container-lowest/80 backdrop-blur-md rounded text-[10px] font-bold tracking-widest uppercase">
+                            04:22
+                        </div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline font-bold text-xl text-on-surface mb-1">Surveillance_Log_Delta.mp4</h3>
+<p class="text-on-surface-variant text-sm font-medium">Recorded: 14 Oct 2023 • 1.2 GB</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+<!-- Folder Item -->
+<div class="md:col-span-4 bg-surface-container-low rounded-xl p-6 flex flex-col justify-between hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<div class="w-14 h-14 bg-primary-container/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[#FF9933] text-3xl" data-icon="folder_lock">lock</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="verified_user">verified_user</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface mt-6">Project_Titan_Archives</h3>
+<p class="text-on-surface-variant text-sm mt-1">42 encrypted objects</p>
+<div class="mt-4 flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-low bg-tertiary-container/20"></div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-low bg-secondary-container/20"></div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-low bg-primary-container/20"></div>
+</div>
+</div>
+</div>
+<!-- Audio Media Card -->
+<div class="md:col-span-4 bg-surface-container-high rounded-xl p-6 hover:shadow-2xl transition-all cursor-pointer border border-transparent hover:border-primary-container/10">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 bg-secondary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="mic">mic</span>
+</div>
+<div class="flex-1">
+<div class="h-1 w-full bg-surface-container-lowest rounded-full overflow-hidden">
+<div class="h-full w-1/3 bg-primary-container"></div>
+</div>
+</div>
+</div>
+<h3 class="font-headline font-bold text-base text-on-surface">Voice_Memo_009.wav</h3>
+<p class="text-on-surface-variant text-xs mt-1 uppercase tracking-widest">Metadata Locked</p>
+</div>
+<!-- Image Card -->
+<div class="md:col-span-8 bg-surface-container-low rounded-xl overflow-hidden flex flex-col md:flex-row cursor-pointer hover:bg-surface-container-high transition-colors group">
+<div class="w-full md:w-48 h-48">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="high-tech server room with glowing blue led lights and rows of dark metallic storage units in a clean industrial setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnubgDniWH8aKa_d10u-ZFwVkYfQRufNNbzLDFzPLwW4ZcB8NUsBJzjvi3GlLGRQFfN5fTmW9FQTLRdsvKzjyOs2Ni5FGbq8DndkWgc_gjIydtxDVZ5AUSDbxCc8hgcQbsLURR_N9SSb4N4KWEZW3Iy-S29JsZNMjZLByD4HyVJPTKgpE-ExnQ4kMtt7M5PACAI-vUqFl3z46249N0OD9y5uOs4gDbieBjxtagVQbVSpcLfI1hms_guc9L919FGSEfemdqg1Dil9o"/>
+</div>
+<div class="p-6 flex-1 flex flex-col justify-center">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-tertiary text-sm" data-icon="verified">verified</span>
+<span class="text-tertiary text-[10px] font-bold uppercase tracking-tighter">Secure Link</span>
+</div>
+<h3 class="font-headline font-bold text-xl text-on-surface">Datacenter_Scan_01.jpg</h3>
+<p class="text-on-surface-variant text-sm mt-2 line-clamp-2">High-resolution thermal scan of Node 7. Access authorized for Level 4 clearance only.</p>
+</div>
+</div>
+</div>
+<!-- Empty State (Hidden when content is present, but kept for logic) -->
+<div class="hidden flex-col items-center justify-center py-32 text-center">
+<div class="w-24 h-24 rounded-full bg-surface-container-high flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-5xl text-on-surface-variant/20" data-icon="search_off">search_off</span>
+</div>
+<h3 class="font-headline font-bold text-2xl text-on-surface">No matching records</h3>
+<p class="text-on-surface-variant mt-2 max-w-xs">The query returned no results from the encrypted vault. Please verify your credentials or search parameters.</p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] md:w-[400px] z-50 flex justify-around items-center py-4 px-8 bg-[#2A2A2A]/60 backdrop-blur-xl rounded-2xl no-border glassmorphism shadow-[0_16px_40px_rgba(0,0,0,0.6)]">
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#FF9933] drop-shadow-[0_0_8px_rgba(255,153,51,0.5)] hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="folder_lock">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Secure</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Setup</span>
+</a>
+</nav>
+</body></html>

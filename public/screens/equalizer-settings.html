@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#343d96",
+              "on-tertiary": "#003912",
+              "secondary-fixed-dim": "#bdc2ff",
+              "on-tertiary-fixed": "#002108",
+              "inverse-surface": "#e5e2e1",
+              "surface-variant": "#353534",
+              "on-secondary-fixed": "#000767",
+              "inverse-on-surface": "#313030",
+              "surface-container-lowest": "#0e0e0e",
+              "surface-container": "#201f1f",
+              "on-primary-fixed": "#2e1500",
+              "on-tertiary-container": "#00501d",
+              "on-error": "#690005",
+              "on-background": "#e5e2e1",
+              "on-surface": "#e5e2e1",
+              "error": "#ffb4ab",
+              "inverse-primary": "#8f4e00",
+              "on-tertiary-fixed-variant": "#00531e",
+              "on-secondary-container": "#a8afff",
+              "secondary-fixed": "#e0e0ff",
+              "secondary": "#bdc2ff",
+              "on-surface-variant": "#dbc2b0",
+              "error-container": "#93000a",
+              "on-primary": "#4c2700",
+              "background": "#131313",
+              "primary-fixed": "#ffdcc2",
+              "tertiary": "#46ea70",
+              "on-secondary": "#1b247f",
+              "primary-container": "#ff9933",
+              "surface-dim": "#131313",
+              "surface-container-high": "#2a2a2a",
+              "primary": "#ffc08d",
+              "outline-variant": "#554336",
+              "surface": "#131313",
+              "on-primary-fixed-variant": "#6d3a00",
+              "primary-fixed-dim": "#ffb77a",
+              "surface-tint": "#ffb77a",
+              "surface-container-low": "#1c1b1b",
+              "on-primary-container": "#693800",
+              "outline": "#a38d7c",
+              "surface-bright": "#3a3939",
+              "tertiary-fixed": "#69ff87",
+              "surface-container-highest": "#353534",
+              "tertiary-container": "#14cd57",
+              "secondary-container": "#343d96",
+              "tertiary-fixed-dim": "#3ce36a",
+              "on-error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      .range-vertical {
+        writing-mode: bt-lr; /* Bottom to top */
+        appearance: slider-vertical;
+        width: 8px;
+        height: 100%;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 bg-[#0E0E0E]/40 backdrop-blur-xl flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#FF9933]/10 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#DBC2B0]">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-[#FF9933] font-headline">Equalizer</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#FF9933]/10 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#FF9933]">settings</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto">
+<!-- Preset Chips (Horizontal Scroll) -->
+<section class="mb-10">
+<div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-2">
+<button class="px-5 py-2 rounded-full bg-primary-container text-on-primary-container font-semibold whitespace-nowrap text-sm transition-all hover:opacity-90">Flat</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-medium whitespace-nowrap text-sm hover:bg-[#FF9933]/10 transition-all border border-transparent hover:border-outline-variant/20">Bass Boost</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-medium whitespace-nowrap text-sm hover:bg-[#FF9933]/10 transition-all border border-transparent hover:border-outline-variant/20">Rock</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-medium whitespace-nowrap text-sm hover:bg-[#FF9933]/10 transition-all border border-transparent hover:border-outline-variant/20">Pop</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-medium whitespace-nowrap text-sm hover:bg-[#FF9933]/10 transition-all border border-transparent hover:border-outline-variant/20">Electronic</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-medium whitespace-nowrap text-sm hover:bg-[#FF9933]/10 transition-all border border-transparent hover:border-outline-variant/20">Classical</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-medium whitespace-nowrap text-sm hover:bg-[#FF9933]/10 transition-all border border-transparent hover:border-outline-variant/20">Jazz</button>
+</div>
+</section>
+<!-- Equalizer Visualizer & Sliders Grid -->
+<section class="bg-surface-container-low rounded-xl p-6 md:p-8 relative overflow-hidden">
+<!-- Background Grain/Texture (Visual Placeholder) -->
+<div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDHKaZ-eUCn7FGha7TxeUn5SF67KH5NAqWc5vs1aZvMomVgEgYeewpddGqUjlVkynOyKn-nMRfONNg3XZSa30l0-of5nf1aIpFxdEf_rcz24b6KyJCb2rL6i_yMcphogSnSqqnzSvNudJTwAfIcyBp4wqaJTHaTEY9l_4aNE5c1yoUk_hEEXlhGuWkFk7bjWw7r0h13DP9ytI_5zYsUj8b3q__FxQvHbCVGcVJhmEpLAPyuj4lK2LkVsx-nQmlPezpweRH7X7owhaU')"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-end h-64 md:h-80 gap-2 md:gap-4 overflow-x-auto no-scrollbar pb-4">
+<!-- Frequency Bands -->
+<!-- Band 32Hz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">32</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 45%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="-2"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">+2dB</span>
+</div>
+<!-- Band 64Hz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">64</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 60%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="5"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">+5dB</span>
+</div>
+<!-- Band 125Hz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">125</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 80%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="12"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">+12dB</span>
+</div>
+<!-- Band 250Hz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">250</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 50%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="0"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">0dB</span>
+</div>
+<!-- Band 500Hz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">500</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 40%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="-4"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">-4dB</span>
+</div>
+<!-- Band 1kHz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">1k</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 35%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="-6"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">-6dB</span>
+</div>
+<!-- Band 2kHz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">2k</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 55%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="2"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">+2dB</span>
+</div>
+<!-- Band 4kHz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">4k</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 70%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="8"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">+8dB</span>
+</div>
+<!-- Band 8kHz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">8k</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 65%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="6"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">+6dB</span>
+</div>
+<!-- Band 16kHz -->
+<div class="flex flex-col items-center flex-1 min-w-[32px] gap-4 h-full">
+<span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">16k</span>
+<div class="flex-1 w-full bg-surface-container-high rounded-full relative flex items-center justify-center group overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-full shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all duration-300" style="height: 50%;"></div>
+<input class="range-vertical opacity-0 absolute inset-0 cursor-pointer z-20" max="15" min="-15" type="range" value="0"/>
+</div>
+<span class="text-[10px] text-primary-container font-bold">0dB</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Enhancement Toggles -->
+<section class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Bass Boost -->
+<div class="bg-surface-container-low p-6 rounded-xl flex items-center justify-between group hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-[#FF9933]/10 flex items-center justify-center text-[#FF9933]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">speaker</span>
+</div>
+<div>
+<h3 class="font-semibold text-on-surface">Bass Boost</h3>
+<p class="text-xs text-on-surface-variant">Deepen low frequencies</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<!-- Virtualizer -->
+<div class="bg-surface-container-low p-6 rounded-xl flex items-center justify-between group hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-[#FF9933]/10 flex items-center justify-center text-[#FF9933]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">surround_sound</span>
+</div>
+<div>
+<h3 class="font-semibold text-on-surface">Virtualizer</h3>
+<p class="text-xs text-on-surface-variant">3D surround spatial effect</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</section>
+<!-- Currently Playing Snippet -->
+<section class="mt-12 mb-8">
+<h2 class="text-xs font-bold text-on-surface-variant uppercase tracking-[0.2em] mb-4 ml-1">Live Source</h2>
+<div class="bg-surface-container-high/40 backdrop-blur-md rounded-xl p-4 flex items-center gap-4 border border-outline-variant/10">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container-highest">
+<img alt="Album Art" class="w-full h-full object-cover" data-alt="Abstract colorful light waves on black background representing modern electronic music album art" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCl4xf5HoSzQXlcrQIn3YIuO3WGk8Ee2Dj0T-W5whRtnxbjGIzX1i3XGSQj4Wuvqh1lKTldR3WO7T3jwP69xB4niYDXie68cqImaPH22N0ABGCiXzHHhk1sqLUi4kWk_p6-QGcJQCpUML0PsnkLh9nb2AOMPHlx7xKbHgbGiH5o7-4oKDpamVvoNkrs111r2LKkFpdp1nJbHQHJu5QUoxczKfk8ErCJzTTK7OUVf0HmYd5LVuGt1-SpUPAiKylK2leXnAAD-M05Fag"/>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-sm">Neon Protocol</h4>
+<p class="text-xs text-[#FF9933] font-medium">Cyberdrive • 128 BPM</p>
+</div>
+<div class="flex gap-1 h-4 items-end px-2">
+<div class="w-1 bg-primary-container h-full rounded-full animate-pulse"></div>
+<div class="w-1 bg-primary-container h-2/3 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+<div class="w-1 bg-primary-container h-1/2 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+<div class="w-1 bg-primary-container h-3/4 rounded-full animate-pulse" style="animation-delay: 0.1s"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-2xl bg-[#1C1B1B]/60 backdrop-blur-2xl shadow-[0_-16px_40px_rgba(0,0,0,0.6)] flex justify-around items-center h-20 pb-safe w-full">
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">encrypted</span>
+<span class="text-[10px] uppercase font-medium tracking-wider">Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#FF9933] drop-shadow-[0_0_8px_rgba(255,153,51,0.4)] scale-110 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" style="font-variation-settings: 'FILL' 1;">equalizer</span>
+<span class="text-[10px] uppercase font-bold tracking-wider">Audio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">public</span>
+<span class="text-[10px] uppercase font-medium tracking-wider">Browser</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#DBC2B0] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">person</span>
+<span class="text-[10px] uppercase font-medium tracking-wider">Profile</span>
+</a>
+</nav>
+</body></html>

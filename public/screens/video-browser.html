@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CIPHER - Video Browser</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#000767",
+                        "inverse-on-surface": "#313030",
+                        "on-tertiary-container": "#00501d",
+                        "error-container": "#93000a",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-dim": "#131313",
+                        "tertiary-fixed-dim": "#3ce36a",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-highest": "#353534",
+                        "on-secondary-container": "#a8afff",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-fixed-variant": "#343d96",
+                        "secondary-container": "#343d96",
+                        "tertiary-container": "#14cd57",
+                        "on-surface": "#e5e2e1",
+                        "on-primary-container": "#693800",
+                        "inverse-primary": "#8f4e00",
+                        "on-tertiary": "#003912",
+                        "primary-container": "#ff9933",
+                        "surface-container": "#201f1f",
+                        "on-primary-fixed": "#2e1500",
+                        "background": "#131313",
+                        "on-error": "#690005",
+                        "on-primary-fixed-variant": "#6d3a00",
+                        "primary-fixed-dim": "#ffb77a",
+                        "on-secondary": "#1b247f",
+                        "on-primary": "#4c2700",
+                        "on-tertiary-fixed-variant": "#00531e",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed": "#ffdcc2",
+                        "on-background": "#e5e2e1",
+                        "outline": "#a38d7c",
+                        "outline-variant": "#554336",
+                        "secondary": "#bdc2ff",
+                        "surface-variant": "#353534",
+                        "error": "#ffb4ab",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-bright": "#3a3939",
+                        "on-tertiary-fixed": "#002108",
+                        "secondary-fixed": "#e0e0ff",
+                        "tertiary": "#46ea70",
+                        "surface-tint": "#ffb77a",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "primary": "#ffc08d",
+                        "on-surface-variant": "#dbc2b0",
+                        "tertiary-fixed": "#69ff87",
+                        "surface": "#131313"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .glass-panel {
+            background: rgba(42, 42, 42, 0.4);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-transparent dark:bg-[#0E0E0E]/90 docked full-width top-0 sticky z-50 no-line tonal stacking via surface-container-low flat no shadows backdrop-blur-md flex justify-between items-center h-16 px-6 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#FF9933] hover:bg-[#FF9933]/10 transition-colors p-2 rounded-full Active: scale-95 duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-['Plus_Jakarta_Sans'] text-2xl font-bold tracking-tight text-[#FF9933]">CIPHER</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-[#FF9933] hover:bg-[#FF9933]/10 transition-colors p-2 rounded-full Active: scale-95 duration-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-[#FF9933] hover:bg-[#FF9933]/10 transition-colors p-2 rounded-full Active: scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<main class="pb-32 px-6 pt-4 max-w-5xl mx-auto">
+<!-- Continue Watching (Editorial Horizontal Scroll) -->
+<section class="mb-10">
+<h2 class="font-headline text-lg font-bold mb-4 tracking-wide text-on-surface-variant flex items-center gap-2">
+<span class="w-1 h-4 bg-primary-container rounded-full"></span>
+                CONTINUE WATCHING
+            </h2>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
+<!-- Card 1 -->
+<div class="flex-none w-72 aspect-video bg-surface-container-high rounded-xl overflow-hidden snap-start relative group cursor-pointer shadow-2xl">
+<img alt="abstract digital art" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="cinematic close-up of flowing orange and black liquid silk texture with dramatic lighting and high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT1g5egVuvnmqTr-5jstXIvPedVATemvVNJ-Mn6GipB8vxgakUEDP4sxWBu6sBqxzM_jN4YNhPeTvAqejoMX0_M3UvydH8WKzNzaCSF4-4GfMGgkZGBtaiwncG_Kg8SHrB62kOsvycqENIn72bFi_9VNbxofZGRjlG0ugzh0nSnqC7_AnJU-XV3TILnt_jn0gbkfHw_QsesHWDulbP8iLcQjhqyaVcKdRHr7-qMUtVBz-1nXAFlWZlVy6FnOAwrFazsf79XhCIy9A"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex flex-col justify-end p-4">
+<p class="text-white font-bold text-sm truncate mb-2 uppercase tracking-wider">The Obsidian Protocol</p>
+<div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[65%]"></div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="flex-none w-72 aspect-video bg-surface-container-high rounded-xl overflow-hidden snap-start relative group cursor-pointer shadow-2xl">
+<img alt="technology background" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="moody high-tech server room with glowing blue and amber lights, futuristic hardware and deep shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6ymyyArm3JxOCiPHenyVcqiNreivFJXFXoeJVT2-nFaWInS-b1t4YgDAKidz8HLIJAxXxEMaQXDQMHNsf78OO2VxS11Ao9NPILsP5O0YreX9xn35asZ6nhYh73Td5JV5jM4DzcIo8RUne6wxoGvkjZ0OtNfnxoP0GuF1JGbOksB_5I2bG2-hNlPSFB2bLKWOXudgDWpOxFbM9LzdalB_PaO69UKTIQOo49rm-R7NI8J2abwajlqTj5sZAj-i4OsCzYKjybasULxU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex flex-col justify-end p-4">
+<p class="text-white font-bold text-sm truncate mb-2 uppercase tracking-wider">Cybernetics Phase 4</p>
+<div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[40%]"></div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="flex-none w-72 aspect-video bg-surface-container-high rounded-xl overflow-hidden snap-start relative group cursor-pointer shadow-2xl">
+<img alt="space visualization" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="abstract cosmic nebulae with vibrant orange and dark indigo gases, star clusters and cinematic lens flare" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAByRUjVaWiBzHNjBg1sX_YMtsU28YoOcNj1JFhltZ7hBhdNFN_YWzAXgL_RuM2lcGdhOfxBXxibKdqQHwuq7Ku9dqo1IoMtVc-bzlT9lYRu4Bu6zgHA_KfQvSa0oIUyP0m4WNc-sIWddkSPMpVlcVCYelZL1IEC8GMJdmvLy-ZkRCRa8awqQdHI3nfGwkUeLK3wMPVUByg_HHUnAzwZWYrcbWR9a1MBt5cC8e8EQAjMX_BdK6OKs6jU1JA7Q4x1NgKR5D8KYdorKI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex flex-col justify-end p-4">
+<p class="text-white font-bold text-sm truncate mb-2 uppercase tracking-wider">Deep Space Logs</p>
+<div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[85%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Folders Grid -->
+<section class="mb-10">
+<h2 class="font-headline text-lg font-bold mb-4 tracking-wide text-on-surface-variant flex items-center gap-2">
+<span class="w-1 h-4 bg-primary-container rounded-full"></span>
+                FOLDERS
+            </h2>
+<div class="grid grid-cols-2 gap-4">
+<!-- Folder 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-video bg-surface-container-high rounded-lg overflow-hidden relative mb-2 flex items-center justify-center">
+<img alt="minimalist art" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-500" data-alt="minimalist architecture with sharp shadows, concrete surfaces and an orange sun-lit wall in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLBlZwMtL9gtB3OxhBMMFJ4u1XSvX-mm1E-KfAlvdCH4zwmNXya8IUBh8NHWnO2RZFQZdxf5KsLQEg0DdLaygt0o0cIqaRgfyVXqxW-JhCOLKfW5ZgsoNECz3qknPcwweC7RAdz-ACa2TmuktVzfAzTMIah78A3-qC9Xh6aIxkfCSoaYniN3s2G_xMLc1doDB5-9R3YbjjKkzfwsj6CHZYGJPe8eXKNCK_5asmb0BzuoHG-NwrUfRHp9GskRHhnWNGmSrlTGDerBs"/>
+<span class="material-symbols-outlined text-primary-container text-4xl relative z-10">folder_zip</span>
+<div class="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-[10px] font-bold text-white uppercase backdrop-blur-md">24 ITEMS</div>
+</div>
+<p class="font-bold text-sm text-on-surface truncate">ENCRYPTED_ARCHIVE</p>
+<p class="text-on-surface-variant text-xs font-medium">Updated 2h ago</p>
+</div>
+<!-- Folder 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-video bg-surface-container-high rounded-lg overflow-hidden relative mb-2 flex items-center justify-center">
+<img alt="digital geometric shapes" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-500" data-alt="high contrast black and white geometric 3D shapes floating in a dark void with orange lighting accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOxkyfFHOB8ga-pLERo3IPabpyFClxUmQDq_mJFfsClxg_KtuDK8ScZse6Pnuc7hPqFyhpoCdMW_7rPyo-PrHiu5jc-tDzQBgPBwX3hgs3HlxxAEeXau51OlBeLkqVWSAvzSbSRloynrw9_dNVDVf-g34SZxD3XkdzOAHxI6uvJOVv33C_CLutLfftbaKxVbQA13eVa7gyzdEUDQ1t7Zjy5Jr6K4kUNpJeLyN6HkDP72IZp5twhh6n33mphYNCV9Qk73GaztPsc0w"/>
+<span class="material-symbols-outlined text-primary-container text-4xl relative z-10">lock</span>
+<div class="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-[10px] font-bold text-white uppercase backdrop-blur-md">12 ITEMS</div>
+</div>
+<p class="font-bold text-sm text-on-surface truncate">PRIVATE_VAULT</p>
+<p class="text-on-surface-variant text-xs font-medium">Updated yesterday</p>
+</div>
+</div>
+</section>
+<!-- Recent List -->
+<section>
+<h2 class="font-headline text-lg font-bold mb-4 tracking-wide text-on-surface-variant flex items-center gap-2">
+<span class="w-1 h-4 bg-primary-container rounded-full"></span>
+                RECENT
+            </h2>
+<div class="space-y-3">
+<!-- List Item 1 -->
+<div class="flex items-center gap-4 h-20 bg-surface-container-low rounded-xl p-2 group hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="w-24 h-full rounded-lg overflow-hidden flex-shrink-0">
+<img alt="abstract dark render" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="abstract dark geometric landscape with a single bright orange horizon line in 8k resolution cinematic style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeauc5jWzXEt_q-e7M154cV7dUOEOiORaZCe59l-_xGU674T9VYqBvHAMsP9PxPWvswQltE2Gjoc6DLsRkyVUL_4PHw00AYf_H-RHBDfEQzefaL_GZRzwvoWyU42udIk8343Z_QonQLPX7elKU1TRzhI1cpRTFU7C_52FUzO5xEjtm6e7hYwCtRYwD8hAlCNmAQSjHemaNLMzaf1reuNdLNwm5Yqc7MykxaSmAxYRCGl7eQpHkl8RlAvAB0Q2J7QN0ZKWMEjY1h7E"/>
+</div>
+<div class="flex-grow min-w-0">
+<h4 class="font-bold text-sm text-on-surface truncate uppercase tracking-tight">System_Maintenance_Report_4k</h4>
+<p class="text-on-surface-variant text-xs mt-1">OCT 14, 2023 • 4.2 GB</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary-container">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<!-- List Item 2 -->
+<div class="flex items-center gap-4 h-20 bg-surface-container-low rounded-xl p-2 group hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="w-24 h-full rounded-lg overflow-hidden flex-shrink-0">
+<img alt="data flowing" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="close up of fiber optic cables glowing with warm orange light in a dark high-tech environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv77ADaadQ4ZpYzotJVpFl6j7SgrVhGt9dr2-bNis53ia9Qj96n4SB_8f0RmdDYZU5TIqh1JW03fPXgCkBUme2SqccxH3Pv6s8SHX0ysbbZt9L9fZNc27bGxWjqHjteOtnSTykZZy2SmbXneDnOdihjktRO0__XZCLXN8oAH1gi3n92YGWrEFBFFlyzJtzcgojTElhgNHWbbIzQU8YuPfWWT1a3-2CjxO7ObN-FyZzzafIOzkULqhhYqMgEwjlT0gmirX3ecCQdV8"/>
+</div>
+<div class="flex-grow min-w-0">
+<h4 class="font-bold text-sm text-on-surface truncate uppercase tracking-tight">Transmission_Intercept_Beta</h4>
+<p class="text-on-surface-variant text-xs mt-1">OCT 12, 2023 • 1.8 GB</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary-container">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<!-- List Item 3 -->
+<div class="flex items-center gap-4 h-20 bg-surface-container-low rounded-xl p-2 group hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="w-24 h-full rounded-lg overflow-hidden flex-shrink-0 relative">
+<div class="absolute inset-0 bg-secondary-container/30 backdrop-blur-[2px] z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg">lock</span>
+</div>
+<img alt="grid pattern" class="w-full h-full object-cover" data-alt="abstract black grid pattern with deep shadows and subtle metallic sheen under soft amber lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCATTF7sLHWah6iUxslBvC49KDhzr3ITMC2JY7OgDj70yOZwBsO307DEl7XYz-sA2znPlfCoj1EqzTOcBbCYpwVst13HAK4z6R7LkizBmD423yH3sWKT0Khim1iCPgrEXADIcUdgSD_PfFj348VBCPwJkX2tRf0lragWZuf2Yxh6Vr766f9KNRxHBNi86jjsBjIUFPlH7ai79XKwFkAhPoe1EshdIzm0unBv5cPdVOqO32dojkRV9-G98ShK1FgJgEp0PNvBQo8Izs"/>
+</div>
+<div class="flex-grow min-w-0">
+<h4 class="font-bold text-sm text-on-surface truncate uppercase tracking-tight">Encrypted_Payload_099</h4>
+<p class="text-on-surface-variant text-xs mt-1">OCT 10, 2023 • LOCKED</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary-container">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-28 right-6 w-14 h-14 bg-primary-container text-on-primary-container rounded-xl shadow-[0_0_20px_rgba(255,153,51,0.4)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'wght' 600;">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-6 w-full flex justify-around items-center px-4 z-50">
+<div class="bg-[#2A2A2A]/60 dark:bg-[#2A2A2A]/60 w-[90%] rounded-2xl mx-auto flex justify-around items-center py-3 no-line glassmorphism-overlay shadow-[0_16px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+<!-- Active: Video -->
+<button class="flex flex-col items-center justify-center text-[#FF9933] bg-[#FF9933]/10 rounded-xl py-2 px-4 shadow-[0_0_15px_rgba(255,153,51,0.3)] transition-all Active: scale-110 duration-300 ease-out">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">movie</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-1">Video</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#DBC2B0] py-2 px-4 hover:text-white transition-all">
+<span class="material-symbols-outlined">music_note</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-1">Music</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#DBC2B0] py-2 px-4 hover:text-white transition-all">
+<span class="material-symbols-outlined">lock</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-1">Vault</span>
+</button>
+</div>
+</nav>
+</body></html>
