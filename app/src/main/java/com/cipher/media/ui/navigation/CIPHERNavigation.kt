@@ -31,6 +31,7 @@ import com.cipher.media.ui.auth.AuthScreen
 import com.cipher.media.ui.auth.OnboardingScreen
 import com.cipher.media.ui.auth.SplashScreen
 import com.cipher.media.ui.components.MiniPlayer
+import com.cipher.media.ui.premium.PremiumScreen
 import com.cipher.media.ui.search.SearchScreen
 import com.cipher.media.ui.settings.SettingsScreen
 import com.cipher.media.ui.stealth.CalculatorScreen
@@ -94,7 +95,7 @@ fun CIPHERNavigation() {
         Screen.AudioPlayer.route, Screen.Equalizer.route,
         Screen.VaultSetup.route, Screen.VaultBrowser.route,
         Screen.Calculator.route, Screen.StealthSetup.route, Screen.IntruderLog.route,
-        Screen.Settings.route, Screen.Search.route
+        Screen.Settings.route, Screen.Search.route, Screen.Premium.route
     )
     val showBottomBar = currentDestination?.route?.let { route ->
         !hideBottomBarRoutes.contains(route) &&
@@ -270,6 +271,9 @@ fun CIPHERNavigation() {
                 }
                 composable(Screen.IntruderLog.route) {
                     IntruderLogScreen(onBack = { navController.popBackStack() })
+                }
+                composable(Screen.Premium.route) {
+                    PremiumScreen(onBack = { navController.popBackStack() })
                 }
 
                 // -- Viewers --

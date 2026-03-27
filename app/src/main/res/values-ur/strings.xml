@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">CIPHER</string>
+    <string name="nav_video">ویڈیو</string>
+    <string name="nav_music">موسیقی</string>
+    <string name="nav_vault">والٹ</string>
+    <string name="back">واپس</string>
+    <string name="search">تلاش کریں</string>
+    <string name="settings">ترتیبات</string>
+    <string name="cancel">منسوخ</string>
+    <string name="save">محفوظ کریں</string>
+    <string name="delete">حذف کریں</string>
+    <string name="ok">ٹھیک ہے</string>
+    <string name="loading">لوڈ ہو رہا ہے…</string>
+    <string name="error_generic">کچھ غلط ہو گیا</string>
+    <string name="welcome_title">CIPHER میں خوش آمدید</string>
+    <string name="skip">چھوڑیں</string>
+    <string name="next">اگلا</string>
+    <string name="get_started">شروع کریں</string>
+    <string name="enter_pin">PIN درج کریں</string>
+    <string name="video_browser_title">ویڈیوز</string>
+    <string name="no_videos">کوئی ویڈیو نہیں ملی</string>
+    <string name="audio_browser_title">موسیقی</string>
+    <string name="no_audio">کوئی موسیقی نہیں ملی</string>
+    <string name="now_playing">ابھی چل رہا ہے</string>
+    <string name="vault_title">والٹ</string>
+    <string name="vault_empty">والٹ خالی ہے</string>
+    <string name="import_files">فائلیں درآمد کریں</string>
+    <string name="security">سیکیورٹی</string>
+    <string name="storage">اسٹوریج</string>
+    <string name="about">کے بارے میں</string>
+    <string name="go_premium">پریمیم حاصل کریں</string>
+    <string name="subscribe_now">ابھی سبسکرائب کریں</string>
+    <string name="upgrade_now">ابھی اپ گریڈ کریں</string>
+    <string name="search_files">فائلیں تلاش کریں…</string>
+    <string name="no_results">کوئی نتائج نہیں ملے</string>
+    <string name="filter_all">سب</string>
+</resources>

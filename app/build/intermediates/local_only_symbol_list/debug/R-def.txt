@@ -1,0 +1,7 @@
+R_DEF: Internal format may change without notice
+local
+drawable widget_background
+layout widget_loading
+string app_name
+style Theme.CIPHER
+xml audio_widget_info

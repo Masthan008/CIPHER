@@ -83,4 +83,22 @@ object AppModule {
     fun provideIntruderLogDao(database: EncryptedDatabase): com.cipher.media.data.local.IntruderLogDao {
         return database.intruderLogDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideBillingManager(@ApplicationContext context: Context): com.cipher.media.billing.BillingManager {
+        return com.cipher.media.billing.BillingManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBillingRepository(billingManager: com.cipher.media.billing.BillingManager): com.cipher.media.billing.BillingRepository {
+        return com.cipher.media.billing.BillingRepository(billingManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAdManager(@ApplicationContext context: Context): com.cipher.media.ads.AdManager {
+        return com.cipher.media.ads.AdManager(context)
+    }
 }

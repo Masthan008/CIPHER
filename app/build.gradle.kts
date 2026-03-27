@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     kotlin("kapt")
 }
 
@@ -32,6 +34,21 @@ android {
             )
         }
     }
+
+    // ABI splits for smaller APK per architecture
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64")
+            isUniversalApk = true
+        }
+    }
+
+    // Restrict resources to supported locales
+    defaultConfig.resourceConfigurations += listOf(
+        "en", "hi", "ta", "te", "mr", "bn", "gu", "kn", "ml", "pa", "ur"
+    )
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -114,6 +131,17 @@ dependencies {
 
     // Glance (home screen widget)
     implementation("androidx.glance:glance-appwidget:1.0.0")
+
+    // Google AdMob
+    implementation("com.google.android.gms:play-services-ads:23.0.0")
+
+    // Google Play Billing
+    implementation("com.android.billingclient:billing-ktx:6.1.0")
+
+    // Firebase Crashlytics
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }
 
 kapt {
