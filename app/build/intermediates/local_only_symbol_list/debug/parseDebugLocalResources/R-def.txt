@@ -2,8 +2,20 @@ R_DEF: Internal format may change without notice
 local
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable ic_next_widget
+drawable ic_pause_widget
+drawable ic_play_widget
+drawable ic_prev_widget
 drawable widget_background
+id widget_album_art
+id widget_artist
+id widget_next
+id widget_play_pause
+id widget_prev
+id widget_root
+id widget_title
 layout widget_loading
+layout widget_music_player
 mipmap ic_launcher
 mipmap ic_launcher_round
 plurals event_count
@@ -127,3 +139,4 @@ string welcome_title
 style Theme.CIPHER
 xml audio_widget_info
 xml gma_ad_services_config
+xml music_widget_info

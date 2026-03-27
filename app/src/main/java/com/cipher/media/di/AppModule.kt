@@ -2,11 +2,15 @@ package com.cipher.media.di
 
 import android.content.ContentResolver
 import android.content.Context
+import com.cipher.media.data.local.MediaDatabase
+import com.cipher.media.data.local.VideoPreferencesDao
+import androidx.room.Room
 import com.cipher.media.data.encryption.CryptoUtil
 import com.cipher.media.data.encryption.KeystoreManager
 import com.cipher.media.data.encryption.VaultEncryptionManager
 import com.cipher.media.data.local.EncryptedDatabase
 import com.cipher.media.data.local.VaultDao
+import com.cipher.media.data.local.IntruderLogDao
 import com.cipher.media.data.repository.EqualizerRepository
 import com.cipher.media.data.repository.MediaRepository
 import dagger.Module
@@ -100,5 +104,35 @@ object AppModule {
     @Singleton
     fun provideAdManager(@ApplicationContext context: Context): com.cipher.media.ads.AdManager {
         return com.cipher.media.ads.AdManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMediaDatabase(@ApplicationContext context: Context): MediaDatabase {
+        return Room.databaseBuilder(
+            context,
+            MediaDatabase::class.java,
+            "cipher_media.db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideVideoPreferencesDao(database: MediaDatabase): VideoPreferencesDao {
+        return database.videoPreferencesDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideQueueDao(database: MediaDatabase): com.cipher.media.ui.audio.queue.model.QueueDao {
+        return database.queueDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideQueueRepository(queueDao: com.cipher.media.ui.audio.queue.model.QueueDao): com.cipher.media.ui.audio.queue.QueueRepository {
+        return com.cipher.media.ui.audio.queue.QueueRepository(queueDao)
     }
 }

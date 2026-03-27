@@ -20,6 +20,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cipher.media.security.IntruderCameraManager
 import com.cipher.media.ui.components.*
@@ -31,11 +34,13 @@ import kotlin.random.Random
 
 /**
  * Vault auth: circuit pattern bg, shield pulse, PIN pad, biometric toggle.
- * Now with proper PIN hash verification, intruder selfie, and self-destruct.
+ * Now with proper PIN hash verification, decoy PIN routing,
+ * biometric unlock, intruder selfie, and self-destruct.
  */
 @Composable
 fun VaultAuthScreen(
     onAuthenticated: () -> Unit,
+    onDecoyAuthenticated: () -> Unit = {},
     viewModel: VaultViewModel,
     stealthViewModel: StealthViewModel = hiltViewModel()
 ) {
@@ -50,9 +55,43 @@ fun VaultAuthScreen(
         context.getSharedPreferences("cipher_vault_prefs", android.content.Context.MODE_PRIVATE)
     }
     val storedPinHash = remember { prefs.getString("vault_pin_hash", null) }
+    val decoyPinHash = stealthViewModel.decoyPinHash
 
     val intruderCamera = remember { IntruderCameraManager(context) }
     val maxAttempts = stealthViewModel.selfDestructAttempts
+
+    // ── Biometric Setup ──
+    val biometricPromptInfo = remember {
+        BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Unlock Vault")
+            .setSubtitle("Use your fingerprint to access")
+            .setNegativeButtonText("Use PIN")
+            .build()
+    }
+
+    fun launchBiometric() {
+        val activity = context as? FragmentActivity ?: return
+        val executor = ContextCompat.getMainExecutor(context)
+        val biometricPrompt = BiometricPrompt(activity, executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    onAuthenticated()
+                }
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    // User pressed "Use PIN" or system error — fall back to PIN
+                    authMode = "pin"
+                }
+                override fun onAuthenticationFailed() {
+                    Toast.makeText(context, "Fingerprint not recognized", Toast.LENGTH_SHORT).show()
+                }
+            })
+        biometricPrompt.authenticate(biometricPromptInfo)
+    }
+
+    // Auto-launch biometric if mode switches
+    LaunchedEffect(authMode) {
+        if (authMode == "biometric") launchBiometric()
+    }
 
     val circuitPoints = remember {
         (0..30).map { Offset(Random.nextFloat() * 1000f, Random.nextFloat() * 2000f) }
@@ -148,7 +187,7 @@ fun VaultAuthScreen(
 
                     Spacer(Modifier.height(Spacing.xl))
 
-                    // PIN pad (already has spring animations from PinPad upgrade)
+                    // PIN pad
                     PinPad(
                         onDigit = { digit ->
                             if (!isLocked && pin.length < 6) {
@@ -161,22 +200,33 @@ fun VaultAuthScreen(
                             if (isLocked) return@PinPad
                             if (pin.length >= 4) {
                                 val enteredHash = hashPin(pin)
-                                if (enteredHash == storedPinHash) {
-                                    failedAttempts = 0
-                                    onAuthenticated()
-                                } else {
-                                    failedAttempts++
-                                    error = true
-                                    pin = ""
-                                    if (stealthViewModel.isIntruderDetectionEnabled) {
-                                        intruderCamera.captureIntruderPhoto { photoPath ->
-                                            stealthViewModel.logIntruderAttempt(failedAttempts, photoPath)
-                                        }
+
+                                when {
+                                    // Check real PIN first
+                                    enteredHash == storedPinHash -> {
+                                        failedAttempts = 0
+                                        onAuthenticated()
                                     }
-                                    if (stealthViewModel.isSelfDestructEnabled && failedAttempts >= maxAttempts) {
-                                        isLocked = true
-                                        viewModel.wipeAllVaultData()
-                                        Toast.makeText(context, "Vault wiped — self-destruct activated", Toast.LENGTH_LONG).show()
+                                    // Check decoy PIN (PRO)
+                                    decoyPinHash != null && enteredHash == decoyPinHash -> {
+                                        failedAttempts = 0
+                                        onDecoyAuthenticated()
+                                    }
+                                    // Wrong PIN
+                                    else -> {
+                                        failedAttempts++
+                                        error = true
+                                        pin = ""
+                                        if (stealthViewModel.isIntruderDetectionEnabled) {
+                                            intruderCamera.captureIntruderPhoto { photoPath ->
+                                                stealthViewModel.logIntruderAttempt(failedAttempts, photoPath)
+                                            }
+                                        }
+                                        if (stealthViewModel.isSelfDestructEnabled && failedAttempts >= maxAttempts) {
+                                            isLocked = true
+                                            viewModel.wipeAllVaultData()
+                                            Toast.makeText(context, "Vault wiped — self-destruct activated", Toast.LENGTH_LONG).show()
+                                        }
                                     }
                                 }
                             } else {
@@ -191,6 +241,13 @@ fun VaultAuthScreen(
             Spacer(Modifier.weight(0.1f))
 
             TextButton(onClick = { authMode = if (authMode == "biometric") "pin" else "biometric" }) {
+                Icon(
+                    if (authMode == "biometric") Icons.Default.Dialpad else Icons.Default.Fingerprint,
+                    contentDescription = null,
+                    tint = CIPHERPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(Spacing.xs))
                 Text(
                     if (authMode == "biometric") "Use PIN" else "Use Biometric",
                     color = CIPHERPrimary
@@ -208,3 +265,4 @@ private fun hashPin(pin: String): String {
     val hashBytes = digest.digest(pin.toByteArray())
     return hashBytes.joinToString("") { "%02x".format(it) }
 }
+

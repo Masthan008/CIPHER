@@ -20,6 +20,7 @@ sealed class Screen(val route: String) {
     data object Settings : Screen("settings")
     data object Search : Screen("search")
     data object Premium : Screen("premium")
+    data object CloudSync : Screen("cloud_sync")
     data object VaultImageViewer : Screen("vault_image/{itemId}") {
         fun createRoute(itemId: String): String = "vault_image/$itemId"
     }
@@ -28,5 +29,9 @@ sealed class Screen(val route: String) {
     }
     data object VideoPlayer : Screen("video_player/{videoUri}") {
         fun createRoute(videoUri: String): String = "video_player/$videoUri"
+    }
+    data object DecoyVault : Screen("decoy_vault")
+    data object NetworkPlayer : Screen("network_player/{streamUrl}") {
+        fun createRoute(streamUrl: String): String = "network_player/$streamUrl"
     }
 }

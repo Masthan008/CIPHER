@@ -1,17 +1,23 @@
 package com.cipher.media;
 
 import com.cipher.media.di.AppModule;
+import com.cipher.media.di.CloudModule;
 import com.cipher.media.di.PlayerModule;
 import com.cipher.media.service.AudioPlaybackService_GeneratedInjector;
 import com.cipher.media.ui.audio.AudioPlayerViewModel_HiltModules;
 import com.cipher.media.ui.audio.equalizer.EqualizerViewModel_HiltModules;
+import com.cipher.media.ui.audio.queue.QueueViewModel_HiltModules;
 import com.cipher.media.ui.premium.PremiumViewModel_HiltModules;
 import com.cipher.media.ui.search.SearchViewModel_HiltModules;
 import com.cipher.media.ui.settings.SettingsViewModel_HiltModules;
+import com.cipher.media.ui.settings.cloud.CloudSyncViewModel_HiltModules;
 import com.cipher.media.ui.stealth.StealthViewModel_HiltModules;
 import com.cipher.media.ui.vault.VaultViewModel_HiltModules;
 import com.cipher.media.ui.video.VideoBrowserViewModel_HiltModules;
 import com.cipher.media.ui.video.VideoPlayerViewModel_HiltModules;
+import com.cipher.media.ui.video.audio.VideoEqualizerViewModel_HiltModules;
+import com.cipher.media.ui.video.enhancement.VideoEnhancementViewModel_HiltModules;
+import com.cipher.media.ui.video.subtitle.SubtitleViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -140,6 +146,7 @@ public final class CIPHERApplication_HiltComponents {
           ApplicationContextModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
+          CloudModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
           PlayerModule.class
       }
@@ -168,15 +175,20 @@ public final class CIPHERApplication_HiltComponents {
           AudioPlayerViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
+          CloudSyncViewModel_HiltModules.KeyModule.class,
           EqualizerViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           PremiumViewModel_HiltModules.KeyModule.class,
+          QueueViewModel_HiltModules.KeyModule.class,
           SearchViewModel_HiltModules.KeyModule.class,
           SettingsViewModel_HiltModules.KeyModule.class,
           StealthViewModel_HiltModules.KeyModule.class,
+          SubtitleViewModel_HiltModules.KeyModule.class,
           VaultViewModel_HiltModules.KeyModule.class,
           VideoBrowserViewModel_HiltModules.KeyModule.class,
+          VideoEnhancementViewModel_HiltModules.KeyModule.class,
+          VideoEqualizerViewModel_HiltModules.KeyModule.class,
           VideoPlayerViewModel_HiltModules.KeyModule.class
       }
   )
@@ -214,14 +226,19 @@ public final class CIPHERApplication_HiltComponents {
   @Subcomponent(
       modules = {
           AudioPlayerViewModel_HiltModules.BindsModule.class,
+          CloudSyncViewModel_HiltModules.BindsModule.class,
           EqualizerViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           PremiumViewModel_HiltModules.BindsModule.class,
+          QueueViewModel_HiltModules.BindsModule.class,
           SearchViewModel_HiltModules.BindsModule.class,
           SettingsViewModel_HiltModules.BindsModule.class,
           StealthViewModel_HiltModules.BindsModule.class,
+          SubtitleViewModel_HiltModules.BindsModule.class,
           VaultViewModel_HiltModules.BindsModule.class,
           VideoBrowserViewModel_HiltModules.BindsModule.class,
+          VideoEnhancementViewModel_HiltModules.BindsModule.class,
+          VideoEqualizerViewModel_HiltModules.BindsModule.class,
           VideoPlayerViewModel_HiltModules.BindsModule.class
       }
   )

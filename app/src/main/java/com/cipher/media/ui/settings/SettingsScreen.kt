@@ -115,9 +115,12 @@ fun SettingsScreen(
             // Storage
             val cacheMb = "%.1f MB".format(settings.cacheSize / 1_048_576.0)
             val vaultMb = "%.1f MB".format(settings.vaultSize / 1_048_576.0)
-            SettingsSection("Storage") {
+            SettingsSection("Storage & Cloud") {
                 SettingsItem(Icons.Default.Storage, "Cache", cacheMb) { }
                 SettingsItem(Icons.Default.FolderSpecial, "Vault Storage", vaultMb) { }
+                SettingsItem(Icons.Default.CloudSync, "Cloud Vault Sync", "Backup to Cloudinary") {
+                    onNavigateTo("cloud_sync")
+                }
                 SettingsItem(Icons.Default.DeleteSweep, "Clear Cache", "") {
                     viewModel.clearCache()
                     Toast.makeText(context, "Cache cleared", Toast.LENGTH_SHORT).show()

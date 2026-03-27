@@ -31,16 +31,21 @@ class AudioPlaybackService : MediaSessionService() {
     override fun onCreate() {
         super.onCreate()
 
+        // FREE FEATURE: Full audio playback service with gapless support
         val player = ExoPlayer.Builder(this)
             .setAudioAttributes(
                 AudioAttributes.Builder()
                     .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                     .setUsage(C.USAGE_MEDIA)
                     .build(),
-                /* handleAudioFocus = */ true
+                /* handleAudioFocus = */ true  // FREE: Auto-handle focus (pause on call, duck on notification)
             )
-            .setHandleAudioBecomingNoisy(true) // pause when headphones unplugged
+            .setHandleAudioBecomingNoisy(true) // FREE: Pause when headphones unplugged
+            .setWakeMode(C.WAKE_MODE_LOCAL)     // FREE: Prevent CPU sleep during background playback
             .build()
+
+        // FREE FEATURE: Gapless playback — skip silence gaps between tracks
+        player.skipSilenceEnabled = true
 
         // Attach audio effects to ExoPlayer's audio session
         audioEffects.attach(player.audioSessionId)

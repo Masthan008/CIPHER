@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.cipher.media.app-mergeDebugResources-97:/values-v29/values-v29.xml",
+            "outputFile": "com.cipher.media.app-mergeDebugResources-111:/values-v29/values-v29.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\masth\\.gradle\\caches\\8.13\\transforms\\aff0aeb26ee6af7ef6c455536e1c39d2\\transformed\\glance-appwidget-1.0.0\\res\\values-v29\\values-v29.xml",
+                    "source": "C:\\Users\\masth\\.gradle\\caches\\8.13\\transforms\\65e813a8e9044797ffbdced1d5ecfdf5\\transformed\\glance-appwidget-1.0.0\\res\\values-v29\\values-v29.xml",
                     "from": {
                         "startLines": "2,6,10,14,15,16",
                         "startColumns": "4,4,4,4,4,4",

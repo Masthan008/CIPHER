@@ -22,6 +22,9 @@ val CIPHERTertiary = Color(0xFF00C853)           // Success green
 val CIPHERTertiaryDim = Color(0xFF009624)
 val CIPHERTertiaryContainer = Color(0xFF003D09)
 
+val ProGold = Color(0xFFFFC107)                  // Pro Tier accent
+val CIPHERAccent = Color(0xFFE65100)             // Deep Orange Accent
+
 // ========== TEXT ==========
 val CIPHEROnSurface = Color(0xFFFFFFFF)          // 100% white primary text
 val CIPHEROnSurfaceVariant = Color(0xFFB0B0B0)   // 70% white secondary text

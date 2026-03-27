@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.cipher.media.app-mergeDebugResources-97:/values-xlarge-v4/values-xlarge-v4.xml",
+            "outputFile": "com.cipher.media.app-mergeDebugResources-111:/values-xlarge-v4/values-xlarge-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\masth\\.gradle\\caches\\8.13\\transforms\\aac2d9e2d9de5d2e5834ae8055e95eec\\transformed\\appcompat-1.6.1\\res\\values-xlarge-v4\\values-xlarge-v4.xml",
+                    "source": "C:\\Users\\masth\\.gradle\\caches\\8.13\\transforms\\a18ab2962acde491ad91fc5c51efd6ef\\transformed\\appcompat-1.6.1\\res\\values-xlarge-v4\\values-xlarge-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7",
                         "startColumns": "4,4,4,4,4,4",

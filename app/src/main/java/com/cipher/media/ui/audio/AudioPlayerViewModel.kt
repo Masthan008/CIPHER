@@ -77,7 +77,7 @@ class AudioPlayerViewModel @Inject constructor(
         connectToService()
     }
 
-    private fun loadAudio() {
+    fun loadAudio() {
         viewModelScope.launch {
             _isLoading.value = true
             _audioList.value = mediaRepository.getLocalAudio()

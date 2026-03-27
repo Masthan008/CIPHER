@@ -4,6 +4,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     kotlin("kapt")
 }
 
@@ -61,6 +62,12 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    secrets {
+        propertiesFileName = ".env.properties"
+        defaultPropertiesFileName = "local.defaults.properties"
     }
 
     composeOptions {
@@ -104,6 +111,13 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.3.0")
     implementation("androidx.media3:media3-ui:1.3.0")
     implementation("androidx.media3:media3-session:1.3.0")
+    implementation("androidx.media3:media3-exoplayer-hls:1.3.0")
+    implementation("androidx.media3:media3-exoplayer-dash:1.3.0")
+    implementation("androidx.media3:media3-datasource:1.3.0")
+    implementation("androidx.media3:media3-cast:1.3.0")
+
+    // Google Cast SDK
+    implementation("com.google.android.gms:play-services-cast-framework:21.4.0")
 
     // Room (stubs for Phase 3)
     implementation("androidx.room:room-runtime:2.6.1")
@@ -131,6 +145,15 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     // Glance (home screen widget)
+    implementation("androidx.glance:glance-appwidget:1.0.0")
+
+    // Firebase (Cloud Sync)
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+
+    // Cloudinary (Blob Storage Sync)
+    implementation("com.cloudinary:cloudinary-android:2.4.0")
     implementation("androidx.glance:glance-appwidget:1.0.0")
 
     // Google AdMob

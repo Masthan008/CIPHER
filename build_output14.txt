@@ -1,0 +1,91 @@
+﻿> Task :app:clean
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :app:processDebugNavigationResources
+> Task :app:generateDebugResValues
+> Task :app:compileDebugNavigationResources
+> Task :app:injectCrashlyticsMappingFileIdDebug
+> Task :app:processDebugGoogleServices
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets
+> Task :app:desugarDebugFileDependencies
+> Task :app:javaPreCompileDebug
+> Task :app:mergeDebugJniLibFolders
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:mergeDebugNativeLibs
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeLibDexDebug
+> Task :app:stripDebugDebugSymbols
+> Task :app:mergeDebugResources
+> Task :app:processDebugResources
+> Task :app:mergeExtDexDebug
+> Task :app:kaptGenerateStubsDebugKotlin
+> Task :app:kaptDebugKotlin
+> Task :app:compileDebugKotlin
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/billing/BillingManager.kt:67:9 Parameter 'listener' is never used
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/billing/BillingManager.kt:106:9 Parameter 'listener' is never used
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/data/encryption/VaultEncryptionManager.kt:38:9 Parameter 'originalName' is never used
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/audio/AudioBrowserScreen.kt:46:59 'Sort: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Sort
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/audio/AudioPlayerScreen.kt:300:42 'QueueMusic: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.QueueMusic
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/audio/equalizer/EqualizerScreen.kt:48:55 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/components/GestureOverlay.kt:155:37 Variable 'change' is never used
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/components/GestureOverlay.kt:364:57 'VolumeUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.VolumeUp
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/components/GestureOverlay.kt:365:56 'VolumeDown: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.VolumeDown
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/components/GestureOverlay.kt:366:43 'VolumeOff: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.VolumeOff
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/components/PremiumAnimations.kt:170:5 Parameter 'glowRadius' is never used
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/components/PremiumAnimations.kt:174:9 Variable 'hueShift' is never used
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/components/ShimmerLoading.kt:22:5 Parameter 'modifier' is never used
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/navigation/CIPHERNavigation.kt:323:42 Parameter 'uri' is never used, could be renamed to _
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/premium/PremiumScreen.kt:64:42 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/search/SearchScreen.kt:49:55 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/settings/SettingsScreen.kt:54:55 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/stealth/StealthSetupScreen.kt:43:55 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/vault/VaultBrowserScreen.kt:113:74 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/vault/components/IntruderLogScreen.kt:39:55 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/vault/components/PinPad.kt:178:31 'Backspace: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Backspace
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/vault/viewer/EncryptedImageViewer.kt:81:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/vault/viewer/EncryptedVideoPlayer.kt:92:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/video/VideoBrowserScreen.kt:53:44 'Sort: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Sort
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/video/VideoPlayerScreen.kt:344:44 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/valli/CIPHER/app/src/main/java/com/cipher/media/ui/video/subtitle/components/SubtitleBottomSheet.kt:215:51 Destructured parameter 'name' is never used
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:hiltAggregateDepsDebug
+> Task :app:hiltJavaCompileDebug
+> Task :app:processDebugJavaRes
+> Task :app:transformDebugClassesWithAsm
+> Task :app:mergeDebugJavaResource
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:mergeProjectDexDebug
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+
+[Incubating] Problems report is available at: file:///C:/valli/CIPHER/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.13/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 4m
+47 actionable tasks: 47 executed

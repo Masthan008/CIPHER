@@ -14,6 +14,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.cipher.media.data.model.MediaItem
 import com.cipher.media.ui.components.*
 import com.cipher.media.ui.theme.*
+import com.cipher.media.ui.video.streaming.StreamingManager
+import com.cipher.media.ui.video.streaming.components.StreamInputDialog
+import androidx.compose.ui.platform.LocalContext
 
 /**
  * Video browser: 2-column grid, FAB, empty state, shimmer loading.
@@ -24,12 +27,35 @@ fun VideoBrowserScreen(
     onVideoClick: (MediaItem) -> Unit,
     onSearchClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
+    onStreamUrl: (String) -> Unit = {},
     viewModel: VideoBrowserViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     var showSortSheet by remember { mutableStateOf(false) }
+    var showStreamDialog by remember { mutableStateOf(false) }
+    val streamingManager = remember { StreamingManager(context) }
+
+    val permissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        viewModel.loadVideos()
+    }
 
     LaunchedEffect(Unit) { viewModel.loadVideos() }
+
+    // Stream URL dialog
+    if (showStreamDialog) {
+        StreamInputDialog(
+            onDismiss = { showStreamDialog = false },
+            onConfirm = { url ->
+                showStreamDialog = false
+                onStreamUrl(url)
+            },
+            validateUrl = { streamingManager.validateUrl(it) },
+            getStreamTypeLabel = { streamingManager.getStreamTypeLabel(it) }
+        )
+    }
 
     Scaffold(
         containerColor = CIPHERBackground,
@@ -40,6 +66,7 @@ fun VideoBrowserScreen(
                         fontWeight = FontWeight.Bold, color = CIPHEROnSurface)
                 },
                 actions = {
+                    CIPHERIconButton(icon = Icons.Default.Language, onClick = { showStreamDialog = true })
                     CIPHERIconButton(icon = Icons.Default.Search, onClick = onSearchClick)
                     CIPHERIconButton(icon = Icons.Default.Settings, onClick = onSettingsClick)
                 },
@@ -50,7 +77,25 @@ fun VideoBrowserScreen(
             )
         },
         floatingActionButton = {
-            CIPHERFAB(icon = Icons.Default.Sort, onClick = { showSortSheet = true })
+            Column(
+                horizontalAlignment = androidx.compose.ui.Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(Spacing.md)
+            ) {
+                if (android.os.Build.VERSION.SDK_INT >= 34) {
+                    CIPHERFAB(
+                        icon = Icons.Default.Add,
+                        onClick = {
+                            permissionLauncher.launch(
+                                arrayOf(
+                                    "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+                                    android.Manifest.permission.READ_MEDIA_VIDEO
+                                )
+                            )
+                        }
+                    )
+                }
+                CIPHERFAB(icon = Icons.Default.Sort, onClick = { showSortSheet = true })
+            }
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
@@ -66,6 +111,7 @@ fun VideoBrowserScreen(
                 )
 
                 else -> LazyVerticalGrid(
+                    modifier = Modifier.fillMaxSize(),
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(Spacing.screenPadding),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.cardGap),

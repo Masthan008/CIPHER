@@ -29,6 +29,10 @@ fun AudioBrowserScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     var showSortSheet by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        viewModel.loadAudio()
+    }
+
     Scaffold(
         containerColor = CIPHERBackground,
         topBar = {

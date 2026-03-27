@@ -18,7 +18,9 @@ import com.cipher.media.ui.theme.*;
 public final class VaultBrowserScreenKt {
     
     /**
-     * Vault browser: shield header, lock badges, import via gallery picker.
+     * Vault browser: shield header, lock badges, import via gallery picker,
+     * folder creation dialog, and proper file click handling.
+     * FLAG_SECURE is set to prevent screenshots of vault contents.
      */
     @kotlin.OptIn(markerClass = {androidx.compose.material3.ExperimentalMaterial3Api.class})
     @androidx.compose.runtime.Composable()

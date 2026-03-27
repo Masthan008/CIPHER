@@ -88,16 +88,19 @@
             </intent-filter>
         </service>
 
-        <!-- Audio Player Widget -->
+        <!-- Music Player Widget (FREE FEATURE) -->
         <receiver
-            android:name=".widget.AudioPlayerWidgetReceiver"
+            android:name=".widget.MusicWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.cipher.media.WIDGET_PLAY_PAUSE" />
+                <action android:name="com.cipher.media.WIDGET_NEXT" />
+                <action android:name="com.cipher.media.WIDGET_PREV" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/audio_widget_info" />
+                android:resource="@xml/music_widget_info" />
         </receiver>
     </application>
 </manifest>

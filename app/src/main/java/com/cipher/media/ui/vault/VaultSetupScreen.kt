@@ -43,7 +43,12 @@ fun VaultSetupScreen(
     LaunchedEffect(confirmPin) {
         if (confirmPin.length == maxLength && step == 1) {
             if (confirmPin == firstPin) {
-                onSetupComplete(confirmPin.hashCode().toString())
+                // BUG FIX: Use identical SHA-256 algorithm as Auth screen!
+                val digest = java.security.MessageDigest.getInstance("SHA-256")
+                val hashBytes = digest.digest(confirmPin.toByteArray())
+                val shaHash = hashBytes.joinToString("") { "%02x".format(it) }
+                
+                onSetupComplete(shaHash)
             } else {
                 errorMessage = "PINs don't match. Try again."
                 confirmPin = ""; firstPin = ""; step = 0

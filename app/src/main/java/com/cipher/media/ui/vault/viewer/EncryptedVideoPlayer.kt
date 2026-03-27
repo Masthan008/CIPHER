@@ -67,7 +67,8 @@ fun EncryptedVideoPlayer(
     LaunchedEffect(tempFile) {
         tempFile?.let { file ->
             val exoPlayer = ExoPlayer.Builder(context).build()
-            exoPlayer.setMediaItem(MediaItem.fromUri(file.toURI().toString()))
+            val uriStr = android.net.Uri.fromFile(file).toString()
+            exoPlayer.setMediaItem(MediaItem.fromUri(uriStr))
             exoPlayer.prepare()
             exoPlayer.playWhenReady = true
             player = exoPlayer

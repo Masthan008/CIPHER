@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment;
 import androidx.compose.ui.Modifier;
 import androidx.compose.ui.graphics.vector.ImageVector;
 import androidx.navigation.NavType;
+import com.cipher.media.data.model.VaultItem;
 import com.cipher.media.ui.audio.AudioPlayerViewModel;
 import com.cipher.media.ui.stealth.StealthViewModel;
 import com.cipher.media.ui.theme.Spacing;

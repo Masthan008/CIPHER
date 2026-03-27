@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.cipher.media.data.model.VaultItem
 import com.cipher.media.ui.audio.AudioBrowserScreen
 import com.cipher.media.ui.audio.AudioPlayerScreen
 import com.cipher.media.ui.audio.AudioPlayerViewModel
@@ -47,6 +48,7 @@ import com.cipher.media.ui.theme.Spacing
 import com.cipher.media.ui.vault.VaultAuthScreen
 import com.cipher.media.ui.vault.VaultBrowserScreen
 import com.cipher.media.ui.vault.VaultSetupScreen
+import com.cipher.media.ui.vault.DecoyVaultScreen
 import com.cipher.media.ui.vault.VaultViewModel
 import com.cipher.media.ui.vault.components.IntruderLogScreen
 import com.cipher.media.ui.vault.viewer.EncryptedImageViewer
@@ -88,16 +90,32 @@ fun CIPHERNavigation() {
     val prefs = remember {
         context.getSharedPreferences("cipher_vault_prefs", android.content.Context.MODE_PRIVATE)
     }
-    val storedPinHash = remember { prefs.getString("vault_pin_hash", null) }
 
-    val startDest = if (stealthViewModel.isStealthEnabled) Screen.Calculator.route else Screen.Splash.route
+    // ── Bug A Fix: Check onboarding completion flag ──
+    val hasCompletedOnboarding = remember {
+        prefs.getBoolean("has_completed_onboarding", false)
+    }
+
+    // ── Bug B Fix: Use mutableStateOf so PIN hash refreshes on create ──
+    var storedPinHash by remember { mutableStateOf(prefs.getString("vault_pin_hash", null)) }
+
+    // Determine start destination:
+    // - If stealth mode → Calculator
+    // - If already onboarded → straight to VideoBrowser (Video screen handles missing permissions)
+    // - If never onboarded → Splash
+    val startDest = when {
+        stealthViewModel.isStealthEnabled -> Screen.Calculator.route
+        hasCompletedOnboarding -> Screen.VideoBrowser.route
+        else -> Screen.Splash.route
+    }
 
     val hideBottomBarRoutes = listOf(
         Screen.Splash.route, Screen.Onboarding.route, Screen.Auth.route,
         Screen.AudioPlayer.route, Screen.Equalizer.route,
         Screen.VaultSetup.route, Screen.VaultBrowser.route,
         Screen.Calculator.route, Screen.StealthSetup.route, Screen.IntruderLog.route,
-        Screen.Settings.route, Screen.Search.route, Screen.Premium.route
+        Screen.Settings.route, Screen.Search.route, Screen.Premium.route,
+        Screen.CloudSync.route
     )
     val showBottomBar = currentDestination?.route?.let { route ->
         !hideBottomBarRoutes.contains(route) &&
@@ -174,6 +192,8 @@ fun CIPHERNavigation() {
                 }
                 composable(Screen.Auth.route) {
                     AuthScreen(onAuthSuccess = {
+                        // ── Bug A Fix: Mark onboarding as complete ──
+                        prefs.edit().putBoolean("has_completed_onboarding", true).apply()
                         navController.navigate(Screen.VideoBrowser.route) {
                             popUpTo(Screen.Auth.route) { inclusive = true }
                         }
@@ -196,7 +216,11 @@ fun CIPHERNavigation() {
                             navController.navigate(Screen.VideoPlayer.createRoute(encodedUri))
                         },
                         onSearchClick = { navController.navigate(Screen.Search.route) },
-                        onSettingsClick = { navController.navigate(Screen.Settings.route) }
+                        onSettingsClick = { navController.navigate(Screen.Settings.route) },
+                        onStreamUrl = { url ->
+                            val encodedUrl = Uri.encode(url)
+                            navController.navigate(Screen.NetworkPlayer.createRoute(encodedUrl))
+                        }
                     )
                 }
                 composable(Screen.AudioBrowser.route) {
@@ -219,6 +243,9 @@ fun CIPHERNavigation() {
                 composable(Screen.Equalizer.route) {
                     EqualizerScreen(onBack = { navController.popBackStack() })
                 }
+                composable(Screen.CloudSync.route) {
+                    com.cipher.media.ui.settings.cloud.CloudSyncScreen(onNavigateBack = { navController.popBackStack() })
+                }
 
                 // -- Calculator Disguise --
                 composable(Screen.Calculator.route) {
@@ -237,6 +264,7 @@ fun CIPHERNavigation() {
                     if (storedPinHash == null) {
                         VaultSetupScreen(onSetupComplete = { pinHash ->
                             prefs.edit().putString("vault_pin_hash", pinHash).apply()
+                            storedPinHash = pinHash
                             navController.navigate(Screen.VaultBrowser.route) {
                                 popUpTo(Screen.VaultAuth.route) { inclusive = true }
                             }
@@ -249,14 +277,37 @@ fun CIPHERNavigation() {
                                     popUpTo(Screen.VaultAuth.route) { inclusive = true }
                                 }
                             },
+                            onDecoyAuthenticated = {
+                                navController.navigate(Screen.DecoyVault.route) {
+                                    popUpTo(Screen.VaultAuth.route) { inclusive = true }
+                                }
+                            },
                             viewModel = vaultVm
                         )
                     }
                 }
                 composable(Screen.VaultBrowser.route) {
                     val vaultViewModel: VaultViewModel = hiltViewModel()
+                    // ── Bug C Fix: Wire onFileClick to navigate to the correct viewer ──
                     VaultBrowserScreen(
-                        onFileClick = { itemId -> },
+                        onFileClick = { itemId ->
+                            val items = vaultViewModel.vaultItems.value
+                            val item = items.find { it.id == itemId }
+                            if (item != null) {
+                                when (item.fileType) {
+                                    VaultItem.FileType.IMAGE -> {
+                                        navController.navigate(Screen.VaultImageViewer.createRoute(itemId))
+                                    }
+                                    VaultItem.FileType.VIDEO -> {
+                                        navController.navigate(Screen.VaultVideoPlayer.createRoute(itemId))
+                                    }
+                                    else -> {
+                                        // For audio/other, open image viewer as fallback
+                                        navController.navigate(Screen.VaultImageViewer.createRoute(itemId))
+                                    }
+                                }
+                            }
+                        },
                         onBack = { navController.popBackStack() },
                         viewModel = vaultViewModel
                     )
@@ -283,7 +334,6 @@ fun CIPHERNavigation() {
                             navController.navigate(Screen.VideoPlayer.createRoute(encodedUri))
                         },
                         onAudioClick = { uri ->
-                            // For audio, load and play
                             navController.navigate(Screen.AudioPlayer.route)
                         }
                     )
@@ -296,6 +346,9 @@ fun CIPHERNavigation() {
                 }
                 composable(Screen.Premium.route) {
                     PremiumScreen(onBack = { navController.popBackStack() })
+                }
+                composable(Screen.DecoyVault.route) {
+                    DecoyVaultScreen(onBack = { navController.popBackStack() })
                 }
 
                 // -- Viewers --
@@ -335,6 +388,16 @@ fun CIPHERNavigation() {
                 ) { backStackEntry ->
                     val videoUri = backStackEntry.arguments?.getString("videoUri") ?: return@composable
                     VideoPlayerScreen(videoUri = Uri.decode(videoUri), onBack = { navController.popBackStack() })
+                }
+                composable(
+                    route = Screen.NetworkPlayer.route,
+                    arguments = listOf(navArgument("streamUrl") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val streamUrl = backStackEntry.arguments?.getString("streamUrl") ?: return@composable
+                    com.cipher.media.ui.video.streaming.NetworkPlayerScreen(
+                        streamUrl = Uri.decode(streamUrl),
+                        onBack = { navController.popBackStack() }
+                    )
                 }
             }
 

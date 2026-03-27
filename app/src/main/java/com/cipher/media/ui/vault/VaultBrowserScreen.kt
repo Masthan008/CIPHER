@@ -19,7 +19,9 @@ import com.cipher.media.ui.components.*
 import com.cipher.media.ui.theme.*
 
 /**
- * Vault browser: shield header, lock badges, import via gallery picker.
+ * Vault browser: shield header, lock badges, import via gallery picker,
+ * folder creation dialog, and proper file click handling.
+ * FLAG_SECURE is set to prevent screenshots of vault contents.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,9 +30,26 @@ fun VaultBrowserScreen(
     onBack: () -> Unit,
     viewModel: VaultViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
+    // Screen protection — block screenshots and screen recording
+    DisposableEffect(Unit) {
+        (context as? android.app.Activity)?.window?.addFlags(
+            android.view.WindowManager.LayoutParams.FLAG_SECURE
+        )
+        onDispose {
+            (context as? android.app.Activity)?.window?.clearFlags(
+                android.view.WindowManager.LayoutParams.FLAG_SECURE
+            )
+        }
+    }
+
     val vaultItems by viewModel.vaultItems.collectAsState()
     val isImporting by viewModel.isImporting.collectAsState()
-    val context = LocalContext.current
+
+    // ── Bug D Fix: Folder creation dialog state ──
+    var showFolderDialog by remember { mutableStateOf(false) }
+    var folderName by remember { mutableStateOf("") }
 
     // File picker launcher — picks multiple files from gallery
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -42,6 +61,56 @@ fun VaultBrowserScreen(
             }
             Toast.makeText(context, "Importing ${uris.size} file(s)…", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // ── Folder Name Dialog ──
+    if (showFolderDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showFolderDialog = false
+                folderName = ""
+            },
+            title = { Text("Create Folder", color = CIPHEROnSurface) },
+            text = {
+                OutlinedTextField(
+                    value = folderName,
+                    onValueChange = { folderName = it },
+                    label = { Text("Folder name") },
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = CIPHERPrimary,
+                        cursorColor = CIPHERPrimary,
+                        focusedLabelColor = CIPHERPrimary
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val name = folderName.trim()
+                        if (name.isNotEmpty()) {
+                            viewModel.createFolder(name)
+                            Toast.makeText(context, "Folder \"$name\" created", Toast.LENGTH_SHORT).show()
+                        }
+                        showFolderDialog = false
+                        folderName = ""
+                    }
+                ) {
+                    Text("Create", color = CIPHERPrimary)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showFolderDialog = false
+                        folderName = ""
+                    }
+                ) {
+                    Text("Cancel", color = CIPHEROnSurfaceVariant)
+                }
+            },
+            containerColor = CIPHERSurface
+        )
     }
 
     Scaffold(
@@ -58,9 +127,11 @@ fun VaultBrowserScreen(
                 navigationIcon = { CIPHERIconButton(icon = Icons.Default.ArrowBack, onClick = onBack) },
                 actions = {
                     CIPHERIconButton(icon = Icons.Default.Add, onClick = {
-                        filePickerLauncher.launch("*/*") // Accept all file types
+                        filePickerLauncher.launch("*/*")
                     })
-                    CIPHERIconButton(icon = Icons.Default.CreateNewFolder, onClick = { viewModel.createFolder("New Folder") })
+                    CIPHERIconButton(icon = Icons.Default.CreateNewFolder, onClick = {
+                        showFolderDialog = true  // ← Opens the dialog instead of static creation
+                    })
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = CIPHERBackground)
             )
