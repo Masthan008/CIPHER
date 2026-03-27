@@ -107,6 +107,22 @@ class VaultViewModel @Inject constructor(
     }
 
     /**
+     * Self-destruct: wipes all vault data (files + database entries).
+     */
+    fun wipeAllVaultData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Delete all encrypted files from disk
+            val vaultDir = java.io.File(context.filesDir, "vault")
+            if (vaultDir.exists()) {
+                vaultDir.deleteRecursively()
+            }
+            // Clear database
+            vaultDao.deleteAllItems()
+            vaultDao.deleteAllFolders()
+        }
+    }
+
+    /**
      * Decrypts a vault item to bytes (for images).
      */
     fun decryptToBytes(item: VaultItem): ByteArray {

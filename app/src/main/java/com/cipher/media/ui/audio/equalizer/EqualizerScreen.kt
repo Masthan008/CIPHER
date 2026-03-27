@@ -64,7 +64,12 @@ fun EqualizerScreen(
                 EQ_PRESETS.forEach { preset ->
                     FilterChip(
                         selected = selectedPreset == preset,
-                        onClick = { /* viewModel.selectPreset(preset) */ },
+                        onClick = {
+                            val presetObj = com.cipher.media.data.model.EqualizerPreset.ALL_PRESETS
+                                .find { it.name == preset }
+                                ?: com.cipher.media.data.model.EqualizerPreset.FLAT
+                            viewModel.selectPreset(presetObj)
+                        },
                         label = { Text(preset, style = MaterialTheme.typography.labelSmall) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = CIPHERPrimary,

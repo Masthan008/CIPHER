@@ -1,5 +1,7 @@
 package com.cipher.media.ui.vault;
 
+import android.widget.Toast;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.compose.foundation.layout.*;
 import androidx.compose.foundation.lazy.grid.*;
 import androidx.compose.material.icons.Icons;
@@ -16,7 +18,7 @@ import com.cipher.media.ui.theme.*;
 public final class VaultBrowserScreenKt {
     
     /**
-     * Vault browser: shield header, lock badges, import via menu.
+     * Vault browser: shield header, lock badges, import via gallery picker.
      */
     @kotlin.OptIn(markerClass = {androidx.compose.material3.ExperimentalMaterial3Api.class})
     @androidx.compose.runtime.Composable()

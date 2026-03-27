@@ -20,36 +20,41 @@ class AdManager @Inject constructor(
     companion object {
         private const val TAG = "CIPHERAdManager"
 
-        // Test ad unit IDs (replace with real IDs before release)
-        const val BANNER_AD_UNIT = "ca-app-pub-7731479239467127~4148664656"
-        const val INTERSTITIAL_AD_UNIT = "ca-app-pub-7731479239467127~4148664656"
-        const val REWARDED_AD_UNIT = "ca-app-pub-7731479239467127~4148664656"
+        // Google's official test ad unit IDs — safe for development
+        // Replace with your real ad unit IDs before production release
+        const val BANNER_AD_UNIT = "ca-app-pub-3940256099942544/6300978111"
+        const val INTERSTITIAL_AD_UNIT = "ca-app-pub-3940256099942544/1033173712"
+        const val REWARDED_AD_UNIT = "ca-app-pub-3940256099942544/5224354917"
 
         const val INTERSTITIAL_INTERVAL = 5 // Show after every N video plays
     }
 
     private var interstitialAd: InterstitialAd? = null
     private var videoPlayCount = 0
+    private var isInitialized = false
 
     fun initialize() {
-        MobileAds.initialize(context) {
-            Log.d(TAG, "AdMob initialized")
+        MobileAds.initialize(context) { initStatus ->
+            Log.d(TAG, "AdMob initialized: $initStatus")
+            isInitialized = true
             loadInterstitial()
         }
     }
 
     private fun loadInterstitial() {
+        if (!isInitialized) return
         val request = AdRequest.Builder().build()
         InterstitialAd.load(context, INTERSTITIAL_AD_UNIT, request,
             object : InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) {
                     interstitialAd = ad
-                    Log.d(TAG, "Interstitial loaded")
+                    Log.d(TAG, "Interstitial loaded successfully")
                 }
 
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     interstitialAd = null
-                    Log.w(TAG, "Interstitial failed: ${error.message}")
+                    Log.w(TAG, "Interstitial load failed: code=${error.code}, msg=${error.message}")
+                    // Retry after a short delay is handled by the next play event
                 }
             }
         )
@@ -61,23 +66,34 @@ class AdManager @Inject constructor(
      */
     fun onVideoPlayed(activity: Activity): Boolean {
         videoPlayCount++
-        if (videoPlayCount % INTERSTITIAL_INTERVAL == 0 && interstitialAd != null) {
-            interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    interstitialAd = null
-                    loadInterstitial() // Preload next
-                }
+        Log.d(TAG, "Video play #$videoPlayCount, interstitial loaded: ${interstitialAd != null}")
 
-                override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                    interstitialAd = null
-                    loadInterstitial()
+        if (videoPlayCount % INTERSTITIAL_INTERVAL == 0) {
+            if (interstitialAd != null) {
+                interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d(TAG, "Interstitial dismissed, preloading next")
+                        interstitialAd = null
+                        loadInterstitial()
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(error: AdError) {
+                        Log.w(TAG, "Interstitial show failed: ${error.message}")
+                        interstitialAd = null
+                        loadInterstitial()
+                    }
                 }
+                interstitialAd?.show(activity)
+                return true
+            } else {
+                // Ad wasn't loaded yet, preload for next time
+                loadInterstitial()
             }
-            interstitialAd?.show(activity)
-            return true
         }
         return false
     }
 
     fun getAdRequest(): AdRequest = AdRequest.Builder().build()
+
+    fun isAdLoaded(): Boolean = interstitialAd != null
 }

@@ -1,6 +1,5 @@
 package com.cipher.media.ui.audio
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -23,10 +22,12 @@ import com.cipher.media.ui.theme.*
 @Composable
 fun AudioBrowserScreen(
     onAudioClick: (AudioItem, List<AudioItem>) -> Unit,
+    onSearchClick: () -> Unit = {},
     viewModel: AudioPlayerViewModel = hiltViewModel()
 ) {
     val audioList by viewModel.audioList.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    var showSortSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = CIPHERBackground,
@@ -41,7 +42,8 @@ fun AudioBrowserScreen(
                     )
                 },
                 actions = {
-                    CIPHERIconButton(icon = Icons.Default.Search, onClick = { })
+                    CIPHERIconButton(icon = Icons.Default.Search, onClick = onSearchClick)
+                    CIPHERIconButton(icon = Icons.Default.Sort, onClick = { showSortSheet = true })
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = CIPHERBackground,
@@ -76,6 +78,28 @@ fun AudioBrowserScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // Sort bottom sheet
+    if (showSortSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showSortSheet = false },
+            containerColor = CIPHERSurface
+        ) {
+            Column(modifier = Modifier.padding(Spacing.md)) {
+                Text("Sort By", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = CIPHEROnSurface)
+                Spacer(Modifier.height(Spacing.md))
+                listOf("Title (A-Z)", "Title (Z-A)", "Artist", "Duration (Longest)", "Recently Added").forEach { option ->
+                    TextButton(
+                        onClick = { showSortSheet = false },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(option, color = CIPHEROnSurface, modifier = Modifier.weight(1f))
+                    }
+                }
+                Spacer(Modifier.height(Spacing.lg))
             }
         }
     }

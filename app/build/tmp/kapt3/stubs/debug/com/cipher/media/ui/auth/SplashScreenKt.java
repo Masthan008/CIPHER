@@ -16,9 +16,12 @@ import com.cipher.media.ui.theme.*;
 public final class SplashScreenKt {
     
     /**
-     * Splash screen: diagonal gradient #0D0D0D → #1A237E,
-     * logo scale 0.8→1.0, opacity 0→1, tagline fade last 0.5s.
-     * Duration: 2.5s then calls onSplashComplete.
+     * Premium Splash screen with:
+     * - Diagonal gradient background
+     * - Floating particle "magic dust" effect
+     * - Spring-physics logo entrance (scale + rotation)
+     * - Idle floating animation while visible
+     * - Staggered tagline fade-in
      */
     @androidx.compose.runtime.Composable()
     public static final void SplashScreen(@org.jetbrains.annotations.NotNull()

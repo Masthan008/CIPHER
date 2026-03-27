@@ -1,15 +1,23 @@
 package com.cipher.media.ui.components
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -19,7 +27,10 @@ import coil.compose.AsyncImage
 import com.cipher.media.ui.theme.*
 
 /**
- * Media card with thumbnail, title, subtitle.
+ * Premium Media card with:
+ *  - Spring-physics press animation (bouncy scale)
+ *  - Glassmorphic shimmer border
+ *  - Subtle glow on touch
  */
 @Composable
 fun MediaCard(
@@ -31,22 +42,87 @@ fun MediaCard(
     duration: String? = null,
     badge: String? = null
 ) {
+    // Spring press animation
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "card_scale"
+    )
+    val glowAlpha by animateFloatAsState(
+        targetValue = if (isPressed) 0.15f else 0f,
+        animationSpec = tween(200),
+        label = "card_glow"
+    )
+
+    // Glassmorphic shimmer
+    val infiniteTransition = rememberInfiniteTransition(label = "card_glass")
+    val shimmerX by infiniteTransition.animateFloat(
+        initialValue = -100f,
+        targetValue = 500f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(5000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "card_shimmer"
+    )
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .graphicsLayer { scaleX = scale; scaleY = scale }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        isPressed = true
+                        tryAwaitRelease()
+                        isPressed = false
+                        onClick()
+                    }
+                )
+            },
         shape = RoundedCornerShape(Corners.medium),
         colors = CardDefaults.cardColors(containerColor = CIPHERSurface),
         elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level1)
     ) {
         Column {
-            // Thumbnail
+            // Thumbnail with subtle glow overlay
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
                     .clip(RoundedCornerShape(topStart = Corners.medium, topEnd = Corners.medium))
                     .background(CIPHERSurfaceVariant)
+                    .drawBehind {
+                        // Glassmorphic shimmer line across thumbnail
+                        drawRect(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    CIPHERPrimary.copy(alpha = 0.08f),
+                                    Color.Transparent
+                                ),
+                                start = Offset(shimmerX, 0f),
+                                end = Offset(shimmerX + 120f, size.height)
+                            )
+                        )
+                        // Press glow
+                        if (glowAlpha > 0f) {
+                            drawRect(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        CIPHERPrimary.copy(alpha = glowAlpha),
+                                        Color.Transparent
+                                    ),
+                                    center = Offset(size.width / 2f, size.height / 2f),
+                                    radius = size.width * 0.8f
+                                )
+                            )
+                        }
+                    }
             ) {
                 AsyncImage(
                     model = thumbnailUri,
@@ -116,7 +192,7 @@ fun MediaCard(
 }
 
 /**
- * Horizontal list item card (80dp height).
+ * Premium horizontal list item card with spring press.
  */
 @Composable
 fun MediaListItem(
@@ -128,11 +204,31 @@ fun MediaListItem(
     duration: String? = null,
     trailing: @Composable (() -> Unit)? = null
 ) {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.97f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessHigh
+        ),
+        label = "list_scale"
+    )
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable(onClick = onClick),
+            .graphicsLayer { scaleX = scale; scaleY = scale }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        isPressed = true
+                        tryAwaitRelease()
+                        isPressed = false
+                        onClick()
+                    }
+                )
+            },
         shape = RoundedCornerShape(Corners.medium),
         colors = CardDefaults.cardColors(containerColor = CIPHERSurface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)

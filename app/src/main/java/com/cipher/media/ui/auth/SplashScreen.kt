@@ -10,19 +10,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cipher.media.ui.theme.*
 import kotlinx.coroutines.delay
+import kotlin.math.sin
 
 /**
- * Splash screen: diagonal gradient #0D0D0D → #1A237E,
- * logo scale 0.8→1.0, opacity 0→1, tagline fade last 0.5s.
- * Duration: 2.5s then calls onSplashComplete.
+ * Premium Splash screen with:
+ *  - Diagonal gradient background
+ *  - Floating particle "magic dust" effect
+ *  - Spring-physics logo entrance (scale + rotation)
+ *  - Idle floating animation while visible
+ *  - Staggered tagline fade-in
  */
 @Composable
 fun SplashScreen(onSplashComplete: () -> Unit) {
@@ -37,18 +44,81 @@ fun SplashScreen(onSplashComplete: () -> Unit) {
         onSplashComplete()
     }
 
+    // Spring-physics logo entrance
     val logoScale by animateFloatAsState(
-        targetValue = if (animationStarted) 1f else 0.8f,
-        animationSpec = tween(1500, easing = FastOutSlowInEasing), label = "logo_scale"
+        targetValue = if (animationStarted) 1f else 0.3f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMediumLow
+        ),
+        label = "logo_scale"
     )
     val logoAlpha by animateFloatAsState(
         targetValue = if (animationStarted) 1f else 0f,
-        animationSpec = tween(1200, easing = FastOutSlowInEasing), label = "logo_alpha"
+        animationSpec = tween(800, easing = FastOutSlowInEasing),
+        label = "logo_alpha"
     )
+    val logoRotation by animateFloatAsState(
+        targetValue = if (animationStarted) 0f else -15f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMediumLow
+        ),
+        label = "logo_rotation"
+    )
+
+    // Idle float for the logo
+    val infiniteTransition = rememberInfiniteTransition(label = "splash_idle")
+    val idleY by infiniteTransition.animateFloat(
+        initialValue = -3f,
+        targetValue = 3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "idle_y"
+    )
+
+    // Particle animation time
+    val particleTime by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 6.2832f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "particle_time"
+    )
+
+    // Neon glow pulse
+    val glowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.1f,
+        targetValue = 0.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow_alpha"
+    )
+
     val taglineAlpha by animateFloatAsState(
         targetValue = if (showTagline) 1f else 0f,
-        animationSpec = tween(500, easing = FastOutSlowInEasing), label = "tagline_alpha"
+        animationSpec = tween(500, easing = FastOutSlowInEasing),
+        label = "tagline_alpha"
     )
+
+    // Particle data
+    data class Particle(val xPhase: Float, val yPhase: Float, val size: Float, val speed: Float)
+    val particles = remember {
+        (0 until 20).map {
+            Particle(
+                xPhase = (it * 137.5f) % 360f,
+                yPhase = (it * 97.3f) % 360f,
+                size = 1.5f + (it % 4) * 0.8f,
+                speed = 0.7f + (it % 3) * 0.3f
+            )
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -57,17 +127,49 @@ fun SplashScreen(onSplashComplete: () -> Unit) {
                 Brush.linearGradient(
                     colors = listOf(GradientSplashStart, GradientSplashEnd)
                 )
-            ),
+            )
+            .drawBehind {
+                // Floating particles
+                particles.forEach { p ->
+                    val x = (sin(particleTime * p.speed + p.xPhase) * 0.5f + 0.5f) * size.width
+                    val y = (sin(particleTime * p.speed * 0.7f + p.yPhase) * 0.5f + 0.5f) * size.height
+                    val alpha = (sin(particleTime * 1.5f + p.xPhase) * 0.5f + 0.5f) * 0.35f
+
+                    drawCircle(
+                        color = CIPHERPrimary.copy(alpha = alpha),
+                        radius = p.size * density,
+                        center = Offset(x, y)
+                    )
+                }
+
+                // Central neon glow behind logo
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            CIPHERPrimary.copy(alpha = glowAlpha),
+                            Color.Transparent
+                        ),
+                        center = Offset(size.width / 2f, size.height / 2f - 60 * density),
+                        radius = 200f * density
+                    ),
+                    center = Offset(size.width / 2f, size.height / 2f - 60 * density),
+                    radius = 200f * density
+                )
+            },
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            // Shield logo
+            // Shield logo with spring entrance + idle float
             Icon(
                 Icons.Default.Shield, null,
                 modifier = Modifier
                     .size(120.dp)
-                    .scale(logoScale)
-                    .alpha(logoAlpha),
+                    .offset(y = idleY.dp)
+                    .graphicsLayer {
+                        scaleX = logoScale; scaleY = logoScale
+                        alpha = logoAlpha
+                        rotationZ = logoRotation
+                    },
                 tint = CIPHERPrimary
             )
 
@@ -76,9 +178,10 @@ fun SplashScreen(onSplashComplete: () -> Unit) {
             // Wordmark
             Text(
                 text = "CIPHER",
-                modifier = Modifier
-                    .scale(logoScale)
-                    .alpha(logoAlpha),
+                modifier = Modifier.graphicsLayer {
+                    scaleX = logoScale; scaleY = logoScale
+                    alpha = logoAlpha
+                },
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontSize = 28.sp,
                     letterSpacing = (-0.5).sp

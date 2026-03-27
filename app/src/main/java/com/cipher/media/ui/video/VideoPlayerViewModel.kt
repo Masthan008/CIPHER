@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 /**
- * UI state for video player.
+ * UI state for video player — includes speed, aspect ratio, PiP controls.
  */
 data class PlayerUiState(
     val isPlaying: Boolean = false,
@@ -17,8 +17,10 @@ data class PlayerUiState(
     val duration: Long = 0L,
     val bufferedPosition: Long = 0L,
     val isControlsVisible: Boolean = true,
-    val isLocked: Boolean = false,          // Screen rotation lock
-    val playbackSpeed: Float = 1.0f
+    val isLocked: Boolean = false,              // Screen rotation lock
+    val playbackSpeed: Float = 1.0f,
+    val aspectRatioMode: AspectRatioMode = AspectRatioMode.FIT,
+    val showSpeedMenu: Boolean = false
 ) {
     val progress: Float
         get() = if (duration > 0) currentPosition.toFloat() / duration else 0f
@@ -26,15 +28,24 @@ data class PlayerUiState(
         get() = if (duration > 0) bufferedPosition.toFloat() / duration else 0f
 }
 
+enum class AspectRatioMode(val label: String) {
+    FIT("Fit"),
+    FILL("Fill"),
+    ZOOM("Zoom")
+}
+
 /**
  * ViewModel for video player screen.
- * Provides player state and exposes ExoPlayer.Builder for the screen to construct
- * the actual player instance within the appropriate lifecycle.
+ * Manages playback state, speed, aspect ratio, and control visibility.
  */
 @HiltViewModel
 class VideoPlayerViewModel @Inject constructor(
     val playerBuilder: ExoPlayer.Builder
 ) : ViewModel() {
+
+    companion object {
+        val SPEED_OPTIONS = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
+    }
 
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
@@ -63,5 +74,22 @@ class VideoPlayerViewModel @Inject constructor(
 
     fun toggleRotationLock() {
         _uiState.value = _uiState.value.copy(isLocked = !_uiState.value.isLocked)
+    }
+
+    fun setPlaybackSpeed(speed: Float) {
+        _uiState.value = _uiState.value.copy(playbackSpeed = speed, showSpeedMenu = false)
+    }
+
+    fun toggleSpeedMenu() {
+        _uiState.value = _uiState.value.copy(showSpeedMenu = !_uiState.value.showSpeedMenu)
+    }
+
+    fun cycleAspectRatio() {
+        val next = when (_uiState.value.aspectRatioMode) {
+            AspectRatioMode.FIT -> AspectRatioMode.FILL
+            AspectRatioMode.FILL -> AspectRatioMode.ZOOM
+            AspectRatioMode.ZOOM -> AspectRatioMode.FIT
+        }
+        _uiState.value = _uiState.value.copy(aspectRatioMode = next)
     }
 }

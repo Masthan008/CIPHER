@@ -1,10 +1,13 @@
 package com.cipher.media.ui.video;
 
 import android.app.Activity;
+import android.app.PictureInPictureParams;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
+import android.util.Rational;
 import android.view.WindowManager;
 import androidx.compose.animation.*;
 import androidx.compose.foundation.layout.*;
@@ -14,11 +17,13 @@ import androidx.compose.material3.*;
 import androidx.compose.runtime.*;
 import androidx.compose.ui.Alignment;
 import androidx.compose.ui.Modifier;
+import androidx.compose.ui.text.font.FontWeight;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
+import androidx.media3.ui.AspectRatioFrameLayout;
 import androidx.media3.ui.PlayerView;
 import com.cipher.media.util.TimeUtil;
 
@@ -27,7 +32,8 @@ public final class VideoPlayerScreenKt {
     
     /**
      * Full-screen video player with ExoPlayer, custom controls overlay,
-     * and gesture-based interactions.
+     * gesture-based interactions, speed control, skip ±10s, aspect ratio,
+     * and Picture-in-Picture support.
      */
     @androidx.compose.runtime.Composable()
     public static final void VideoPlayerScreen(@org.jetbrains.annotations.NotNull()

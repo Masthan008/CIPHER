@@ -22,9 +22,12 @@ import com.cipher.media.ui.theme.*
 @Composable
 fun VideoBrowserScreen(
     onVideoClick: (MediaItem) -> Unit,
+    onSearchClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     viewModel: VideoBrowserViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showSortSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) { viewModel.loadVideos() }
 
@@ -37,8 +40,8 @@ fun VideoBrowserScreen(
                         fontWeight = FontWeight.Bold, color = CIPHEROnSurface)
                 },
                 actions = {
-                    CIPHERIconButton(icon = Icons.Default.Search, onClick = { })
-                    CIPHERIconButton(icon = Icons.Default.Settings, onClick = { })
+                    CIPHERIconButton(icon = Icons.Default.Search, onClick = onSearchClick)
+                    CIPHERIconButton(icon = Icons.Default.Settings, onClick = onSettingsClick)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = CIPHERBackground,
@@ -46,7 +49,9 @@ fun VideoBrowserScreen(
                 )
             )
         },
-        floatingActionButton = { CIPHERFAB(icon = Icons.Default.Add, onClick = { }) }
+        floatingActionButton = {
+            CIPHERFAB(icon = Icons.Default.Sort, onClick = { showSortSheet = true })
+        }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when {
@@ -83,6 +88,28 @@ fun VideoBrowserScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // Sort/Filter bottom sheet
+    if (showSortSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showSortSheet = false },
+            containerColor = CIPHERSurface
+        ) {
+            Column(modifier = Modifier.padding(Spacing.md)) {
+                Text("Sort By", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = CIPHEROnSurface)
+                Spacer(Modifier.height(Spacing.md))
+                listOf("Name (A-Z)", "Name (Z-A)", "Date (Newest)", "Date (Oldest)", "Size (Largest)", "Duration (Longest)").forEach { option ->
+                    TextButton(
+                        onClick = { showSortSheet = false },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(option, color = CIPHEROnSurface, modifier = Modifier.weight(1f))
+                    }
+                }
+                Spacer(Modifier.height(Spacing.lg))
             }
         }
     }

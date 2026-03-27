@@ -1,5 +1,6 @@
 package com.cipher.media.ui.settings;
 
+import android.widget.Toast;
 import androidx.compose.foundation.layout.*;
 import androidx.compose.material.icons.Icons;
 import androidx.compose.material.icons.filled.*;
@@ -15,7 +16,7 @@ import com.cipher.media.ui.theme.*;
 public final class SettingsScreenKt {
     
     /**
-     * Settings: grouped sections (Appearance, Privacy, Playback, Storage, About).
+     * Settings: all items are wired to SettingsViewModel for persistent storage.
      */
     @androidx.compose.runtime.Composable()
     public static final void SettingsScreen(@org.jetbrains.annotations.NotNull()

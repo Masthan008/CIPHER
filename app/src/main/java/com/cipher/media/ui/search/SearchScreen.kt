@@ -19,10 +19,13 @@ import com.cipher.media.ui.theme.*
 
 /**
  * Search screen: animated search field, filter chips, staggered results.
+ * Tapping a result navigates to video or audio player.
  */
 @Composable
 fun SearchScreen(
     onBack: () -> Unit,
+    onVideoClick: (String) -> Unit = {},
+    onAudioClick: (String) -> Unit = {},
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val query by viewModel.query.collectAsState()
@@ -117,7 +120,13 @@ fun SearchScreen(
                                 subtitle = result.subtitle,
                                 thumbnailUri = null,
                                 duration = null,
-                                onClick = { }
+                                onClick = {
+                                    when (result.type) {
+                                        SearchFilter.VIDEO -> onVideoClick(result.uri)
+                                        SearchFilter.MUSIC -> onAudioClick(result.uri)
+                                        else -> { }
+                                    }
+                                }
                             )
                         }
                     }

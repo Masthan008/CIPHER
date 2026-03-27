@@ -2,9 +2,12 @@ package com.cipher.media.ui.vault
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,7 +19,8 @@ import com.cipher.media.ui.theme.*
 import com.cipher.media.ui.vault.components.PinPad
 
 /**
- * First-time vault setup: create a 6-digit PIN.
+ * First-time vault setup: create a 6-digit PIN with visible dot indicators
+ * and optional show/hide PIN toggle.
  */
 @Composable
 fun VaultSetupScreen(
@@ -26,7 +30,10 @@ fun VaultSetupScreen(
     var firstPin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var showPin by remember { mutableStateOf(false) }
     val maxLength = 6
+
+    val currentPin = if (step == 0) firstPin else confirmPin
 
     // Auto-advance when PIN is full
     LaunchedEffect(firstPin) {
@@ -72,7 +79,68 @@ fun VaultSetupScreen(
                 Text(it, style = MaterialTheme.typography.bodySmall, color = CIPHERError)
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(24.dp))
+
+            // PIN dot/digit indicators
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(maxLength) { index ->
+                    if (index < currentPin.length) {
+                        if (showPin) {
+                            // Show the actual digit
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .background(CIPHERPrimary.copy(alpha = 0.15f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = currentPin[index].toString(),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = CIPHERPrimary
+                                )
+                            }
+                        } else {
+                            // Filled dot
+                            Box(
+                                modifier = Modifier
+                                    .size(14.dp)
+                                    .background(CIPHERPrimary, CircleShape)
+                            )
+                        }
+                    } else {
+                        // Empty dot
+                        Box(
+                            modifier = Modifier
+                                .size(14.dp)
+                                .background(CIPHERDivider, CircleShape)
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(Spacing.sm))
+
+            // Show/hide PIN toggle
+            TextButton(onClick = { showPin = !showPin }) {
+                Icon(
+                    if (showPin) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                    contentDescription = if (showPin) "Hide PIN" else "Show PIN",
+                    tint = CIPHERPrimary,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(Spacing.xs))
+                Text(
+                    if (showPin) "Hide PIN" else "Show PIN",
+                    color = CIPHERPrimary,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
 
             PinPad(
                 onDigit = { digit ->

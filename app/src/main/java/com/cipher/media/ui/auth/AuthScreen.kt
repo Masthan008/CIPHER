@@ -20,26 +20,36 @@ import com.cipher.media.ui.components.CIPHERButton
 import com.cipher.media.ui.theme.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 /**
  * Permission request screen with gradient CTA.
- * Requests READ_MEDIA_VIDEO/AUDIO on API 33+, else READ_EXTERNAL_STORAGE.
+ * Requests both READ_MEDIA_VIDEO and READ_MEDIA_AUDIO on API 33+,
+ * else READ_EXTERNAL_STORAGE. This ensures the app can discover
+ * both video and audio files from the device.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AuthScreen(onAuthSuccess: () -> Unit) {
-    val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        Manifest.permission.READ_MEDIA_VIDEO
-    else
-        Manifest.permission.READ_EXTERNAL_STORAGE
-
-    val permissionState = rememberPermissionState(permission) { granted ->
-        if (granted) onAuthSuccess()
+    val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        listOf(
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_AUDIO
+        )
+    } else {
+        listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
-    LaunchedEffect(permissionState.status) {
-        if (permissionState.status.isGranted) onAuthSuccess()
+    val permissionsState = rememberMultiplePermissionsState(permissions) { results ->
+        // Navigate once ALL permissions are granted
+        if (results.values.all { it }) {
+            onAuthSuccess()
+        }
+    }
+
+    // Auto-advance if already granted
+    LaunchedEffect(permissionsState.allPermissionsGranted) {
+        if (permissionsState.allPermissionsGranted) onAuthSuccess()
     }
 
     Box(
@@ -94,7 +104,7 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
 
             CIPHERButton(
                 text = "Grant Permission",
-                onClick = { permissionState.launchPermissionRequest() },
+                onClick = { permissionsState.launchMultiplePermissionRequest() },
                 modifier = Modifier.fillMaxWidth()
             )
         }

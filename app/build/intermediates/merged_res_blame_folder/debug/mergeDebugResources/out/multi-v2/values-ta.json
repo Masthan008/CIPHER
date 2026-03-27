@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.cipher.media.app-mergeDebugResources-94:/values-ta/values-ta.xml",
+            "outputFile": "com.cipher.media.app-mergeDebugResources-97:/values-ta/values-ta.xml",
             "map": [
                 {
                     "source": "C:\\Users\\masth\\.gradle\\caches\\8.13\\transforms\\cb25081258f56e22e6ebe74626c56966\\transformed\\play-services-basement-18.2.0\\res\\values-ta\\values.xml",

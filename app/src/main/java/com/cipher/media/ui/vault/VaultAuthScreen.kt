@@ -1,5 +1,6 @@
 package com.cipher.media.ui.vault
 
+import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,26 +15,44 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.cipher.media.security.IntruderCameraManager
 import com.cipher.media.ui.components.*
+import com.cipher.media.ui.stealth.StealthViewModel
 import com.cipher.media.ui.theme.*
 import com.cipher.media.ui.vault.components.PinPad
+import java.security.MessageDigest
 import kotlin.random.Random
 
 /**
  * Vault auth: circuit pattern bg, shield pulse, PIN pad, biometric toggle.
- * PIN state is managed locally — VaultViewModel handles file operations only.
+ * Now with proper PIN hash verification, intruder selfie, and self-destruct.
  */
 @Composable
 fun VaultAuthScreen(
     onAuthenticated: () -> Unit,
-    viewModel: VaultViewModel
+    viewModel: VaultViewModel,
+    stealthViewModel: StealthViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     var pin by remember { mutableStateOf("") }
     var authMode by remember { mutableStateOf("pin") }
     var error by remember { mutableStateOf(false) }
+    var failedAttempts by remember { mutableIntStateOf(0) }
+    var isLocked by remember { mutableStateOf(false) }
+
+    val prefs = remember {
+        context.getSharedPreferences("cipher_vault_prefs", android.content.Context.MODE_PRIVATE)
+    }
+    val storedPinHash = remember { prefs.getString("vault_pin_hash", null) }
+
+    val intruderCamera = remember { IntruderCameraManager(context) }
+    val maxAttempts = stealthViewModel.selfDestructAttempts
 
     val circuitPoints = remember {
         (0..30).map { Offset(Random.nextFloat() * 1000f, Random.nextFloat() * 2000f) }
@@ -76,50 +95,98 @@ fun VaultAuthScreen(
 
             Spacer(Modifier.height(Spacing.lg))
 
-            Text(
-                if (authMode == "biometric") "Touch fingerprint sensor" else if (error) "Wrong PIN" else "Enter PIN",
-                style = MaterialTheme.typography.titleMedium,
-                color = if (error) CIPHERError else CIPHEROnSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
+            // Glassmorphic PIN entry panel
+            GlassmorphicCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.md),
+                cornerRadius = 24.dp
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(vertical = Spacing.lg, horizontal = Spacing.md)
+                ) {
+                    val statusText = when {
+                        isLocked -> "Vault Locked — Too many attempts"
+                        authMode == "biometric" -> "Touch fingerprint sensor"
+                        error -> "Wrong PIN (${failedAttempts} failed)"
+                        else -> "Enter PIN"
+                    }
 
-            Spacer(Modifier.height(Spacing.xl))
+                    Text(
+                        statusText,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (error || isLocked) CIPHERError else CIPHEROnSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
 
-            // PIN dots
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
-                repeat(6) { index ->
-                    Box(
-                        modifier = Modifier
-                            .size(14.dp)
-                            .background(
-                                if (index < pin.length) CIPHERPrimary else CIPHERDivider,
-                                CircleShape
+                    Spacer(Modifier.height(Spacing.xl))
+
+                    // Animated PIN dots with spring scale
+                    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
+                        repeat(6) { index ->
+                            val filled = index < pin.length
+                            val dotScale by animateFloatAsState(
+                                targetValue = if (filled) 1.3f else 1f,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessHigh
+                                ),
+                                label = "dot_$index"
                             )
+                            Box(
+                                modifier = Modifier
+                                    .size(14.dp)
+                                    .graphicsLayer { scaleX = dotScale; scaleY = dotScale }
+                                    .background(
+                                        if (filled) CIPHERPrimary else CIPHERDivider,
+                                        CircleShape
+                                    )
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(Spacing.xl))
+
+                    // PIN pad (already has spring animations from PinPad upgrade)
+                    PinPad(
+                        onDigit = { digit ->
+                            if (!isLocked && pin.length < 6) {
+                                pin += digit
+                                error = false
+                            }
+                        },
+                        onBackspace = { if (pin.isNotEmpty()) pin = pin.dropLast(1) },
+                        onSubmit = {
+                            if (isLocked) return@PinPad
+                            if (pin.length >= 4) {
+                                val enteredHash = hashPin(pin)
+                                if (enteredHash == storedPinHash) {
+                                    failedAttempts = 0
+                                    onAuthenticated()
+                                } else {
+                                    failedAttempts++
+                                    error = true
+                                    pin = ""
+                                    if (stealthViewModel.isIntruderDetectionEnabled) {
+                                        intruderCamera.captureIntruderPhoto { photoPath ->
+                                            stealthViewModel.logIntruderAttempt(failedAttempts, photoPath)
+                                        }
+                                    }
+                                    if (stealthViewModel.isSelfDestructEnabled && failedAttempts >= maxAttempts) {
+                                        isLocked = true
+                                        viewModel.wipeAllVaultData()
+                                        Toast.makeText(context, "Vault wiped — self-destruct activated", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            } else {
+                                error = true
+                                pin = ""
+                            }
+                        }
                     )
                 }
             }
-
-            Spacer(Modifier.height(Spacing.xl))
-
-            // PIN pad
-            PinPad(
-                onDigit = { digit ->
-                    if (pin.length < 6) {
-                        pin += digit
-                        error = false
-                    }
-                },
-                onBackspace = { if (pin.isNotEmpty()) pin = pin.dropLast(1) },
-                onSubmit = {
-                    // Simple PIN check (in production, compare hashed)
-                    if (pin.length >= 4) {
-                        onAuthenticated()
-                    } else {
-                        error = true
-                        pin = ""
-                    }
-                }
-            )
 
             Spacer(Modifier.weight(0.1f))
 
@@ -133,4 +200,11 @@ fun VaultAuthScreen(
             Spacer(Modifier.height(Spacing.md))
         }
     }
+}
+
+/** SHA-256 hash of a PIN string */
+private fun hashPin(pin: String): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    val hashBytes = digest.digest(pin.toByteArray())
+    return hashBytes.joinToString("") { "%02x".format(it) }
 }

@@ -1,5 +1,6 @@
 package com.cipher.media.ui.premium
 
+import android.app.Activity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -35,6 +37,8 @@ fun PremiumScreen(
     viewModel: PremiumViewModel = hiltViewModel()
 ) {
     val selectedPlan by viewModel.selectedPlan.collectAsState()
+    val context = LocalContext.current
+    val activity = context as? Activity
 
     Scaffold(containerColor = CIPHERBackground) { padding ->
         Column(
@@ -120,7 +124,7 @@ fun PremiumScreen(
             // Subscribe button
             CIPHERButton(
                 text = "Subscribe Now",
-                onClick = { viewModel.subscribe() },
+                onClick = { activity?.let { viewModel.subscribe(it) } },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = Spacing.md)
@@ -131,7 +135,7 @@ fun PremiumScreen(
             // Remove ads one-time
             CIPHEROutlinedButton(
                 text = "Just Remove Ads — ₹199 one-time",
-                onClick = { viewModel.removeAds() },
+                onClick = { activity?.let { viewModel.removeAds(it) } },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = Spacing.md)

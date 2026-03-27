@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.cipher.media.app-mergeDebugResources-94:/values-watch-v20/values-watch-v20.xml",
+            "outputFile": "com.cipher.media.app-mergeDebugResources-97:/values-watch-v20/values-watch-v20.xml",
             "map": [
                 {
                     "source": "C:\\Users\\masth\\.gradle\\caches\\8.13\\transforms\\0eb570b66870ff1619dc536e9674d32d\\transformed\\play-services-auth-17.0.0\\res\\values-watch-v20\\values.xml",

@@ -128,8 +128,9 @@
 
         <activity
             android:name="com.cipher.media.MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
             android:exported="true"
+            android:supportsPictureInPicture="true"
             android:theme="@style/Theme.CIPHER" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -205,6 +206,14 @@
             android:name="androidx.glance.appwidget.GlanceRemoteViewsService"
             android:exported="true"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <service
+            android:name="androidx.camera.core.impl.MetadataHolderService"
+            android:enabled="false"
+            android:exported="false" >
+            <meta-data
+                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+        </service>
         <service
             android:name="androidx.core.widget.RemoteViewsCompatService"
             android:permission="android.permission.BIND_REMOTEVIEWS" /> <!-- Include the AdActivity and InAppPurchaseActivity configChanges and themes. -->

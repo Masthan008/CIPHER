@@ -182,10 +182,22 @@ fun CIPHERNavigation() {
 
                 // -- Main Tabs --
                 composable(Screen.VideoBrowser.route) {
-                    VideoBrowserScreen(onVideoClick = { mediaItem ->
-                        val encodedUri = Uri.encode(mediaItem.uri.toString())
-                        navController.navigate(Screen.VideoPlayer.createRoute(encodedUri))
-                    })
+                    val adManager = remember {
+                        (context.applicationContext as com.cipher.media.CIPHERApplication).adManager
+                    }
+                    VideoBrowserScreen(
+                        onVideoClick = { mediaItem ->
+                            // Show interstitial every 5th video play
+                            val activity = context as? android.app.Activity
+                            if (activity != null) {
+                                adManager.onVideoPlayed(activity)
+                            }
+                            val encodedUri = Uri.encode(mediaItem.uri.toString())
+                            navController.navigate(Screen.VideoPlayer.createRoute(encodedUri))
+                        },
+                        onSearchClick = { navController.navigate(Screen.Search.route) },
+                        onSettingsClick = { navController.navigate(Screen.Settings.route) }
+                    )
                 }
                 composable(Screen.AudioBrowser.route) {
                     AudioBrowserScreen(
@@ -193,6 +205,7 @@ fun CIPHERNavigation() {
                             audioViewModel.playAudio(audio, playlist)
                             navController.navigate(Screen.AudioPlayer.route)
                         },
+                        onSearchClick = { navController.navigate(Screen.Search.route) },
                         viewModel = audioViewModel
                     )
                 }
@@ -263,7 +276,17 @@ fun CIPHERNavigation() {
                     )
                 }
                 composable(Screen.Search.route) {
-                    SearchScreen(onBack = { navController.popBackStack() })
+                    SearchScreen(
+                        onBack = { navController.popBackStack() },
+                        onVideoClick = { uri ->
+                            val encodedUri = Uri.encode(uri)
+                            navController.navigate(Screen.VideoPlayer.createRoute(encodedUri))
+                        },
+                        onAudioClick = { uri ->
+                            // For audio, load and play
+                            navController.navigate(Screen.AudioPlayer.route)
+                        }
+                    )
                 }
                 composable(Screen.StealthSetup.route) {
                     StealthSetupScreen(onBack = { navController.popBackStack() })

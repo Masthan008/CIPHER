@@ -48,6 +48,10 @@ public final class VaultDao_Impl implements VaultDao {
 
   private final SharedSQLiteStatement __preparedStmtOfDeleteFolderById;
 
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAllItems;
+
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAllFolders;
+
   public VaultDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfVaultItemEntity = new EntityInsertionAdapter<VaultItemEntity>(__db) {
@@ -167,6 +171,22 @@ public final class VaultDao_Impl implements VaultDao {
       @NonNull
       public String createQuery() {
         final String _query = "DELETE FROM vault_folders WHERE id = ?";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfDeleteAllItems = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM vault_items";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfDeleteAllFolders = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM vault_folders";
         return _query;
       }
     };
@@ -337,6 +357,52 @@ public final class VaultDao_Impl implements VaultDao {
           }
         } finally {
           __preparedStmtOfDeleteFolderById.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object deleteAllItems(final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAllItems.acquire();
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfDeleteAllItems.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object deleteAllFolders(final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAllFolders.acquire();
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfDeleteAllFolders.release(_stmt);
         }
       }
     }, $completion);

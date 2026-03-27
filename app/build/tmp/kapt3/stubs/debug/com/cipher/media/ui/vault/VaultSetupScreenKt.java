@@ -13,7 +13,8 @@ import com.cipher.media.ui.theme.*;
 public final class VaultSetupScreenKt {
     
     /**
-     * First-time vault setup: create a 6-digit PIN.
+     * First-time vault setup: create a 6-digit PIN with visible dot indicators
+     * and optional show/hide PIN toggle.
      */
     @androidx.compose.runtime.Composable()
     public static final void VaultSetupScreen(@org.jetbrains.annotations.NotNull()

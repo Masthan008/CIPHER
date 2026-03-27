@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.cipher.media.ui.components.*
 import com.cipher.media.ui.theme.*
+import androidx.media3.common.Player
 
 /**
  * Full-screen audio player: blurred album art background, breathing animation,
@@ -36,6 +37,9 @@ fun AudioPlayerScreen(
     val isPlaying by viewModel.isPlaying.collectAsState()
     val currentPosition by viewModel.currentPosition.collectAsState()
     val duration by viewModel.duration.collectAsState()
+
+    val shuffleEnabled by viewModel.shuffleEnabled.collectAsState()
+    val repeatMode by viewModel.repeatMode.collectAsState()
 
     val audio = currentAudio ?: return
     val progress = if (duration > 0) currentPosition.toFloat() / duration.toFloat() else 0f
@@ -152,7 +156,11 @@ fun AudioPlayerScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CIPHERIconButton(icon = Icons.Default.Shuffle, onClick = { viewModel.toggleShuffle() })
+                CIPHERIconButton(
+                    icon = Icons.Default.Shuffle,
+                    onClick = { viewModel.toggleShuffle() },
+                    tint = if (shuffleEnabled) CIPHERPrimary else CIPHEROnSurfaceVariant
+                )
                 CIPHERIconButton(icon = Icons.Default.SkipPrevious, onClick = { viewModel.skipPrevious() }, size = Spacing.minTouchTarget)
                 FloatingActionButton(
                     onClick = { viewModel.togglePlayPause() },
@@ -167,7 +175,14 @@ fun AudioPlayerScreen(
                     )
                 }
                 CIPHERIconButton(icon = Icons.Default.SkipNext, onClick = { viewModel.skipNext() }, size = Spacing.minTouchTarget)
-                CIPHERIconButton(icon = Icons.Default.Repeat, onClick = { viewModel.cycleRepeatMode() })
+                CIPHERIconButton(
+                    icon = when (repeatMode) {
+                        Player.REPEAT_MODE_ONE -> Icons.Default.RepeatOne
+                        else -> Icons.Default.Repeat
+                    },
+                    onClick = { viewModel.cycleRepeatMode() },
+                    tint = if (repeatMode != Player.REPEAT_MODE_OFF) CIPHERPrimary else CIPHEROnSurfaceVariant
+                )
             }
 
             Spacer(Modifier.height(Spacing.lg))

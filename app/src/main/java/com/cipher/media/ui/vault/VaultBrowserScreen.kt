@@ -1,14 +1,17 @@
 package com.cipher.media.ui.vault
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,7 +19,7 @@ import com.cipher.media.ui.components.*
 import com.cipher.media.ui.theme.*
 
 /**
- * Vault browser: shield header, lock badges, import via menu.
+ * Vault browser: shield header, lock badges, import via gallery picker.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,6 +30,19 @@ fun VaultBrowserScreen(
 ) {
     val vaultItems by viewModel.vaultItems.collectAsState()
     val isImporting by viewModel.isImporting.collectAsState()
+    val context = LocalContext.current
+
+    // File picker launcher — picks multiple files from gallery
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        if (uris.isNotEmpty()) {
+            uris.forEach { uri ->
+                viewModel.importFile(uri)
+            }
+            Toast.makeText(context, "Importing ${uris.size} file(s)…", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         containerColor = CIPHERBackground,
@@ -41,6 +57,9 @@ fun VaultBrowserScreen(
                 },
                 navigationIcon = { CIPHERIconButton(icon = Icons.Default.ArrowBack, onClick = onBack) },
                 actions = {
+                    CIPHERIconButton(icon = Icons.Default.Add, onClick = {
+                        filePickerLauncher.launch("*/*") // Accept all file types
+                    })
                     CIPHERIconButton(icon = Icons.Default.CreateNewFolder, onClick = { viewModel.createFolder("New Folder") })
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = CIPHERBackground)
@@ -65,7 +84,7 @@ fun VaultBrowserScreen(
                     title = "Your vault is empty",
                     subtitle = "Import files to keep them encrypted",
                     actionText = "Import from gallery",
-                    onAction = { }
+                    onAction = { filePickerLauncher.launch("*/*") }
                 )
 
                 else -> LazyVerticalGrid(

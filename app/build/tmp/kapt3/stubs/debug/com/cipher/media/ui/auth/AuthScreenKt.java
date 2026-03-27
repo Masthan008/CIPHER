@@ -19,7 +19,9 @@ public final class AuthScreenKt {
     
     /**
      * Permission request screen with gradient CTA.
-     * Requests READ_MEDIA_VIDEO/AUDIO on API 33+, else READ_EXTERNAL_STORAGE.
+     * Requests both READ_MEDIA_VIDEO and READ_MEDIA_AUDIO on API 33+,
+     * else READ_EXTERNAL_STORAGE. This ensures the app can discover
+     * both video and audio files from the device.
      */
     @kotlin.OptIn(markerClass = {com.google.accompanist.permissions.ExperimentalPermissionsApi.class})
     @androidx.compose.runtime.Composable()

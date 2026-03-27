@@ -89,11 +89,15 @@ class SearchViewModel @Inject constructor(
 
         contentResolver.query(uri, projection, selection, selectionArgs, null)?.use { cursor ->
             val nameCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+            val idCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
             while (cursor.moveToNext() && results.size < 20) {
+                val id = cursor.getLong(idCol)
+                val contentUri = android.content.ContentUris.withAppendedId(uri, id).toString()
                 results.add(SearchResult(
                     title = cursor.getString(nameCol),
                     subtitle = if (isVideo) "Video" else "Audio",
-                    type = type
+                    type = type,
+                    uri = contentUri
                 ))
             }
         }

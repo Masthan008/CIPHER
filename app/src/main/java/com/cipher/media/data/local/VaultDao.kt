@@ -67,4 +67,10 @@ interface VaultDao {
 
     @Query("DELETE FROM vault_folders WHERE id = :id")
     suspend fun deleteFolderById(id: String)
+
+    @Query("DELETE FROM vault_items")
+    suspend fun deleteAllItems()
+
+    @Query("DELETE FROM vault_folders")
+    suspend fun deleteAllFolders()
 }
