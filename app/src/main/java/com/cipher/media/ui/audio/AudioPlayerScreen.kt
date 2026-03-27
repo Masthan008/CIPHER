@@ -2,6 +2,7 @@ package com.cipher.media.ui.audio
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -9,19 +10,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.cipher.media.ui.audio.components.AlbumArt
-import com.cipher.media.ui.audio.components.AudioControls
+import coil.compose.AsyncImage
+import com.cipher.media.ui.components.*
 import com.cipher.media.ui.theme.*
-import com.cipher.media.util.TimeUtil
 
 /**
- * Full-screen audio player with album art, seekbar, and controls.
+ * Full-screen audio player: blurred album art background, breathing animation,
+ * prominent seek bar, shuffle/prev/play(80dp)/next/repeat controls.
  */
 @Composable
 fun AudioPlayerScreen(
@@ -31,142 +34,152 @@ fun AudioPlayerScreen(
 ) {
     val currentAudio by viewModel.currentAudio.collectAsState()
     val isPlaying by viewModel.isPlaying.collectAsState()
-    val position by viewModel.currentPosition.collectAsState()
+    val currentPosition by viewModel.currentPosition.collectAsState()
     val duration by viewModel.duration.collectAsState()
-    val shuffleEnabled by viewModel.shuffleEnabled.collectAsState()
-    val repeatMode by viewModel.repeatMode.collectAsState()
 
     val audio = currentAudio ?: return
+    val progress = if (duration > 0) currentPosition.toFloat() / duration.toFloat() else 0f
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(CIPHERBackground)
-    ) {
-        // Background album art
-        AlbumArt(
-            artUri = audio.albumArtUri,
-            modifier = Modifier.fillMaxSize()
+    fun formatTime(ms: Long): String {
+        val totalSec = ms / 1000
+        val min = totalSec / 60
+        val sec = totalSec % 60
+        return "%d:%02d".format(min, sec)
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Blurred album art background
+        AsyncImage(
+            model = audio.albumArtUri,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize().blur(40.dp)
         )
+        Box(modifier = Modifier.fillMaxSize().background(CIPHERBackground.copy(alpha = 0.8f)))
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars)
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(horizontal = Spacing.lg),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Top bar
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.sm),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Close",
-                        modifier = Modifier.size(32.dp),
-                        tint = CIPHEROnSurface
-                    )
-                }
+                CIPHERIconButton(icon = Icons.Default.KeyboardArrowDown, onClick = onBack)
+                Text("Now Playing", style = MaterialTheme.typography.titleSmall, color = CIPHEROnSurfaceVariant)
+                CIPHERIconButton(icon = Icons.Default.MoreVert, onClick = { })
+            }
 
-                Text(
-                    text = "NOW PLAYING",
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 2.sp
-                    ),
-                    color = CIPHEROnSurfaceVariant
-                )
+            Spacer(Modifier.weight(0.1f))
 
-                IconButton(onClick = onOpenEqualizer) {
-                    Icon(
-                        imageVector = Icons.Default.Equalizer,
-                        contentDescription = "Equalizer",
-                        tint = CIPHERPrimary
-                    )
+            // Album art with breathing
+            BreathingEffect { mod ->
+                Box(
+                    modifier = mod
+                        .size(280.dp)
+                        .clip(RoundedCornerShape(Corners.extraLarge))
+                        .background(CIPHERSurfaceVariant)
+                ) {
+                    if (audio.albumArtUri != null) {
+                        AsyncImage(
+                            model = audio.albumArtUri,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Icon(
+                            Icons.Default.MusicNote, null,
+                            tint = CIPHERPrimary.copy(alpha = 0.3f),
+                            modifier = Modifier.size(80.dp).align(Alignment.Center)
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(Modifier.height(Spacing.xl))
 
-            // Track Info
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = audio.title,
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = CIPHEROnSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "${audio.artist} • ${audio.album}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CIPHEROnSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center
-                )
-            }
+            // Title & artist
+            Text(
+                text = audio.title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = CIPHEROnSurface,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(Spacing.xs))
+            Text(
+                text = audio.artist,
+                style = MaterialTheme.typography.bodyMedium,
+                color = CIPHEROnSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(Modifier.height(Spacing.xl))
 
-            // SeekBar
-            Column {
+            // Seek bar
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Slider(
-                    value = if (duration > 0) position.toFloat() / duration.toFloat() else 0f,
-                    onValueChange = { fraction ->
-                        viewModel.seekTo((fraction * duration).toLong())
+                    value = progress,
+                    onValueChange = { frac ->
+                        viewModel.seekTo((frac * duration).toLong())
                     },
+                    modifier = Modifier.fillMaxWidth(),
                     colors = SliderDefaults.colors(
                         thumbColor = CIPHERPrimary,
                         activeTrackColor = CIPHERPrimary,
                         inactiveTrackColor = PlayerSeekBarInactive
-                    ),
-                    modifier = Modifier.fillMaxWidth()
+                    )
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = TimeUtil.formatDuration(position),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = CIPHEROnSurfaceVariant
-                    )
-                    Text(
-                        text = TimeUtil.formatDuration(duration),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = CIPHEROnSurfaceVariant
-                    )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(formatTime(currentPosition), style = MaterialTheme.typography.labelSmall, color = CIPHEROnSurfaceVariant)
+                    Text(formatTime(duration), style = MaterialTheme.typography.labelSmall, color = CIPHEROnSurfaceVariant)
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(Spacing.md))
 
-            // Controls
-            AudioControls(
-                isPlaying = isPlaying,
-                shuffleEnabled = shuffleEnabled,
-                repeatMode = repeatMode,
-                onPlayPause = { viewModel.togglePlayPause() },
-                onNext = { viewModel.skipNext() },
-                onPrevious = { viewModel.skipPrevious() },
-                onShuffle = { viewModel.toggleShuffle() },
-                onRepeat = { viewModel.cycleRepeatMode() }
-            )
+            // Main controls
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CIPHERIconButton(icon = Icons.Default.Shuffle, onClick = { viewModel.toggleShuffle() })
+                CIPHERIconButton(icon = Icons.Default.SkipPrevious, onClick = { viewModel.skipPrevious() }, size = Spacing.minTouchTarget)
+                FloatingActionButton(
+                    onClick = { viewModel.togglePlayPause() },
+                    modifier = Modifier.size(80.dp),
+                    shape = CircleShape,
+                    containerColor = CIPHERPrimary,
+                    contentColor = CIPHEROnPrimary
+                ) {
+                    Icon(
+                        if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        null, modifier = Modifier.size(36.dp)
+                    )
+                }
+                CIPHERIconButton(icon = Icons.Default.SkipNext, onClick = { viewModel.skipNext() }, size = Spacing.minTouchTarget)
+                CIPHERIconButton(icon = Icons.Default.Repeat, onClick = { viewModel.cycleRepeatMode() })
+            }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(Modifier.height(Spacing.lg))
+
+            // Action row
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                CIPHERIconButton(icon = Icons.Default.Equalizer, onClick = onOpenEqualizer, tint = CIPHERPrimary)
+                CIPHERIconButton(icon = Icons.Default.FavoriteBorder, onClick = { })
+                CIPHERIconButton(icon = Icons.Default.QueueMusic, onClick = { })
+            }
+
+            Spacer(Modifier.weight(0.1f))
         }
     }
 }

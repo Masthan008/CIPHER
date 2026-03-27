@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <plurals name="event_count">
+        <item quantity="one">%d event logged</item>
+        <item quantity="other">%d events logged</item>
+    </plurals>
+    <plurals name="file_count">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+    <string name="about">About</string>
+    <string name="app_name">CIPHER</string>
+    <string name="appearance">Appearance</string>
+    <string name="audio_browser_title">Music</string>
+    <string name="auto_lock">Vault Auto-Lock</string>
+    <string name="auto_lock_1min">1 min</string>
+    <string name="auto_lock_5min">5 min</string>
+    <string name="auto_lock_never">Never</string>
+    <string name="back">Back</string>
+    <string name="best_value">BEST VALUE</string>
+    <string name="biometric_every_time">Biometric Every Time</string>
+    <string name="biometric_every_time_desc">Require biometric on each vault open</string>
+    <string name="biometric_prompt_desc">Use fingerprint to unlock vault</string>
+    <string name="biometric_prompt_title">Authenticate</string>
+    <string name="break_in_alerts">Break-in Alerts</string>
+    <string name="cache">Cache</string>
+    <string name="calculator_mode">Calculator Mode</string>
+    <string name="calculator_mode_desc">App appears as a calculator in launcher</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="clear_cache_confirm">This will remove all cached data.</string>
+    <string name="com.google.firebase.crashlytics.mapping_file_id" ns1:ignore="UnusedResources,TypographyDashes" translatable="false">00000000000000000000000000000000</string>
+    <string name="confirm_pin">Confirm PIN</string>
+    <string name="create_folder">Create Folder</string>
+    <string name="decoy_pin">Decoy PIN</string>
+    <string name="delete">Delete</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="enter_pin">Enter PIN</string>
+    <string name="eq_preset_bass">Bass Boost</string>
+    <string name="eq_preset_classical">Classical</string>
+    <string name="eq_preset_flat">Flat</string>
+    <string name="eq_preset_jazz">Jazz</string>
+    <string name="eq_preset_pop">Pop</string>
+    <string name="eq_preset_rock">Rock</string>
+    <string name="eq_preset_treble">Treble</string>
+    <string name="eq_preset_vocal">Vocal</string>
+    <string name="equalizer">Equalizer</string>
+    <string name="error_generic">Something went wrong</string>
+    <string name="feature_requires_pro">%s is available with CIPHER Pro.</string>
+    <string name="filter_all">All</string>
+    <string name="filter_music">Music</string>
+    <string name="filter_video">Video</string>
+    <string name="folder_name">Folder Name</string>
+    <string name="gcm_defaultSenderId" translatable="false">574688439793</string>
+    <string name="get_started">Get Started</string>
+    <string name="go_premium">Go Premium</string>
+    <string name="google_api_key" translatable="false">AIzaSyBWo4rGDMn_-qeXuH8z6A0hOQ4QwccKvGA</string>
+    <string name="google_app_id" translatable="false">1:574688439793:android:c523bc6e513926da6ce850</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBWo4rGDMn_-qeXuH8z6A0hOQ4QwccKvGA</string>
+    <string name="google_storage_bucket" translatable="false">cipher-d9ff0.firebasestorage.app</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="import_files">Import Files</string>
+    <string name="intruder_detection">Intruder Detection</string>
+    <string name="intruder_detection_desc">Take photo on failed unlock attempts</string>
+    <string name="loading">Loading…</string>
+    <string name="maybe_later">Maybe Later</string>
+    <string name="nav_music">Music</string>
+    <string name="nav_vault">Vault</string>
+    <string name="nav_video">Video</string>
+    <string name="next">Next</string>
+    <string name="no_audio">No music found</string>
+    <string name="no_audio_subtitle">Music on your device will appear here</string>
+    <string name="no_break_ins">No break-in attempts</string>
+    <string name="no_results">No results found</string>
+    <string name="no_results_subtitle">Try a different search term</string>
+    <string name="no_videos">No videos found</string>
+    <string name="no_videos_subtitle">Videos on your device will appear here</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="ok">OK</string>
+    <string name="onboarding_privacy_desc">No data leaves your device without your permission</string>
+    <string name="onboarding_privacy_title">Privacy First</string>
+    <string name="onboarding_setup_desc">Create a PIN to protect your vault</string>
+    <string name="onboarding_setup_title">Set Up Security</string>
+    <string name="onboarding_vault_desc">Keep your private files safe with military-grade encryption</string>
+    <string name="onboarding_vault_title">Encrypted Vault</string>
+    <string name="pin_mismatch">PINs don\'t match</string>
+    <string name="plan_power_yearly">Power Yearly</string>
+    <string name="plan_pro_monthly">Pro Monthly</string>
+    <string name="plan_pro_yearly">Pro Yearly</string>
+    <string name="premium_feature">Premium Feature</string>
+    <string name="premium_subtitle">Remove ads • Premium features • Unlimited vault</string>
+    <string name="project_id" translatable="false">cipher-d9ff0</string>
+    <string name="remove_ads_onetime">Just Remove Ads — ₹199 one-time</string>
+    <string name="restore_purchases">Restore Purchases</string>
+    <string name="retry">Retry</string>
+    <string name="save">Save</string>
+    <string name="save_58">SAVE 58%</string>
+    <string name="search">Search</string>
+    <string name="search_files">Search files…</string>
+    <string name="search_hint">Type at least 2 characters to search</string>
+    <string name="secret_code">Secret Code</string>
+    <string name="security">Security</string>
+    <string name="self_destruct">Self-Destruct</string>
+    <string name="self_destruct_warning">After %d failed attempts, ALL vault data will be permanently destroyed. This cannot be undone.</string>
+    <string name="settings">Settings</string>
+    <string name="skip">Skip</string>
+    <string name="starting_price">Starting at just ₹99/month</string>
+    <string name="stealth_settings">Stealth Settings</string>
+    <string name="storage">Storage</string>
+    <string name="subscribe_now">Subscribe Now</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_system">System</string>
+    <string name="unlock_full_power">Unlock Full Power</string>
+    <string name="upgrade_now">Upgrade Now</string>
+    <string name="vault_empty">Vault is empty</string>
+    <string name="vault_empty_subtitle">Import files to keep them encrypted</string>
+    <string name="vault_secure">Your vault is secure</string>
+    <string name="vault_storage">Vault Storage</string>
+    <string name="vault_title">Vault</string>
+    <string name="vault_unlock">Unlock Vault</string>
+    <string name="version_info">Version 1.0.0 • Privacy-first media player</string>
+    <string name="video_browser_title">Videos</string>
+    <string name="welcome_subtitle">Your privacy-first media player</string>
+    <string name="welcome_title">Welcome to CIPHER</string>
+    <style name="Theme.CIPHER" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

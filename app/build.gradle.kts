@@ -135,8 +135,8 @@ dependencies {
     // Google AdMob
     implementation("com.google.android.gms:play-services-ads:23.0.0")
 
-    // Google Play Billing
-    implementation("com.android.billingclient:billing-ktx:6.1.0")
+    // Razorpay Payment Gateway (subscriptions + one-time)
+    implementation("com.razorpay:checkout:1.6.33")
 
     // Firebase Crashlytics
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))

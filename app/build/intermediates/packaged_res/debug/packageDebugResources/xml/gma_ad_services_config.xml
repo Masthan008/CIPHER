@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ad-services-config>
+    <topics allowAdPersonalization="false" />
+    <attribution allowAllToAccess="false" />
+    <custom-audiences allowAllToAccess="false" />
+</ad-services-config>

@@ -1,24 +1,19 @@
 package com.cipher.media.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -27,8 +22,7 @@ import com.cipher.media.data.model.AudioItem
 import com.cipher.media.ui.theme.*
 
 /**
- * Persistent mini player shown at the bottom of the screen when audio is playing
- * and the user navigates away from the full-screen player.
+ * Glassmorphic mini player with blurred background, progress bar, and controls.
  */
 @Composable
 fun MiniPlayer(
@@ -39,85 +33,86 @@ fun MiniPlayer(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AnimatedVisibility(
-        visible = currentAudio != null,
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
+    if (currentAudio == null) return
+
+    Card(
         modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = Spacing.sm, vertical = Spacing.xs)
+            .height(Spacing.miniPlayerHeight)
+            .pointerInput(Unit) { detectTapGestures(onTap = { onTap() }) },
+        shape = RoundedCornerShape(Corners.large),
+        colors = CardDefaults.cardColors(containerColor = CIPHERSurface.copy(alpha = 0.95f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level2)
     ) {
-        currentAudio?.let { audio ->
-            Row(
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = Spacing.sm),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Album art
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    .background(CIPHERSurface)
-                    .clickable { onTap() }
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(Corners.medium))
+                    .background(CIPHERSurfaceVariant)
             ) {
-                // Album art
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(CIPHERSurfaceVariant),
-                    contentAlignment = Alignment.Center
-                ) {
+                if (currentAudio.albumArtUri != null) {
                     AsyncImage(
-                        model = audio.albumArtUri,
+                        model = currentAudio.albumArtUri,
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        modifier = Modifier.fillMaxSize()
                     )
+                } else {
                     Icon(
-                        imageVector = Icons.Default.MusicNote,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = CIPHEROnSurfaceVariant.copy(alpha = 0.3f)
+                        Icons.Default.MusicNote, null,
+                        tint = CIPHERPrimary.copy(alpha = 0.5f),
+                        modifier = Modifier.size(24.dp).align(Alignment.Center)
                     )
                 }
+            }
 
-                // Track info
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Text(
-                        text = audio.title,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                        color = CIPHEROnSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = audio.artist,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = CIPHEROnSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            // Title & artist
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = Spacing.sm)
+            ) {
+                Text(
+                    currentAudio.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = CIPHEROnSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    currentAudio.artist,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = CIPHEROnSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
 
-                // Play / Pause
-                IconButton(onClick = onPlayPause) {
-                    Icon(
-                        imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = if (isPlaying) "Pause" else "Play",
-                        tint = CIPHEROnSurface
-                    )
-                }
+            // Play/Pause
+            IconButton(onClick = onPlayPause) {
+                Icon(
+                    if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    contentDescription = if (isPlaying) "Pause" else "Play",
+                    tint = CIPHERPrimary,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
 
-                // Dismiss
-                IconButton(onClick = onDismiss) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Stop",
-                        tint = CIPHEROnSurfaceVariant,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+            // Close
+            IconButton(onClick = onDismiss, modifier = Modifier.size(36.dp)) {
+                Icon(
+                    Icons.Default.Close, "Dismiss",
+                    tint = CIPHEROnSurfaceVariant,
+                    modifier = Modifier.size(18.dp)
+                )
             }
         }
     }

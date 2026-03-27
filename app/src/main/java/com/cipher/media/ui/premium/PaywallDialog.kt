@@ -1,98 +1,74 @@
 package com.cipher.media.ui.premium
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.cipher.media.ui.components.CIPHERButton
+import com.cipher.media.ui.components.CIPHEROutlinedButton
+import com.cipher.media.ui.components.PulseGlow
 import com.cipher.media.ui.theme.*
 
 /**
- * Non-intrusive paywall dialog shown when a free user tries to access a gated feature.
+ * Non-intrusive paywall dialog for feature gating.
  */
 @Composable
 fun PaywallDialog(
     featureName: String,
-    onDismiss: () -> Unit,
-    onUpgrade: () -> Unit
+    onUpgrade: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = CIPHERSurface,
+        shape = RoundedCornerShape(Corners.large),
         icon = {
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        Brush.linearGradient(listOf(CIPHERPrimary, CIPHERSecondary))
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
+            PulseGlow { mod ->
                 Icon(
-                    Icons.Default.WorkspacePremium, null,
-                    tint = Color.White,
-                    modifier = Modifier.size(32.dp)
+                    Icons.Default.Lock, null,
+                    tint = CIPHERPrimary,
+                    modifier = mod.size(48.dp)
                 )
             }
         },
         title = {
             Text(
                 "Premium Feature",
-                color = CIPHEROnSurface,
                 fontWeight = FontWeight.Bold,
+                color = CIPHEROnSurface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
         },
         text = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     "$featureName is available with CIPHER Pro.",
                     color = CIPHEROnSurfaceVariant,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(Spacing.xs))
                 Text(
                     "Starting at just ₹99/month",
                     color = CIPHERPrimary,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         },
         confirmButton = {
-            Button(
-                onClick = onUpgrade,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = CIPHERPrimary,
-                    contentColor = CIPHEROnPrimary
-                ),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Upgrade Now", fontWeight = FontWeight.Bold)
-            }
+            CIPHERButton(text = "Upgrade Now", onClick = onUpgrade, modifier = Modifier.fillMaxWidth())
         },
         dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
                 Text("Maybe Later", color = CIPHEROnSurfaceVariant)
             }
         }

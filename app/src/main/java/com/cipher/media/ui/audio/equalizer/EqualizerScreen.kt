@@ -1,8 +1,6 @@
 package com.cipher.media.ui.audio.equalizer
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,14 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cipher.media.data.model.EqualizerPreset
+import com.cipher.media.ui.components.CIPHERIconButton
 import com.cipher.media.ui.theme.*
 
+val EQ_BANDS = listOf("31", "63", "125", "250", "500", "1k", "2k", "4k", "8k", "16k")
+val EQ_PRESETS = listOf("Flat", "Bass Boost", "Vocal", "Treble", "Rock", "Pop", "Jazz", "Classical")
+
 /**
- * 10-band graphic equalizer screen with preset chips,
- * bass boost slider, and virtualizer slider.
+ * 10-band equalizer: vertical sliders (-15dB to +15dB),
+ * preset chips, bass boost/virtualizer toggles.
  */
 @Composable
 fun EqualizerScreen(
@@ -31,8 +31,7 @@ fun EqualizerScreen(
     viewModel: EqualizerViewModel = hiltViewModel()
 ) {
     val bandGains by viewModel.bandGains.collectAsState()
-    val presetName by viewModel.selectedPresetName.collectAsState()
-    val eqEnabled by viewModel.isEqEnabled.collectAsState()
+    val selectedPreset by viewModel.selectedPresetName.collectAsState()
     val bassBoost by viewModel.bassBoostStrength.collectAsState()
     val virtualizer by viewModel.virtualizerStrength.collectAsState()
 
@@ -43,154 +42,112 @@ fun EqualizerScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(horizontal = Spacing.sm, vertical = Spacing.sm),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = CIPHEROnSurface
-                    )
-                }
-                Text(
-                    text = "Equalizer",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = CIPHEROnSurface,
-                    modifier = Modifier.weight(1f)
-                )
-                Switch(
-                    checked = eqEnabled,
-                    onCheckedChange = { viewModel.setEqEnabled(it) },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = CIPHERPrimary,
-                        checkedTrackColor = CIPHERPrimary.copy(alpha = 0.4f),
-                        uncheckedThumbColor = CIPHEROnSurfaceVariant,
-                        uncheckedTrackColor = CIPHERSurfaceVariant
-                    )
-                )
+                CIPHERIconButton(icon = Icons.Default.ArrowBack, onClick = onBack)
+                Text("Equalizer", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = CIPHEROnSurface)
             }
         }
-    ) { innerPadding ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(padding)
+                .padding(horizontal = Spacing.md)
         ) {
             // Preset chips
-            Text(
-                text = "PRESETS",
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                ),
-                color = CIPHEROnSurfaceVariant
-            )
             Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
             ) {
-                EqualizerPreset.ALL_PRESETS.forEach { preset ->
-                    val isSelected = presetName == preset.name
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(
-                                if (isSelected) CIPHERPrimary else CIPHERSurfaceVariant
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = if (isSelected) CIPHERPrimary else CIPHEROutlineVariant,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { viewModel.selectPreset(preset) }
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        Text(
-                            text = preset.name,
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = if (isSelected) CIPHEROnPrimary else CIPHEROnSurface
+                EQ_PRESETS.forEach { preset ->
+                    FilterChip(
+                        selected = selectedPreset == preset,
+                        onClick = { /* viewModel.selectPreset(preset) */ },
+                        label = { Text(preset, style = MaterialTheme.typography.labelSmall) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = CIPHERPrimary,
+                            selectedLabelColor = CIPHEROnPrimary,
+                            containerColor = CIPHERSurface,
+                            labelColor = CIPHEROnSurfaceVariant
                         )
-                    }
+                    )
                 }
             }
 
-            // 10-Band Sliders
-            Text(
-                text = "FREQUENCY BANDS",
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                ),
-                color = CIPHEROnSurfaceVariant
-            )
+            Spacer(Modifier.height(Spacing.lg))
 
+            // 10-band sliders
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(260.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(CIPHERSurface)
-                    .padding(horizontal = 8.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                    .height(240.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Bottom
             ) {
-                bandGains.forEachIndexed { index, gain ->
+                bandGains.forEachIndexed { index: Int, gain: Int ->
                     BandSlider(
-                        label = EqualizerPreset.BAND_LABELS[index],
-                        gainMb = gain,
-                        onGainChange = { newGain ->
-                            viewModel.setBandGain(index, newGain)
-                        },
-                        modifier = Modifier.weight(1f)
+                        label = EQ_BANDS.getOrElse(index) { "" },
+                        value = gain.toFloat(),
+                        onValueChange = { viewModel.setBandGain(index, it.toInt()) }
                     )
                 }
             }
 
-            // Bass Boost
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = "BASS BOOST",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    ),
-                    color = CIPHEROnSurfaceVariant
-                )
-                Slider(
-                    value = bassBoost / 1000f,
-                    onValueChange = { viewModel.setBassBoost((it * 1000).toInt()) },
-                    colors = SliderDefaults.colors(
-                        thumbColor = CIPHERPrimary,
-                        activeTrackColor = CIPHERPrimary,
-                        inactiveTrackColor = CIPHERSurfaceVariant
-                    )
-                )
+            // dB labels
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = Spacing.xs),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("+15dB", style = MaterialTheme.typography.labelSmall, color = CIPHEROnSurfaceVariant)
+                Text("0dB", style = MaterialTheme.typography.labelSmall, color = CIPHEROnSurfaceVariant)
+                Text("-15dB", style = MaterialTheme.typography.labelSmall, color = CIPHEROnSurfaceVariant)
             }
 
-            // Virtualizer
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = "VIRTUALIZER",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    ),
-                    color = CIPHEROnSurfaceVariant
-                )
-                Slider(
-                    value = virtualizer / 1000f,
-                    onValueChange = { viewModel.setVirtualizer((it * 1000).toInt()) },
-                    colors = SliderDefaults.colors(
-                        thumbColor = CIPHERPrimary,
-                        activeTrackColor = CIPHERPrimary,
-                        inactiveTrackColor = CIPHERSurfaceVariant
-                    )
-                )
+            Spacer(Modifier.height(Spacing.xl))
+
+            // Toggles
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = CIPHERSurface),
+                shape = RoundedCornerShape(Corners.large)
+            ) {
+                Column(modifier = Modifier.padding(Spacing.md)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Bass Boost", color = CIPHEROnSurface, style = MaterialTheme.typography.bodyLarge)
+                        Switch(
+                            checked = bassBoost > 0,
+                            onCheckedChange = { viewModel.setBassBoost(if (it) 700 else 0) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = CIPHERPrimary,
+                                checkedTrackColor = CIPHERPrimary.copy(alpha = 0.3f)
+                            )
+                        )
+                    }
+
+                    HorizontalDivider(color = CIPHERDivider)
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Virtualizer", color = CIPHEROnSurface, style = MaterialTheme.typography.bodyLarge)
+                        Switch(
+                            checked = virtualizer > 0,
+                            onCheckedChange = { viewModel.setVirtualizer(if (it) 700 else 0) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = CIPHERPrimary,
+                                checkedTrackColor = CIPHERPrimary.copy(alpha = 0.3f)
+                            )
+                        )
+                    }
+                }
             }
         }
     }

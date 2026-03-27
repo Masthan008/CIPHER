@@ -8,62 +8,66 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.cipher.media.ui.theme.*
 
 /**
- * Custom vertical slider for a single EQ frequency band.
- * Displays frequency label at bottom and dB value at top.
+ * Vertical band slider: bar chart style, primary color fill.
+ * Range: -15dB to +15dB.
  */
 @Composable
 fun BandSlider(
     label: String,
-    gainMb: Int,  // millibels -1500 to 1500
-    onGainChange: (Int) -> Unit,
+    value: Float, // -15f to 15f
+    onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val minDb = -15f
-    val maxDb = 15f
-    val currentDb = gainMb / 100f
-    val normalizedValue = (currentDb - minDb) / (maxDb - minDb)
-
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        modifier = modifier.width(28.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // dB value
-        Text(
-            text = "%+.0f".format(currentDb),
-            style = MaterialTheme.typography.labelSmall,
-            color = if (gainMb != 0) CIPHERPrimary else CIPHEROnSurfaceVariant
-        )
-
-        // Vertical slider
+        // Vertical slider track
         Box(
             modifier = Modifier
-                .width(40.dp)
-                .weight(1f),
-            contentAlignment = Alignment.Center
+                .width(8.dp)
+                .height(200.dp)
+                .clip(RoundedCornerShape(Corners.small))
+                .background(CIPHERSurfaceVariant)
         ) {
-            Slider(
-                value = normalizedValue,
-                onValueChange = { newNorm ->
-                    val newDb = minDb + newNorm * (maxDb - minDb)
-                    onGainChange((newDb * 100).toInt())
-                },
-                colors = SliderDefaults.colors(
-                    thumbColor = CIPHERPrimary,
-                    activeTrackColor = CIPHERPrimary,
-                    inactiveTrackColor = CIPHERSurfaceVariant
-                ),
+            // Fill from bottom based on value
+            val normalizedValue: Float = ((value + 15f) / 30f).coerceIn(0f, 1f)
+
+            Box(
                 modifier = Modifier
-                    .requiredHeight(200.dp)
-                    .requiredWidth(40.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight(normalizedValue)
+                    .align(Alignment.BottomCenter)
+                    .clip(RoundedCornerShape(Corners.small))
+                    .background(CIPHERPrimary.copy(alpha = 0.8f))
             )
         }
 
-        // Frequency label
+        // Invisible slider for interaction
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = -15f..15f,
+            modifier = Modifier
+                .width(200.dp)
+                .height(28.dp)
+                .graphicsLayer { rotationZ = -90f },
+            colors = SliderDefaults.colors(
+                thumbColor = Color.Transparent,
+                activeTrackColor = Color.Transparent,
+                inactiveTrackColor = Color.Transparent
+            )
+        )
+
+        Spacer(Modifier.height(Spacing.xs))
+
+        // Label
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,

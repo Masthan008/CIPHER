@@ -1,296 +1,171 @@
 package com.cipher.media.ui.auth
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.cipher.media.ui.components.CIPHERButton
 import com.cipher.media.ui.theme.*
+import kotlinx.coroutines.launch
+
+data class OnboardingPage(
+    val icon: ImageVector,
+    val title: String,
+    val description: String
+)
+
+val onboardingPages = listOf(
+    OnboardingPage(Icons.Default.Shield, "Welcome to CIPHER", "Your privacy-first media player"),
+    OnboardingPage(Icons.Default.Lock, "Military-Grade Privacy", "Keep your private files safe with AES-256 encryption"),
+    OnboardingPage(Icons.Default.LibraryMusic, "All Your Media", "Play video & music with a premium experience"),
+    OnboardingPage(Icons.Default.Fingerprint, "Let's Set Up", "Enable biometric lock to protect your vault")
+)
 
 /**
- * Onboarding screen describing CIPHER features before prompting for authentication.
+ * 4-page horizontal onboarding with animated icons, dot indicators, skip/next.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(
     onNextClick: () -> Unit,
     onSkipClick: () -> Unit
 ) {
+    val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
+    val scope = rememberCoroutineScope()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(CIPHERBackground)
     ) {
-        // Decorative radial overlay
+        // Skip button
+        TextButton(
+            onClick = onSkipClick,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(Spacing.md)
+        ) {
+            Text("Skip", color = CIPHEROnSurfaceVariant)
+        }
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.weight(0.2f))
+
+            // Pager
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.weight(0.6f)
+            ) { page ->
+                OnboardingPageContent(onboardingPages[page])
+            }
+
+            // Dot indicators
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+                modifier = Modifier.padding(vertical = Spacing.lg)
+            ) {
+                repeat(onboardingPages.size) { index ->
+                    val isActive = pagerState.currentPage == index
+                    Box(
+                        modifier = Modifier
+                            .size(if (isActive) 24.dp else 8.dp, 8.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (isActive) CIPHERPrimary else CIPHERDivider
+                            )
+                    )
+                }
+            }
+
+            // Next / Get Started button
+            CIPHERButton(
+                text = if (pagerState.currentPage == onboardingPages.lastIndex) "Get Started" else "Next",
+                onClick = {
+                    if (pagerState.currentPage == onboardingPages.lastIndex) {
+                        onNextClick()
+                    } else {
+                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.xxl)
+            )
+
+            Spacer(Modifier.weight(0.1f))
+        }
+    }
+}
+
+@Composable
+private fun OnboardingPageContent(page: OnboardingPage) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Spacing.xl),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Animated icon with gradient glow
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .size(160.dp)
+                .clip(CircleShape)
                 .background(
-                    Brush.verticalGradient(
+                    Brush.radialGradient(
                         colors = listOf(
-                            Color.Transparent,
-                            CIPHERBackground.copy(alpha = 0.2f),
+                            CIPHERPrimary.copy(alpha = 0.15f),
                             CIPHERBackground
                         )
                     )
-                )
-        )
-
-        // Header - Skip Button
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 48.dp, end = 32.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Text(
-                text = "SKIP",
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 1.sp
                 ),
-                color = CIPHEROnSurfaceVariant,
-                modifier = Modifier
-                    .clickable { onSkipClick() }
-                    .padding(8.dp)
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                page.icon, null,
+                modifier = Modifier.size(80.dp),
+                tint = CIPHERPrimary
             )
         }
 
-        // Main Content (Asymmetric Editorial Layout)
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 80.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // The Lens Illustration
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 64.dp)
-                    .size(256.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                // Glow Effect
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .blur(100.dp)
-                        .background(CIPHERPrimary.copy(alpha = 0.2f), RoundedCornerShape(percent = 50))
-                )
+        Spacer(Modifier.height(Spacing.xl))
 
-                // Outer Ring
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .border(1.dp, CIPHERPrimary.copy(alpha = 0.1f), RoundedCornerShape(percent = 50))
-                )
+        Text(
+            page.title,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = CIPHEROnSurface,
+            textAlign = TextAlign.Center
+        )
 
-                // Main Shield Container
-                Box(
-                    modifier = Modifier
-                        .size(192.dp)
-                        .clip(RoundedCornerShape(32.dp))
-                        .background(CIPHERSurfaceVariant)
-                        .border(1.dp, CIPHEROnSurface.copy(alpha = 0.05f), RoundedCornerShape(32.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Shield,
-                        contentDescription = "Shield",
-                        modifier = Modifier.size(140.dp),
-                        tint = CIPHERPrimary
-                    )
+        Spacer(Modifier.height(Spacing.md))
 
-                    // Overlay Play Icon
-                    Box(
-                        modifier = Modifier
-                            .offset(y = 8.dp)
-                            .size(64.dp)
-                            .clip(RoundedCornerShape(percent = 50))
-                            .background(CIPHERBackground.copy(alpha = 0.8f))
-                            .border(1.dp, CIPHERPrimary.copy(alpha = 0.3f), RoundedCornerShape(percent = 50)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Play",
-                            modifier = Modifier.size(40.dp),
-                            tint = CIPHERPrimary
-                        )
-                    }
-                }
-
-                // Orbiting Tech Bits
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .offset(x = (-8).dp, y = (-16).dp)
-                        .background(CIPHERSurfaceBright, RoundedCornerShape(percent = 50))
-                        .border(1.dp, CIPHEROutlineVariant.copy(alpha = 0.2f), RoundedCornerShape(percent = 50))
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Lock,
-                        contentDescription = null,
-                        modifier = Modifier.size(12.dp),
-                        tint = CIPHERTertiary
-                    )
-                    Text(
-                        text = "ENCRYPTED",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp,
-                            fontSize = 10.sp
-                        ),
-                        color = CIPHEROnSurfaceVariant
-                    )
-                }
-            }
-
-            // Typography Cluster
-            Column(
-                modifier = Modifier.widthIn(max = 320.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = buildAnnotatedString {
-                        append("Welcome to ")
-                        withStyle(style = SpanStyle(color = CIPHERPrimary)) {
-                            append("CIPHER")
-                        }
-                    },
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = (-0.5).sp
-                    ),
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                )
-
-                Text(
-                    text = buildAnnotatedString {
-                        append("Military-grade privacy for your ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Medium, color = CIPHEROnSurface)) { append("videos") }
-                        append(", ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Medium, color = CIPHEROnSurface)) { append("music") }
-                        append(", and ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Medium, color = CIPHEROnSurface)) { append("files") }
-                        append(".")
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CIPHEROnSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-
-        // Bottom Navigation Shell
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 32.dp, bottom = 48.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(40.dp)
-        ) {
-            // Dots Indicator
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .height(6.dp)
-                        .width(32.dp)
-                        .background(CIPHERPrimary, RoundedCornerShape(percent = 50))
-                )
-                Box(
-                    modifier = Modifier
-                        .size(6.dp)
-                        .background(CIPHERSurfaceBright, RoundedCornerShape(percent = 50))
-                )
-                Box(
-                    modifier = Modifier
-                        .size(6.dp)
-                        .background(CIPHERSurfaceBright, RoundedCornerShape(percent = 50))
-                )
-            }
-
-            // CTA Action (Next)
-            Button(
-                onClick = onNextClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .widthIn(max = 384.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent
-                ),
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                colors = listOf(CIPHERPrimary, Color(0xFF693800))
-                            )
-                        )
-                        .padding(horizontal = 24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Next",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 0.5.sp
-                            ),
-                            color = CIPHEROnPrimary
-                        )
-                        Box(
-                            modifier = Modifier
-                                .background(Color.Black.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
-                                .padding(4.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.ChevronRight,
-                                contentDescription = "Next",
-                                tint = CIPHEROnPrimary
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        Text(
+            page.description,
+            style = MaterialTheme.typography.bodyLarge,
+            color = CIPHEROnSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
     }
 }

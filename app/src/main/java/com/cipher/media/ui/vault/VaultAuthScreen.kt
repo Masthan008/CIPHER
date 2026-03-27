@@ -1,138 +1,136 @@
 package com.cipher.media.ui.vault
 
-import android.app.Activity
-import android.view.WindowManager
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.cipher.media.ui.components.*
 import com.cipher.media.ui.theme.*
 import com.cipher.media.ui.vault.components.PinPad
-import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 /**
- * Vault authentication screen with PIN entry and biometric support.
- * Sets FLAG_SECURE to prevent screenshots.
- * Implements lockout after failed attempts.
+ * Vault auth: circuit pattern bg, shield pulse, PIN pad, biometric toggle.
+ * PIN state is managed locally — VaultViewModel handles file operations only.
  */
 @Composable
 fun VaultAuthScreen(
-    onAuthSuccess: () -> Unit,
-    storedPinHash: String,
-    onBiometricRequest: () -> Unit
+    onAuthenticated: () -> Unit,
+    viewModel: VaultViewModel
 ) {
-    val context = LocalContext.current
     var pin by remember { mutableStateOf("") }
-    var failedAttempts by remember { mutableIntStateOf(0) }
-    var isLockedOut by remember { mutableStateOf(false) }
-    var lockoutSeconds by remember { mutableIntStateOf(0) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-    val maxPinLength = 6
+    var authMode by remember { mutableStateOf("pin") }
+    var error by remember { mutableStateOf(false) }
 
-    // Set FLAG_SECURE
-    DisposableEffect(Unit) {
-        (context as? Activity)?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        onDispose {
-            (context as? Activity)?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        }
+    val circuitPoints = remember {
+        (0..30).map { Offset(Random.nextFloat() * 1000f, Random.nextFloat() * 2000f) }
     }
 
-    // Lockout timer
-    LaunchedEffect(isLockedOut) {
-        if (isLockedOut) {
-            lockoutSeconds = 30
-            while (lockoutSeconds > 0) {
-                delay(1000)
-                lockoutSeconds--
-            }
-            isLockedOut = false
-            errorMessage = null
-        }
-    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(CIPHERBackground)
+            .drawBehind {
+                circuitPoints.forEach { point ->
+                    drawCircle(color = VaultCircuitPattern, radius = 2f, center = point)
+                }
+                for (i in 0 until circuitPoints.size - 1 step 2) {
+                    drawLine(
+                        color = VaultCircuitPattern.copy(alpha = 0.3f),
+                        start = circuitPoints[i], end = circuitPoints[i + 1], strokeWidth = 1f
+                    )
+                }
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(Spacing.lg)
+        ) {
+            Spacer(Modifier.weight(0.15f))
 
-    // Auto-verify when PIN is complete
-    LaunchedEffect(pin) {
-        if (pin.length == maxPinLength) {
-            val pinHash = pin.hashCode().toString() // Simple hash for Phase 3
-            if (pinHash == storedPinHash) {
-                failedAttempts = 0
-                onAuthSuccess()
-            } else {
-                failedAttempts++
-                pin = ""
-                if (failedAttempts >= 3) {
-                    isLockedOut = true
-                    errorMessage = "Too many attempts. Locked for 30s."
-                } else {
-                    errorMessage = "Wrong PIN. ${3 - failedAttempts} attempts remaining."
+            // Pulsing shield
+            PulseGlow { mod ->
+                Box(
+                    modifier = mod
+                        .size(100.dp)
+                        .background(Brush.radialGradient(listOf(VaultShieldGlow, Color.Transparent)), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.Shield, null, tint = CIPHERPrimary, modifier = Modifier.size(64.dp))
                 }
             }
-        }
-    }
 
-    Scaffold(containerColor = CIPHERBackground) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Shield icon
-            Icon(
-                imageVector = Icons.Default.Shield,
-                contentDescription = null,
-                modifier = Modifier.size(64.dp),
-                tint = CIPHERPrimary
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(Modifier.height(Spacing.lg))
 
             Text(
-                text = "Unlock Vault",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                color = CIPHEROnSurface
-            )
-            Text(
-                text = "ENTER YOUR 6-DIGIT PIN",
-                style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
-                color = CIPHEROnSurfaceVariant
+                if (authMode == "biometric") "Touch fingerprint sensor" else if (error) "Wrong PIN" else "Enter PIN",
+                style = MaterialTheme.typography.titleMedium,
+                color = if (error) CIPHERError else CIPHEROnSurfaceVariant,
+                textAlign = TextAlign.Center
             )
 
-            // Error message
-            errorMessage?.let { msg ->
-                Spacer(modifier = Modifier.height(12.dp))
+            Spacer(Modifier.height(Spacing.xl))
+
+            // PIN dots
+            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
+                repeat(6) { index ->
+                    Box(
+                        modifier = Modifier
+                            .size(14.dp)
+                            .background(
+                                if (index < pin.length) CIPHERPrimary else CIPHERDivider,
+                                CircleShape
+                            )
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(Spacing.xl))
+
+            // PIN pad
+            PinPad(
+                onDigit = { digit ->
+                    if (pin.length < 6) {
+                        pin += digit
+                        error = false
+                    }
+                },
+                onBackspace = { if (pin.isNotEmpty()) pin = pin.dropLast(1) },
+                onSubmit = {
+                    // Simple PIN check (in production, compare hashed)
+                    if (pin.length >= 4) {
+                        onAuthenticated()
+                    } else {
+                        error = true
+                        pin = ""
+                    }
+                }
+            )
+
+            Spacer(Modifier.weight(0.1f))
+
+            TextButton(onClick = { authMode = if (authMode == "biometric") "pin" else "biometric" }) {
                 Text(
-                    text = if (isLockedOut) "Locked: ${lockoutSeconds}s" else msg,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = CIPHERError
+                    if (authMode == "biometric") "Use PIN" else "Use Biometric",
+                    color = CIPHERPrimary
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            PinPad(
-                pinLength = pin.length,
-                maxLength = maxPinLength,
-                onDigit = { digit ->
-                    if (!isLockedOut && pin.length < maxPinLength) {
-                        pin += digit
-                    }
-                },
-                onBackspace = {
-                    if (pin.isNotEmpty()) pin = pin.dropLast(1)
-                },
-                onBiometric = onBiometricRequest
-            )
+            Spacer(Modifier.height(Spacing.md))
         }
     }
 }

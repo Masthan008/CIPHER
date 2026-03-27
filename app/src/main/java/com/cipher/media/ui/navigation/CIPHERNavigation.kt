@@ -38,10 +38,12 @@ import com.cipher.media.ui.stealth.CalculatorScreen
 import com.cipher.media.ui.stealth.StealthSetupScreen
 import com.cipher.media.ui.stealth.StealthViewModel
 import com.cipher.media.ui.theme.CIPHERBackground
+import com.cipher.media.ui.theme.CIPHERDivider
 import com.cipher.media.ui.theme.CIPHEROnSurface
 import com.cipher.media.ui.theme.CIPHEROnSurfaceVariant
 import com.cipher.media.ui.theme.CIPHERPrimary
 import com.cipher.media.ui.theme.CIPHERSurface
+import com.cipher.media.ui.theme.Spacing
 import com.cipher.media.ui.vault.VaultAuthScreen
 import com.cipher.media.ui.vault.VaultBrowserScreen
 import com.cipher.media.ui.vault.VaultSetupScreen
@@ -208,12 +210,12 @@ fun CIPHERNavigation() {
                 // -- Calculator Disguise --
                 composable(Screen.Calculator.route) {
                     CalculatorScreen(
-                        secretCode = stealthViewModel.secretCode,
-                        onVaultTrigger = {
+                        onSecretTriggered = {
                             navController.navigate(Screen.VaultAuth.route) {
                                 popUpTo(Screen.Calculator.route) { inclusive = true }
                             }
-                        }
+                        },
+                        viewModel = stealthViewModel
                     )
                 }
 
@@ -227,31 +229,23 @@ fun CIPHERNavigation() {
                             }
                         })
                     } else {
+                        val vaultVm: VaultViewModel = hiltViewModel()
                         VaultAuthScreen(
-                            onAuthSuccess = {
+                            onAuthenticated = {
                                 navController.navigate(Screen.VaultBrowser.route) {
                                     popUpTo(Screen.VaultAuth.route) { inclusive = true }
                                 }
                             },
-                            storedPinHash = storedPinHash,
-                            onBiometricRequest = { }
+                            viewModel = vaultVm
                         )
                     }
                 }
                 composable(Screen.VaultBrowser.route) {
                     val vaultViewModel: VaultViewModel = hiltViewModel()
                     VaultBrowserScreen(
-                        viewModel = vaultViewModel,
-                        onItemClick = { item ->
-                            when (item.fileType) {
-                                com.cipher.media.data.model.VaultItem.FileType.IMAGE ->
-                                    navController.navigate(Screen.VaultImageViewer.createRoute(item.id))
-                                com.cipher.media.data.model.VaultItem.FileType.VIDEO ->
-                                    navController.navigate(Screen.VaultVideoPlayer.createRoute(item.id))
-                                else -> { }
-                            }
-                        },
-                        onBack = { navController.popBackStack() }
+                        onFileClick = { itemId -> },
+                        onBack = { navController.popBackStack() },
+                        viewModel = vaultViewModel
                     )
                 }
 
@@ -259,8 +253,13 @@ fun CIPHERNavigation() {
                 composable(Screen.Settings.route) {
                     SettingsScreen(
                         onBack = { navController.popBackStack() },
-                        onStealthSetup = { navController.navigate(Screen.StealthSetup.route) },
-                        onIntruderLog = { navController.navigate(Screen.IntruderLog.route) }
+                        onNavigateTo = { route ->
+                            when (route) {
+                                "intruder_log" -> navController.navigate(Screen.IntruderLog.route)
+                                "premium" -> navController.navigate(Screen.Premium.route)
+                                else -> navController.navigate(Screen.StealthSetup.route)
+                            }
+                        }
                     )
                 }
                 composable(Screen.Search.route) {

@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Shield shape -->
+    <path
+        android:fillColor="#FF9933"
+        android:pathData="M54,24 L78,36 L78,60 C78,72 66,82 54,86 C42,82 30,72 30,60 L30,36 Z" />
+    <!-- Lock icon inside shield -->
+    <path
+        android:fillColor="#2E1500"
+        android:pathData="M54,50 C51.8,50 50,51.8 50,54 C50,55.4 50.7,56.6 51.8,57.3 L51,62 L57,62 L56.2,57.3 C57.3,56.6 58,55.4 58,54 C58,51.8 56.2,50 54,50 Z M60,48 L60,46 C60,42.7 57.3,40 54,40 C50.7,40 48,42.7 48,46 L48,48 L46,48 L46,62 C46,63.1 46.9,64 48,64 L60,64 C61.1,64 62,63.1 62,62 L62,48 Z" />
+</vector>

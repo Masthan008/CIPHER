@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">વિશે</string>
+    <string name="app_name">CIPHER</string>
+    <string name="audio_browser_title">સંગીત</string>
+    <string name="back">પાછા</string>
+    <string name="cancel">રદ કરો</string>
+    <string name="delete">કાઢી નાખો</string>
+    <string name="enter_pin">PIN દાખલ કરો</string>
+    <string name="error_generic">કંઈક ખોટું થયું</string>
+    <string name="filter_all">બધા</string>
+    <string name="get_started">શરૂ કરો</string>
+    <string name="go_premium">પ્રીમિયમ મેળવો</string>
+    <string name="import_files">ફાઇલો આયાત કરો</string>
+    <string name="loading">લોડ થઈ રહ્યું છે…</string>
+    <string name="nav_music">સંગીત</string>
+    <string name="nav_vault">વૉલ્ટ</string>
+    <string name="nav_video">વીડિયો</string>
+    <string name="next">આગળ</string>
+    <string name="no_audio">કોઈ સંગીત મળ્યું નથી</string>
+    <string name="no_results">કોઈ પરિણામ મળ્યા નથી</string>
+    <string name="no_videos">કોઈ વીડિયો મળ્યા નથી</string>
+    <string name="now_playing">હવે વાગી રહ્યું છે</string>
+    <string name="ok">ઠીક છે</string>
+    <string name="save">સાચવો</string>
+    <string name="search">શોધો</string>
+    <string name="search_files">ફાઇલો શોધો…</string>
+    <string name="security">સુરક્ષા</string>
+    <string name="settings">સેટિંગ્સ</string>
+    <string name="skip">છોડો</string>
+    <string name="storage">સ્ટોરેજ</string>
+    <string name="subscribe_now">હમણાં સબસ્ક્રાઇબ કરો</string>
+    <string name="upgrade_now">હમણાં અપગ્રેડ કરો</string>
+    <string name="vault_empty">વૉલ્ટ ખાલી છે</string>
+    <string name="vault_title">વૉલ્ટ</string>
+    <string name="video_browser_title">વીડિયો</string>
+    <string name="welcome_title">CIPHERમાં આપનું સ્વાગત છે</string>
+</resources>

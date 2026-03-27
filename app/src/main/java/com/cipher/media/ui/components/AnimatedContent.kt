@@ -2,142 +2,110 @@ package com.cipher.media.ui.components
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.unit.dp
 
+// ========== STAGGERED ENTRANCE ==========
 /**
- * Staggered fade-in animation for list/grid items.
- * Each item fades in with a delay based on its index.
+ * Items fade in + slide up with 50ms stagger per index.
  */
 @Composable
-fun StaggeredAnimatedItem(
+fun StaggeredEntrance(
     index: Int,
-    delayPerItem: Int = 50,
-    durationMs: Int = 300,
     content: @Composable () -> Unit
 ) {
     var visible by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(index * 50L)
         visible = true
     }
 
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(
-            animationSpec = tween(
-                durationMillis = durationMs,
-                delayMillis = index * delayPerItem,
-                easing = FastOutSlowInEasing
-            )
-        ) + slideInVertically(
-            initialOffsetY = { it / 4 },
-            animationSpec = tween(
-                durationMillis = durationMs,
-                delayMillis = index * delayPerItem,
-                easing = FastOutSlowInEasing
-            )
-        )
-    ) {
-        content()
-    }
-}
-
-/**
- * Scale-on-press button effect (0.95 bounce).
- */
-@Composable
-fun ScalePressBox(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.95f else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium
-        ),
-        label = "scale_press"
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(300, easing = FastOutSlowInEasing), label = "stagger_alpha"
+    )
+    val offsetY by animateFloatAsState(
+        targetValue = if (visible) 0f else 20f,
+        animationSpec = tween(300, easing = FastOutSlowInEasing), label = "stagger_y"
     )
 
-    Box(
-        modifier = modifier
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            )
-    ) {
+    Box(modifier = Modifier.alpha(alpha).offset(y = offsetY.dp)) {
         content()
     }
 }
 
+// ========== SCALE ON PRESS ==========
 /**
- * Breathing/pulsing animation for album art "now playing" indicator.
+ * Scale bounce: 1.0 → 0.95 → 1.0 on press.
  */
 @Composable
-fun BreathingAnimation(
-    modifier: Modifier = Modifier,
-    content: @Composable (Float) -> Unit
+fun ScaleOnPress(
+    isPressed: Boolean,
+    content: @Composable (Modifier) -> Unit
+) {
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = tween(100, easing = FastOutSlowInEasing), label = "press_scale"
+    )
+    content(Modifier.scale(scale))
+}
+
+// ========== BREATHING EFFECT ==========
+/**
+ * Subtle breathing pulse: scale 1.0 → 1.02, 4s infinite loop.
+ */
+@Composable
+fun BreathingEffect(
+    content: @Composable (Modifier) -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "breathing")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.03f,
+        targetValue = 1.02f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "breath_scale"
+    )
+    content(Modifier.scale(scale))
+}
+
+// ========== PULSE GLOW ==========
+/**
+ * Pulsing alpha glow: 0.5 → 1.0, 2s loop.
+ */
+@Composable
+fun PulseGlow(
+    content: @Composable (Modifier) -> Unit
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.5f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(2000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
-        ),
-        label = "breathing_scale"
+        ), label = "pulse_alpha"
     )
-
-    Box(modifier = modifier.graphicsLayer { scaleX = scale; scaleY = scale }) {
-        content(scale)
-    }
+    content(Modifier.alpha(alpha))
 }
 
-/**
- * Navigation transition specs for AnimatedNavHost.
- */
-object NavAnimations {
-    fun enterTransition(): EnterTransition = fadeIn(
-        animationSpec = tween(300, easing = FastOutSlowInEasing)
-    ) + slideInHorizontally(
-        initialOffsetX = { it / 6 },
-        animationSpec = tween(300, easing = FastOutSlowInEasing)
-    )
+// ========== NAV TRANSITIONS ==========
+val NavEnterTransition: EnterTransition = fadeIn(tween(300, easing = FastOutSlowInEasing)) +
+    slideInHorizontally(initialOffsetX = { it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
 
-    fun exitTransition(): ExitTransition = fadeOut(
-        animationSpec = tween(300, easing = FastOutSlowInEasing)
-    ) + slideOutHorizontally(
-        targetOffsetX = { -it / 6 },
-        animationSpec = tween(300, easing = FastOutSlowInEasing)
-    )
+val NavExitTransition: ExitTransition = fadeOut(tween(200, easing = FastOutSlowInEasing))
 
-    fun popEnterTransition(): EnterTransition = fadeIn(
-        animationSpec = tween(300, easing = FastOutSlowInEasing)
-    ) + slideInHorizontally(
-        initialOffsetX = { -it / 6 },
-        animationSpec = tween(300, easing = FastOutSlowInEasing)
-    )
+val NavPopEnterTransition: EnterTransition = fadeIn(tween(300, easing = FastOutSlowInEasing)) +
+    slideInHorizontally(initialOffsetX = { -it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
 
-    fun popExitTransition(): ExitTransition = fadeOut(
-        animationSpec = tween(300, easing = FastOutSlowInEasing)
-    ) + slideOutHorizontally(
-        targetOffsetX = { it / 6 },
-        animationSpec = tween(300, easing = FastOutSlowInEasing)
-    )
-}
+val NavPopExitTransition: ExitTransition = fadeOut(tween(200, easing = FastOutSlowInEasing)) +
+    slideOutHorizontally(targetOffsetX = { it / 6 }, animationSpec = tween(200, easing = FastOutSlowInEasing))
+
+// ========== TAB CROSSFADE ==========
+val TabCrossfade: FiniteAnimationSpec<Float> = tween(200, easing = FastOutSlowInEasing)

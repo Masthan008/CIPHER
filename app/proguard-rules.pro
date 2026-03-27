@@ -15,9 +15,10 @@
 -keep class net.sqlcipher.** { *; }
 -dontwarn net.sqlcipher.**
 
-# Google Play Billing
--keep class com.android.vending.billing.** { *; }
--keep class com.android.billingclient.** { *; }
+# Razorpay
+-keep class com.razorpay.** { *; }
+-dontwarn com.razorpay.**
+-keepattributes *Annotation*
 
 # AdMob
 -keep class com.google.android.gms.ads.** { *; }

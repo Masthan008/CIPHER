@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "574688439793",
+    "project_id": "cipher-d9ff0",
+    "storage_bucket": "cipher-d9ff0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574688439793:android:c523bc6e513926da6ce850",
+        "android_client_info": {
+          "package_name": "com.cipher.media"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWo4rGDMn_-qeXuH8z6A0hOQ4QwccKvGA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

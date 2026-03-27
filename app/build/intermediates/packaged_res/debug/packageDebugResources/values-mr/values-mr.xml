@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">माहिती</string>
+    <string name="app_name">CIPHER</string>
+    <string name="audio_browser_title">संगीत</string>
+    <string name="back">मागे</string>
+    <string name="cancel">रद्द करा</string>
+    <string name="delete">हटवा</string>
+    <string name="enter_pin">PIN प्रविष्ट करा</string>
+    <string name="error_generic">काहीतरी चुकले</string>
+    <string name="filter_all">सर्व</string>
+    <string name="get_started">सुरू करा</string>
+    <string name="go_premium">प्रीमियम घ्या</string>
+    <string name="import_files">फाइल्स आयात करा</string>
+    <string name="loading">लोड होत आहे…</string>
+    <string name="nav_music">संगीत</string>
+    <string name="nav_vault">व्हॉल्ट</string>
+    <string name="nav_video">व्हिडिओ</string>
+    <string name="next">पुढे</string>
+    <string name="no_audio">संगीत सापडले नाही</string>
+    <string name="no_results">परिणाम सापडले नाहीत</string>
+    <string name="no_videos">व्हिडिओ सापडले नाहीत</string>
+    <string name="now_playing">आता प्ले होत आहे</string>
+    <string name="ok">ठीक आहे</string>
+    <string name="save">जतन करा</string>
+    <string name="search">शोधा</string>
+    <string name="search_files">फाइल्स शोधा…</string>
+    <string name="security">सुरक्षा</string>
+    <string name="settings">सेटिंग्ज</string>
+    <string name="skip">वगळा</string>
+    <string name="storage">स्टोरेज</string>
+    <string name="subscribe_now">आता सबस्क्राइब करा</string>
+    <string name="upgrade_now">आता अपग्रेड करा</string>
+    <string name="vault_empty">व्हॉल्ट रिकामे आहे</string>
+    <string name="vault_title">व्हॉल्ट</string>
+    <string name="video_browser_title">व्हिडिओ</string>
+    <string name="welcome_title">CIPHER मध्ये आपले स्वागत आहे</string>
+</resources>

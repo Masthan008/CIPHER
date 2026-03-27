@@ -3,204 +3,202 @@ package com.cipher.media.ui.stealth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cipher.media.ui.theme.*
+import kotlin.math.*
 
 /**
- * Fully functional calculator disguise.
- * Secret trigger: enter the vault PIN code then press "=" to open vault.
+ * Full calculator disguise. Secret code triggers vault.
  */
 @Composable
 fun CalculatorScreen(
-    secretCode: String,
-    onVaultTrigger: () -> Unit
+    onSecretTriggered: () -> Unit,
+    viewModel: StealthViewModel
 ) {
     var display by remember { mutableStateOf("0") }
-    var operand1 by remember { mutableStateOf<Double?>(null) }
-    var pendingOp by remember { mutableStateOf<String?>(null) }
-    var resetOnNext by remember { mutableStateOf(false) }
-    var inputBuffer by remember { mutableStateOf("") } // tracks raw digit input for secret code
-
-    fun evaluate(): Double? {
-        val a = operand1 ?: return null
-        val b = display.toDoubleOrNull() ?: return null
-        return when (pendingOp) {
-            "+" -> a + b
-            "−" -> a - b
-            "×" -> a * b
-            "÷" -> if (b != 0.0) a / b else null
-            "%" -> a * (b / 100.0)
-            else -> b
-        }
-    }
-
-    fun onDigit(d: String) {
-        inputBuffer += d
-        if (resetOnNext) {
-            display = d
-            resetOnNext = false
-        } else {
-            display = if (display == "0") d else display + d
-        }
-    }
-
-    fun onOperator(op: String) {
-        inputBuffer = ""
-        operand1 = display.toDoubleOrNull()
-        pendingOp = op
-        resetOnNext = true
-    }
-
-    fun onEquals() {
-        // Secret code check: if buffer matches secret code, trigger vault
-        if (inputBuffer == secretCode) {
-            onVaultTrigger()
-            return
-        }
-
-        val result = evaluate()
-        display = if (result != null) {
-            if (result == result.toLong().toDouble()) {
-                result.toLong().toString()
-            } else {
-                "%.8g".format(result)
-            }
-        } else {
-            "Error"
-        }
-        operand1 = null
-        pendingOp = null
-        resetOnNext = true
-        inputBuffer = ""
-    }
-
-    fun onClear() {
-        display = "0"
-        operand1 = null
-        pendingOp = null
-        resetOnNext = false
-        inputBuffer = ""
-    }
-
-    fun onToggleSign() {
-        val value = display.toDoubleOrNull() ?: return
-        display = if (-value == (-value).toLong().toDouble()) {
-            (-value).toLong().toString()
-        } else {
-            (-value).toString()
-        }
-    }
-
-    fun onDecimalPoint() {
-        if ("." !in display) {
-            display += "."
-        }
-    }
+    var expression by remember { mutableStateOf("") }
+    val secretCode = viewModel.secretCode
 
     val buttons = listOf(
-        listOf("C", "±", "%", "÷"),
-        listOf("7", "8", "9", "×"),
-        listOf("4", "5", "6", "−"),
-        listOf("1", "2", "3", "+"),
-        listOf("0", ".", "=")
+        "C", "(", ")", "/",
+        "7", "8", "9", "*",
+        "4", "5", "6", "-",
+        "1", "2", "3", "+",
+        "%", "0", ".", "="
     )
 
-    Scaffold(containerColor = CIPHERBackground) { innerPadding ->
+    fun onButtonClick(btn: String) {
+        when (btn) {
+            "C" -> { display = "0"; expression = "" }
+            "=" -> {
+                // Check secret code
+                if (expression == secretCode) {
+                    onSecretTriggered()
+                    return
+                }
+                display = try {
+                    evaluateExpression(expression)
+                } catch (_: Exception) { "Error" }
+                expression = ""
+            }
+            else -> {
+                if (display == "0" && btn.first().isDigit()) {
+                    display = btn; expression = btn
+                } else {
+                    display += btn; expression += btn
+                }
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(CIPHERBackground)
+            .windowInsetsPadding(WindowInsets.systemBars)
+    ) {
+        // Display
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
+                .weight(0.3f)
+                .padding(horizontal = Spacing.lg),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.End
         ) {
-            // Display
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                Text(
-                    text = display,
-                    style = MaterialTheme.typography.displayLarge.copy(
-                        fontWeight = FontWeight.Light,
-                        fontSize = 64.sp
-                    ),
-                    color = CIPHEROnSurface,
-                    textAlign = TextAlign.End,
-                    maxLines = 1,
-                    modifier = Modifier.padding(end = 8.dp, bottom = 16.dp)
-                )
-            }
+            Text(
+                text = expression,
+                style = MaterialTheme.typography.bodyMedium,
+                color = CIPHEROnSurfaceVariant,
+                textAlign = TextAlign.End,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(Spacing.xs))
+            Text(
+                text = display,
+                style = MaterialTheme.typography.displayMedium,
+                fontWeight = FontWeight.Light,
+                color = CIPHEROnSurface,
+                textAlign = TextAlign.End,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(Spacing.md))
+        }
 
-            // Buttons
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                buttons.forEach { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        row.forEach { label ->
-                            val isOperator = label in listOf("+", "−", "×", "÷", "=")
-                            val isFunction = label in listOf("C", "±", "%")
-                            val isZero = label == "0"
+        HorizontalDivider(color = CIPHERDivider)
 
-                            Box(
-                                modifier = Modifier
-                                    .then(
-                                        if (isZero) Modifier.weight(2f) else Modifier.weight(1f)
-                                    )
-                                    .aspectRatio(if (isZero) 2.2f else 1f)
-                                    .clip(if (isZero) RoundedCornerShape(36.dp) else CircleShape)
-                                    .background(
-                                        when {
-                                            isOperator -> CIPHERPrimary
-                                            isFunction -> CIPHERSurfaceBright
-                                            else -> CIPHERSurfaceVariant
-                                        }
-                                    )
-                                    .clickable {
-                                        when {
-                                            label == "C" -> onClear()
-                                            label == "±" -> onToggleSign()
-                                            label == "." -> onDecimalPoint()
-                                            label == "=" -> onEquals()
-                                            isOperator -> onOperator(label)
-                                            else -> onDigit(label)
-                                        }
-                                    },
-                                contentAlignment = if (isZero) Alignment.CenterStart else Alignment.Center
-                            ) {
-                                Text(
-                                    text = label,
-                                    style = MaterialTheme.typography.headlineMedium.copy(
-                                        fontWeight = FontWeight.Medium
-                                    ),
-                                    color = when {
-                                        isOperator -> CIPHEROnPrimary
-                                        isFunction -> CIPHEROnSurface
-                                        else -> CIPHEROnSurface
-                                    },
-                                    modifier = if (isZero) Modifier.padding(start = 28.dp) else Modifier
-                                )
+        // Buttons grid
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            modifier = Modifier.weight(0.7f).padding(Spacing.sm),
+            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
+        ) {
+            items(buttons) { btn ->
+                val isOperator = btn in listOf("+", "-", "*", "/", "=")
+                val isFunction = btn in listOf("C", "(", ")", "%")
+
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .clip(CircleShape)
+                        .background(
+                            when {
+                                isOperator -> CIPHERPrimary
+                                isFunction -> CIPHERSurfaceVariant
+                                else -> CIPHERSurface
                             }
+                        )
+                        .clickable { onButtonClick(btn) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = btn,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = when {
+                            isOperator -> CIPHEROnPrimary
+                            else -> CIPHEROnSurface
                         }
-                    }
+                    )
                 }
             }
         }
     }
 }
+
+private fun evaluateExpression(expr: String): String {
+    return try {
+        val result = simpleEval(expr)
+        if (result == result.toLong().toDouble()) result.toLong().toString()
+        else "%.6f".format(result).trimEnd('0').trimEnd('.')
+    } catch (_: Exception) { "Error" }
+}
+
+private fun simpleEval(expr: String): Double {
+    return ExprParser(expr).parse()
+}
+
+private class ExprParser(private val expr: String) {
+    private var pos = 0
+
+    fun parse(): Double {
+        val result = parseExpr()
+        return result
+    }
+
+    private fun parseExpr(): Double {
+        var left = parseTerm()
+        while (pos < expr.length && expr[pos] in "+-") {
+            val op = expr[pos++]
+            val right = parseTerm()
+            left = if (op == '+') left + right else left - right
+        }
+        return left
+    }
+
+    private fun parseTerm(): Double {
+        var left = parseFactor()
+        while (pos < expr.length && expr[pos] in "*/%") {
+            val op = expr[pos++]
+            val right = parseFactor()
+            left = when (op) { '*' -> left * right; '/' -> left / right; '%' -> left % right; else -> left }
+        }
+        return left
+    }
+
+    private fun parseFactor(): Double {
+        if (pos < expr.length && expr[pos] == '(') {
+            pos++
+            val r = parseExpr()
+            if (pos < expr.length && expr[pos] == ')') pos++
+            return r
+        }
+        return parseNumber()
+    }
+
+    private fun parseNumber(): Double {
+        val start = pos
+        if (pos < expr.length && (expr[pos] == '-' || expr[pos] == '+')) pos++
+        while (pos < expr.length && (expr[pos].isDigit() || expr[pos] == '.')) pos++
+        return expr.substring(start, pos).toDouble()
+    }
+}
+

@@ -1,6 +1,5 @@
 package com.cipher.media.billing
 
-import com.android.billingclient.api.Purchase
 import com.cipher.media.billing.model.Products
 import com.cipher.media.billing.model.SubscriptionTier
 import kotlinx.coroutines.flow.*
@@ -8,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Resolves the user's active subscription tier from purchase state.
+ * Resolves the user's active subscription tier from Razorpay purchase state.
  */
 @Singleton
 class BillingRepository @Inject constructor(
@@ -17,7 +16,7 @@ class BillingRepository @Inject constructor(
     /**
      * The user's current active tier based on purchases.
      */
-    val activeTier: StateFlow<SubscriptionTier> = billingManager.purchases
+    val activeTier: StateFlow<SubscriptionTier> = billingManager.activePurchases
         .map { purchases -> resolveTier(purchases) }
         .stateIn(
             scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default),
@@ -28,12 +27,9 @@ class BillingRepository @Inject constructor(
     /**
      * Whether ads should be shown (free tier + no ad-removal purchase).
      */
-    val shouldShowAds: StateFlow<Boolean> = billingManager.purchases
+    val shouldShowAds: StateFlow<Boolean> = billingManager.activePurchases
         .map { purchases ->
-            val hasAdRemoval = purchases.any {
-                it.purchaseState == Purchase.PurchaseState.PURCHASED &&
-                it.products.contains(Products.REMOVE_ADS)
-            }
+            val hasAdRemoval = Products.REMOVE_ADS in purchases
             val tier = resolveTier(purchases)
             tier == SubscriptionTier.FREE && !hasAdRemoval
         }
@@ -46,17 +42,12 @@ class BillingRepository @Inject constructor(
     val isPro: Flow<Boolean> = activeTier.map { it == SubscriptionTier.PRO || it == SubscriptionTier.POWER }
     val isPower: Flow<Boolean> = activeTier.map { it == SubscriptionTier.POWER }
 
-    private fun resolveTier(purchases: List<Purchase>): SubscriptionTier {
-        val activeProducts = purchases
-            .filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }
-            .flatMap { it.products }
-            .toSet()
-
+    private fun resolveTier(purchases: Set<String>): SubscriptionTier {
         return when {
-            Products.LIFETIME in activeProducts -> SubscriptionTier.POWER
-            Products.POWER_YEARLY in activeProducts -> SubscriptionTier.POWER
-            Products.PRO_YEARLY in activeProducts -> SubscriptionTier.PRO
-            Products.PRO_MONTHLY in activeProducts -> SubscriptionTier.PRO
+            Products.LIFETIME in purchases -> SubscriptionTier.POWER
+            Products.POWER_YEARLY in purchases -> SubscriptionTier.POWER
+            Products.PRO_YEARLY in purchases -> SubscriptionTier.PRO
+            Products.PRO_MONTHLY in purchases -> SubscriptionTier.PRO
             else -> SubscriptionTier.FREE
         }
     }

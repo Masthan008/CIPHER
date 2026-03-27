@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "C:\\Users\\masth\\.gradle\\daemon\\8.13\\com.cipher.media.app-debug-96:\\drawable_widget_background.xml.flat",
+        "source": "C:\\Users\\masth\\.gradle\\daemon\\8.13\\com.cipher.media.app-main-98:\\drawable\\widget_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\masth\\.gradle\\daemon\\8.13\\com.cipher.media.app-debug-96:\\xml_audio_widget_info.xml.flat",
+        "source": "C:\\Users\\masth\\.gradle\\daemon\\8.13\\com.cipher.media.app-main-98:\\xml\\audio_widget_info.xml"
+    },
+    {
+        "merged": "com.cipher.media.app-debug-96:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.cipher.media.app-main-98:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.cipher.media.app-debug-96:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.cipher.media.app-main-98:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.cipher.media.app-debug-96:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.cipher.media.app-main-98:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.cipher.media.app-debug-96:/xml_gma_ad_services_config.xml.flat",
+        "source": "com.cipher.media.app-main-98:/xml/gma_ad_services_config.xml"
+    },
+    {
+        "merged": "com.cipher.media.app-debug-96:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.cipher.media.app-main-98:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\masth\\.gradle\\daemon\\8.13\\com.cipher.media.app-debug-96:\\layout_widget_loading.xml.flat",
+        "source": "C:\\Users\\masth\\.gradle\\daemon\\8.13\\com.cipher.media.app-main-98:\\layout\\widget_loading.xml"
+    }
+]

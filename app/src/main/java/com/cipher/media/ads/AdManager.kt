@@ -21,9 +21,9 @@ class AdManager @Inject constructor(
         private const val TAG = "CIPHERAdManager"
 
         // Test ad unit IDs (replace with real IDs before release)
-        const val BANNER_AD_UNIT = "ca-app-pub-3940256099942544/6300978111"
-        const val INTERSTITIAL_AD_UNIT = "ca-app-pub-3940256099942544/1033173712"
-        const val REWARDED_AD_UNIT = "ca-app-pub-3940256099942544/5224354917"
+        const val BANNER_AD_UNIT = "ca-app-pub-7731479239467127~4148664656"
+        const val INTERSTITIAL_AD_UNIT = "ca-app-pub-7731479239467127~4148664656"
+        const val REWARDED_AD_UNIT = "ca-app-pub-7731479239467127~4148664656"
 
         const val INTERSTITIAL_INTERVAL = 5 // Show after every N video plays
     }

@@ -48,7 +48,7 @@ private fun AudioWidgetContent(
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(ImageProvider(R.drawable.widget_background))
+            .background(ImageProvider(com.cipher.media.R.drawable.widget_background))
             .clickable(actionStartActivity<MainActivity>())
             .padding(16.dp),
         contentAlignment = Alignment.CenterStart
