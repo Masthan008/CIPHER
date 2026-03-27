@@ -1,12 +1,13 @@
 package com.cipher.media.ui.navigation
 
 import android.net.Uri
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,10 +31,13 @@ import com.cipher.media.ui.auth.AuthScreen
 import com.cipher.media.ui.auth.OnboardingScreen
 import com.cipher.media.ui.auth.SplashScreen
 import com.cipher.media.ui.components.MiniPlayer
+import com.cipher.media.ui.search.SearchScreen
+import com.cipher.media.ui.settings.SettingsScreen
 import com.cipher.media.ui.stealth.CalculatorScreen
 import com.cipher.media.ui.stealth.StealthSetupScreen
 import com.cipher.media.ui.stealth.StealthViewModel
 import com.cipher.media.ui.theme.CIPHERBackground
+import com.cipher.media.ui.theme.CIPHEROnSurface
 import com.cipher.media.ui.theme.CIPHEROnSurfaceVariant
 import com.cipher.media.ui.theme.CIPHERPrimary
 import com.cipher.media.ui.theme.CIPHERSurface
@@ -55,6 +59,16 @@ val bottomNavItems = listOf(
     BottomNavItem(Screen.VaultAuth, "Vault", Icons.Default.Lock)
 )
 
+// Nav transition specs
+private val enterAnim: EnterTransition = fadeIn(tween(300, easing = FastOutSlowInEasing)) +
+    slideInHorizontally(initialOffsetX = { it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
+private val exitAnim: ExitTransition = fadeOut(tween(300, easing = FastOutSlowInEasing)) +
+    slideOutHorizontally(targetOffsetX = { -it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
+private val popEnterAnim: EnterTransition = fadeIn(tween(300, easing = FastOutSlowInEasing)) +
+    slideInHorizontally(initialOffsetX = { -it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
+private val popExitAnim: ExitTransition = fadeOut(tween(300, easing = FastOutSlowInEasing)) +
+    slideOutHorizontally(targetOffsetX = { it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
+
 @Composable
 fun CIPHERNavigation() {
     val navController = rememberNavController()
@@ -73,14 +87,14 @@ fun CIPHERNavigation() {
     }
     val storedPinHash = remember { prefs.getString("vault_pin_hash", null) }
 
-    // Determine start destination: if stealth mode, start with calculator
     val startDest = if (stealthViewModel.isStealthEnabled) Screen.Calculator.route else Screen.Splash.route
 
     val hideBottomBarRoutes = listOf(
         Screen.Splash.route, Screen.Onboarding.route, Screen.Auth.route,
         Screen.AudioPlayer.route, Screen.Equalizer.route,
         Screen.VaultSetup.route, Screen.VaultBrowser.route,
-        Screen.Calculator.route, Screen.StealthSetup.route, Screen.IntruderLog.route
+        Screen.Calculator.route, Screen.StealthSetup.route, Screen.IntruderLog.route,
+        Screen.Settings.route, Screen.Search.route
     )
     val showBottomBar = currentDestination?.route?.let { route ->
         !hideBottomBarRoutes.contains(route) &&
@@ -90,8 +104,8 @@ fun CIPHERNavigation() {
     } ?: false
 
     val showMiniPlayer = currentAudio != null &&
-            currentDestination?.route != Screen.AudioPlayer.route &&
-            currentDestination?.route?.startsWith("video_player") != true
+        currentDestination?.route != Screen.AudioPlayer.route &&
+        currentDestination?.route?.startsWith("video_player") != true
 
     Scaffold(
         containerColor = CIPHERBackground,
@@ -99,9 +113,7 @@ fun CIPHERNavigation() {
             if (showBottomBar) {
                 NavigationBar(containerColor = CIPHERSurface, contentColor = CIPHERPrimary) {
                     bottomNavItems.forEach { item ->
-                        val selected = currentDestination?.hierarchy?.any {
-                            it.route == item.screen.route
-                        } == true
+                        val selected = currentDestination?.hierarchy?.any { it.route == item.screen.route } == true
                         NavigationBarItem(
                             icon = { Icon(item.icon, item.label) },
                             label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
@@ -127,8 +139,14 @@ fun CIPHERNavigation() {
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            NavHost(navController = navController, startDestination = startDest) {
-
+            NavHost(
+                navController = navController,
+                startDestination = startDest,
+                enterTransition = { enterAnim },
+                exitTransition = { exitAnim },
+                popEnterTransition = { popEnterAnim },
+                popExitTransition = { popExitAnim }
+            ) {
                 // -- Auth Flow --
                 composable(Screen.Splash.route) {
                     SplashScreen(onSplashComplete = {
@@ -236,7 +254,17 @@ fun CIPHERNavigation() {
                     )
                 }
 
-                // -- Stealth Settings --
+                // -- Settings & Search --
+                composable(Screen.Settings.route) {
+                    SettingsScreen(
+                        onBack = { navController.popBackStack() },
+                        onStealthSetup = { navController.navigate(Screen.StealthSetup.route) },
+                        onIntruderLog = { navController.navigate(Screen.IntruderLog.route) }
+                    )
+                }
+                composable(Screen.Search.route) {
+                    SearchScreen(onBack = { navController.popBackStack() })
+                }
                 composable(Screen.StealthSetup.route) {
                     StealthSetupScreen(onBack = { navController.popBackStack() })
                 }

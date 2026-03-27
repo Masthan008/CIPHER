@@ -111,6 +111,9 @@ dependencies {
 
     // Security (encrypted shared prefs for PIN hash)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    // Glance (home screen widget)
+    implementation("androidx.glance:glance-appwidget:1.0.0")
 }
 
 kapt {

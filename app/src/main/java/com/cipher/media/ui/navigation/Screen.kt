@@ -17,6 +17,8 @@ sealed class Screen(val route: String) {
     data object Calculator : Screen("calculator")
     data object StealthSetup : Screen("stealth_setup")
     data object IntruderLog : Screen("intruder_log")
+    data object Settings : Screen("settings")
+    data object Search : Screen("search")
     data object VaultImageViewer : Screen("vault_image/{itemId}") {
         fun createRoute(itemId: String): String = "vault_image/$itemId"
     }
