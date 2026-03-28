@@ -1,0 +1,29 @@
+package com.cipher.media.ui.settings.theme.components;
+
+import androidx.compose.foundation.layout.*;
+import androidx.compose.material.icons.Icons;
+import androidx.compose.material.icons.filled.*;
+import androidx.compose.material3.*;
+import androidx.compose.runtime.Composable;
+import androidx.compose.ui.Alignment;
+import androidx.compose.ui.Modifier;
+import androidx.compose.ui.text.font.FontWeight;
+import androidx.compose.ui.text.style.TextOverflow;
+import com.cipher.media.data.model.audiofx.Tier;
+import com.cipher.media.ui.settings.theme.model.NowPlayingLayout;
+import com.cipher.media.ui.theme.*;
+
+@kotlin.Metadata(mv = {1, 9, 0}, k = 2, xi = 48, d1 = {"\u0000 \n\u0000\n\u0002\u0010\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\u001a6\u0010\u0000\u001a\u00020\u00012\u0006\u0010\u0002\u001a\u00020\u00032\u0006\u0010\u0004\u001a\u00020\u00052\u0012\u0010\u0006\u001a\u000e\u0012\u0004\u0012\u00020\u0003\u0012\u0004\u0012\u00020\u00010\u00072\b\b\u0002\u0010\b\u001a\u00020\tH\u0007\u00a8\u0006\n"}, d2 = {"NowPlayingLayoutPicker", "", "selectedLayout", "Lcom/cipher/media/ui/settings/theme/model/NowPlayingLayout;", "userTier", "Lcom/cipher/media/data/model/audiofx/Tier;", "onLayoutSelected", "Lkotlin/Function1;", "modifier", "Landroidx/compose/ui/Modifier;", "app_debug"})
+public final class NowPlayingLayoutPickerKt {
+    
+    /**
+     * Now Playing layout picker showing layout preview cards.
+     */
+    @androidx.compose.runtime.Composable()
+    public static final void NowPlayingLayoutPicker(@org.jetbrains.annotations.NotNull()
+    com.cipher.media.ui.settings.theme.model.NowPlayingLayout selectedLayout, @org.jetbrains.annotations.NotNull()
+    com.cipher.media.data.model.audiofx.Tier userTier, @org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.Function1<? super com.cipher.media.ui.settings.theme.model.NowPlayingLayout, kotlin.Unit> onLayoutSelected, @org.jetbrains.annotations.NotNull()
+    androidx.compose.ui.Modifier modifier) {
+    }
+}

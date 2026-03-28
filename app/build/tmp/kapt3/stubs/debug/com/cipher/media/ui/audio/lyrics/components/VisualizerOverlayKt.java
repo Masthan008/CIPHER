@@ -1,0 +1,17 @@
+package com.cipher.media.ui.audio.lyrics.components;
+
+import androidx.compose.animation.core.*;
+import androidx.compose.runtime.*;
+import androidx.compose.ui.Modifier;
+import androidx.compose.ui.graphics.Brush;
+import androidx.compose.ui.graphics.StrokeCap;
+import androidx.compose.ui.graphics.drawscope.DrawScope;
+import androidx.compose.ui.graphics.drawscope.Stroke;
+import androidx.compose.ui.unit.Dp;
+import com.cipher.media.ui.audio.lyrics.model.VisualizerSettings;
+import com.cipher.media.ui.audio.lyrics.model.VisualizerType;
+import kotlin.math.*;
+
+@kotlin.Metadata(mv = {1, 9, 0}, k = 2, xi = 48, d1 = {"\u0000@\n\u0000\n\u0002\u0010\u0002\n\u0000\n\u0002\u0010\u0014\n\u0000\n\u0002\u0010\u0012\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u0007\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\f\u001a>\u0010\u0000\u001a\u00020\u00012\u0006\u0010\u0002\u001a\u00020\u00032\u0006\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u00072\b\b\u0002\u0010\b\u001a\u00020\t2\b\b\u0002\u0010\n\u001a\u00020\u000bH\u0007\u00f8\u0001\u0000\u00a2\u0006\u0004\b\f\u0010\r\u001a*\u0010\u000e\u001a\u00020\u000f2\u0006\u0010\u0010\u001a\u00020\u000f2\u0006\u0010\u0011\u001a\u00020\u000f2\u0006\u0010\u0012\u001a\u00020\u0013H\u0002\u00f8\u0001\u0000\u00a2\u0006\u0004\b\u0014\u0010\u0015\u001a6\u0010\u0016\u001a\u00020\u0001*\u00020\u00172\u0006\u0010\u0002\u001a\u00020\u00032\u0006\u0010\u0018\u001a\u00020\u000f2\u0006\u0010\u0019\u001a\u00020\u000f2\u0006\u0010\u0006\u001a\u00020\u0007H\u0002\u00f8\u0001\u0000\u00a2\u0006\u0004\b\u001a\u0010\u001b\u001a6\u0010\u001c\u001a\u00020\u0001*\u00020\u00172\u0006\u0010\u0002\u001a\u00020\u00032\u0006\u0010\u0018\u001a\u00020\u000f2\u0006\u0010\u0019\u001a\u00020\u000f2\u0006\u0010\u0006\u001a\u00020\u0007H\u0002\u00f8\u0001\u0000\u00a2\u0006\u0004\b\u001d\u0010\u001b\u001a6\u0010\u001e\u001a\u00020\u0001*\u00020\u00172\u0006\u0010\u0002\u001a\u00020\u00032\u0006\u0010\u0018\u001a\u00020\u000f2\u0006\u0010\u0019\u001a\u00020\u000f2\u0006\u0010\u0006\u001a\u00020\u0007H\u0002\u00f8\u0001\u0000\u00a2\u0006\u0004\b\u001f\u0010\u001b\u001a.\u0010 \u001a\u00020\u0001*\u00020\u00172\u0006\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0018\u001a\u00020\u000f2\u0006\u0010\u0019\u001a\u00020\u000fH\u0002\u00f8\u0001\u0000\u00a2\u0006\u0004\b!\u0010\"\u0082\u0002\u0007\n\u0005\b\u00a1\u001e0\u0001\u00a8\u0006#"}, d2 = {"VisualizerOverlay", "", "fftData", "", "waveformData", "", "settings", "Lcom/cipher/media/ui/audio/lyrics/model/VisualizerSettings;", "modifier", "Landroidx/compose/ui/Modifier;", "height", "Landroidx/compose/ui/unit/Dp;", "VisualizerOverlay-M2VBTUQ", "([F[BLcom/cipher/media/ui/audio/lyrics/model/VisualizerSettings;Landroidx/compose/ui/Modifier;F)V", "lerp", "Landroidx/compose/ui/graphics/Color;", "a", "b", "fraction", "", "lerp-jxsXWHM", "(JJF)J", "drawCircular", "Landroidx/compose/ui/graphics/drawscope/DrawScope;", "primary", "secondary", "drawCircular-OoHUuok", "(Landroidx/compose/ui/graphics/drawscope/DrawScope;[FJJLcom/cipher/media/ui/audio/lyrics/model/VisualizerSettings;)V", "drawParticles", "drawParticles-OoHUuok", "drawSpectrumBars", "drawSpectrumBars-OoHUuok", "drawWaveform", "drawWaveform-0YGnOg8", "(Landroidx/compose/ui/graphics/drawscope/DrawScope;[BJJ)V", "app_debug"})
+public final class VisualizerOverlayKt {
+}

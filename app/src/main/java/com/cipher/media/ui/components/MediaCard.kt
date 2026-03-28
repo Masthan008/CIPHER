@@ -78,9 +78,11 @@ fun MediaCard(
                 detectTapGestures(
                     onPress = {
                         isPressed = true
-                        tryAwaitRelease()
+                        val released = tryAwaitRelease()
                         isPressed = false
-                        onClick()
+                        if (released) {
+                            onClick()
+                        }
                     }
                 )
             },
@@ -223,9 +225,11 @@ fun MediaListItem(
                 detectTapGestures(
                     onPress = {
                         isPressed = true
-                        tryAwaitRelease()
+                        val released = tryAwaitRelease()
                         isPressed = false
-                        onClick()
+                        if (released) {
+                            onClick()
+                        }
                     }
                 )
             },

@@ -171,6 +171,9 @@ dependencies {
     implementation("androidx.camera:camera-core:1.3.1")
     implementation("androidx.camera:camera-camera2:1.3.1")
     implementation("androidx.camera:camera-lifecycle:1.3.1")
+
+    // Palette (album art color extraction)
+    implementation("androidx.palette:palette-ktx:1.0.0")
 }
 
 kapt {

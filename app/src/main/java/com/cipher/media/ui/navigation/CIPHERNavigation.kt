@@ -27,7 +27,7 @@ import com.cipher.media.data.model.VaultItem
 import com.cipher.media.ui.audio.AudioBrowserScreen
 import com.cipher.media.ui.audio.AudioPlayerScreen
 import com.cipher.media.ui.audio.AudioPlayerViewModel
-import com.cipher.media.ui.audio.equalizer.EqualizerScreen
+import com.cipher.media.ui.audio.audiofx.components.EqualizerDialog
 import com.cipher.media.ui.auth.AuthScreen
 import com.cipher.media.ui.auth.OnboardingScreen
 import com.cipher.media.ui.auth.SplashScreen
@@ -132,30 +132,17 @@ fun CIPHERNavigation() {
         containerColor = CIPHERBackground,
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar(containerColor = CIPHERSurface, contentColor = CIPHERPrimary) {
-                    bottomNavItems.forEach { item ->
-                        val selected = currentDestination?.hierarchy?.any { it.route == item.screen.route } == true
-                        NavigationBarItem(
-                            icon = { Icon(item.icon, item.label) },
-                            label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
-                            selected = selected,
-                            onClick = {
-                                navController.navigate(item.screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = CIPHERPrimary,
-                                selectedTextColor = CIPHERPrimary,
-                                unselectedIconColor = CIPHEROnSurfaceVariant,
-                                unselectedTextColor = CIPHEROnSurfaceVariant,
-                                indicatorColor = CIPHERSurface
-                            )
-                        )
+                com.cipher.media.ui.navigation.components.LiquidGlassDock(
+                    items = bottomNavItems,
+                    currentRoute = currentDestination?.route,
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
-                }
+                )
             }
         }
     ) { innerPadding ->
@@ -241,7 +228,7 @@ fun CIPHERNavigation() {
                     )
                 }
                 composable(Screen.Equalizer.route) {
-                    EqualizerScreen(onBack = { navController.popBackStack() })
+                    EqualizerDialog(onDismiss = { navController.popBackStack() })
                 }
                 composable(Screen.CloudSync.route) {
                     com.cipher.media.ui.settings.cloud.CloudSyncScreen(onNavigateBack = { navController.popBackStack() })
