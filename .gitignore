@@ -1,24 +1,31 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Gradle files
+.gradle/
+build/
 
-node_modules
-dist
-dist-ssr
-*.local
+# Local configuration file (sdk path, etc)
+local.properties
+.env.properties
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Android Studio / IntelliJ
+.idea/
+*.iml
+.vscode/
+
+# OS files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.swp
+*.swo
+
+# Keystore files (do not commit)
+*.jks
+*.keystore
+
+# Google Services (contains API keys)
+app/google-services.json
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp

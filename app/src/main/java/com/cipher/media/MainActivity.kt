@@ -27,14 +27,11 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             val settings by settingsRepository.state.collectAsState()
-            
-            val isDark = when (settings.themeId) {
-                "light" -> false
-                "dark" -> true
-                else -> isSystemInDarkTheme()
-            }
 
-            CIPHERTheme(darkTheme = isDark) {
+            CIPHERTheme(
+                themeId = settings.themeId,
+                accentColorName = settings.accentColorName
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = androidx.compose.material3.MaterialTheme.colorScheme.background

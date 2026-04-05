@@ -13,15 +13,18 @@ import com.cipher.media.data.local.VaultDao;
 import com.cipher.media.data.local.IntruderLogDao;
 import com.cipher.media.data.repository.EqualizerRepository;
 import com.cipher.media.data.repository.MediaRepository;
+import com.cipher.media.service.PlayerManager;
+import com.google.gson.Gson;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
+import okhttp3.OkHttpClient;
 import javax.inject.Singleton;
 
 @dagger.Module()
-@kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\u0082\u0001\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\b\u00c7\u0002\u0018\u00002\u00020\u0001B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002J\u0012\u0010\u0003\u001a\u00020\u00042\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\u0012\u0010\u0007\u001a\u00020\b2\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\u0010\u0010\t\u001a\u00020\n2\u0006\u0010\u000b\u001a\u00020\bH\u0007J\u0012\u0010\f\u001a\u00020\r2\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\b\u0010\u000e\u001a\u00020\u000fH\u0007J\u001a\u0010\u0010\u001a\u00020\u00112\b\b\u0001\u0010\u0005\u001a\u00020\u00062\u0006\u0010\u0012\u001a\u00020\u0013H\u0007J\u0012\u0010\u0014\u001a\u00020\u00152\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\u0010\u0010\u0016\u001a\u00020\u00172\u0006\u0010\u0018\u001a\u00020\u0011H\u0007J\b\u0010\u0019\u001a\u00020\u0013H\u0007J\u0010\u0010\u001a\u001a\u00020\u001b2\u0006\u0010\u0018\u001a\u00020\u001cH\u0007J\u0012\u0010\u001d\u001a\u00020\u001c2\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\u0010\u0010\u001e\u001a\u00020\u001f2\u0006\u0010 \u001a\u00020\rH\u0007J\u0010\u0010!\u001a\u00020\"2\u0006\u0010\u0018\u001a\u00020\u001cH\u0007J\u0010\u0010#\u001a\u00020$2\u0006\u0010%\u001a\u00020\"H\u0007J\u0010\u0010&\u001a\u00020\'2\u0006\u0010\u0018\u001a\u00020\u0011H\u0007J\"\u0010(\u001a\u00020)2\b\b\u0001\u0010\u0005\u001a\u00020\u00062\u0006\u0010\u0012\u001a\u00020\u00132\u0006\u0010*\u001a\u00020\u000fH\u0007J\u0010\u0010+\u001a\u00020,2\u0006\u0010\u0018\u001a\u00020\u001cH\u0007\u00a8\u0006-"}, d2 = {"Lcom/cipher/media/di/AppModule;", "", "()V", "provideAdManager", "Lcom/cipher/media/ads/AdManager;", "context", "Landroid/content/Context;", "provideBillingManager", "Lcom/cipher/media/billing/BillingManager;", "provideBillingRepository", "Lcom/cipher/media/billing/BillingRepository;", "billingManager", "provideContentResolver", "Landroid/content/ContentResolver;", "provideCryptoUtil", "Lcom/cipher/media/data/encryption/CryptoUtil;", "provideEncryptedDatabase", "Lcom/cipher/media/data/local/EncryptedDatabase;", "keystoreManager", "Lcom/cipher/media/data/encryption/KeystoreManager;", "provideEqualizerRepository", "Lcom/cipher/media/data/repository/EqualizerRepository;", "provideIntruderLogDao", "Lcom/cipher/media/data/local/IntruderLogDao;", "database", "provideKeystoreManager", "provideMediaDao", "Lcom/cipher/media/data/local/MediaDao;", "Lcom/cipher/media/data/local/MediaDatabase;", "provideMediaDatabase", "provideMediaRepository", "Lcom/cipher/media/data/repository/MediaRepository;", "contentResolver", "provideQueueDao", "Lcom/cipher/media/ui/audio/queue/model/QueueDao;", "provideQueueRepository", "Lcom/cipher/media/ui/audio/queue/QueueRepository;", "queueDao", "provideVaultDao", "Lcom/cipher/media/data/local/VaultDao;", "provideVaultEncryptionManager", "Lcom/cipher/media/data/encryption/VaultEncryptionManager;", "cryptoUtil", "provideVideoPreferencesDao", "Lcom/cipher/media/data/local/VideoPreferencesDao;", "app_debug"})
+@kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\u0094\u0001\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\b\u00c7\u0002\u0018\u00002\u00020\u0001B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002J\u0012\u0010\u0003\u001a\u00020\u00042\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\u0012\u0010\u0007\u001a\u00020\b2\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\u0010\u0010\t\u001a\u00020\n2\u0006\u0010\u000b\u001a\u00020\bH\u0007J\u0012\u0010\f\u001a\u00020\r2\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\b\u0010\u000e\u001a\u00020\u000fH\u0007J\u001a\u0010\u0010\u001a\u00020\u00112\b\b\u0001\u0010\u0005\u001a\u00020\u00062\u0006\u0010\u0012\u001a\u00020\u0013H\u0007J\u0012\u0010\u0014\u001a\u00020\u00152\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\b\u0010\u0016\u001a\u00020\u0017H\u0007J\u0010\u0010\u0018\u001a\u00020\u00192\u0006\u0010\u001a\u001a\u00020\u0011H\u0007J\b\u0010\u001b\u001a\u00020\u0013H\u0007J\u0010\u0010\u001c\u001a\u00020\u001d2\u0006\u0010\u001a\u001a\u00020\u001eH\u0007J\u0012\u0010\u001f\u001a\u00020\u001e2\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\u0010\u0010 \u001a\u00020!2\u0006\u0010\"\u001a\u00020\rH\u0007J\b\u0010#\u001a\u00020$H\u0007J\u0012\u0010%\u001a\u00020&2\b\b\u0001\u0010\u0005\u001a\u00020\u0006H\u0007J\u0010\u0010\'\u001a\u00020(2\u0006\u0010\u001a\u001a\u00020\u001eH\u0007J\u0010\u0010)\u001a\u00020*2\u0006\u0010+\u001a\u00020(H\u0007J\u0010\u0010,\u001a\u00020-2\u0006\u0010\u001a\u001a\u00020\u0011H\u0007J\"\u0010.\u001a\u00020/2\b\b\u0001\u0010\u0005\u001a\u00020\u00062\u0006\u0010\u0012\u001a\u00020\u00132\u0006\u00100\u001a\u00020\u000fH\u0007J\u0010\u00101\u001a\u0002022\u0006\u0010\u001a\u001a\u00020\u001eH\u0007\u00a8\u00063"}, d2 = {"Lcom/cipher/media/di/AppModule;", "", "()V", "provideAdManager", "Lcom/cipher/media/ads/AdManager;", "context", "Landroid/content/Context;", "provideBillingManager", "Lcom/cipher/media/billing/BillingManager;", "provideBillingRepository", "Lcom/cipher/media/billing/BillingRepository;", "billingManager", "provideContentResolver", "Landroid/content/ContentResolver;", "provideCryptoUtil", "Lcom/cipher/media/data/encryption/CryptoUtil;", "provideEncryptedDatabase", "Lcom/cipher/media/data/local/EncryptedDatabase;", "keystoreManager", "Lcom/cipher/media/data/encryption/KeystoreManager;", "provideEqualizerRepository", "Lcom/cipher/media/data/repository/EqualizerRepository;", "provideGson", "Lcom/google/gson/Gson;", "provideIntruderLogDao", "Lcom/cipher/media/data/local/IntruderLogDao;", "database", "provideKeystoreManager", "provideMediaDao", "Lcom/cipher/media/data/local/MediaDao;", "Lcom/cipher/media/data/local/MediaDatabase;", "provideMediaDatabase", "provideMediaRepository", "Lcom/cipher/media/data/repository/MediaRepository;", "contentResolver", "provideOkHttpClient", "Lokhttp3/OkHttpClient;", "providePlayerManager", "Lcom/cipher/media/service/PlayerManager;", "provideQueueDao", "Lcom/cipher/media/ui/audio/queue/model/QueueDao;", "provideQueueRepository", "Lcom/cipher/media/ui/audio/queue/QueueRepository;", "queueDao", "provideVaultDao", "Lcom/cipher/media/data/local/VaultDao;", "provideVaultEncryptionManager", "Lcom/cipher/media/data/encryption/VaultEncryptionManager;", "cryptoUtil", "provideVideoPreferencesDao", "Lcom/cipher/media/data/local/VideoPreferencesDao;", "app_debug"})
 @dagger.hilt.InstallIn(value = {dagger.hilt.components.SingletonComponent.class})
 public final class AppModule {
     @org.jetbrains.annotations.NotNull()
@@ -172,6 +175,29 @@ public final class AppModule {
     @org.jetbrains.annotations.NotNull()
     public final com.cipher.media.ui.audio.queue.QueueRepository provideQueueRepository(@org.jetbrains.annotations.NotNull()
     com.cipher.media.ui.audio.queue.model.QueueDao queueDao) {
+        return null;
+    }
+    
+    @dagger.Provides()
+    @javax.inject.Singleton()
+    @org.jetbrains.annotations.NotNull()
+    public final okhttp3.OkHttpClient provideOkHttpClient() {
+        return null;
+    }
+    
+    @dagger.Provides()
+    @javax.inject.Singleton()
+    @org.jetbrains.annotations.NotNull()
+    public final com.google.gson.Gson provideGson() {
+        return null;
+    }
+    
+    @dagger.Provides()
+    @javax.inject.Singleton()
+    @org.jetbrains.annotations.NotNull()
+    public final com.cipher.media.service.PlayerManager providePlayerManager(@dagger.hilt.android.qualifiers.ApplicationContext()
+    @org.jetbrains.annotations.NotNull()
+    android.content.Context context) {
         return null;
     }
 }

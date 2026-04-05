@@ -8,6 +8,7 @@ import com.cipher.media.ui.audio.AudioPlayerViewModel_HiltModules;
 import com.cipher.media.ui.audio.audiofx.EqualizerViewModel_HiltModules;
 import com.cipher.media.ui.audio.library.LibraryViewModel_HiltModules;
 import com.cipher.media.ui.audio.queue.QueueViewModel_HiltModules;
+import com.cipher.media.ui.online.OnlineMusicViewModel_HiltModules;
 import com.cipher.media.ui.premium.PremiumViewModel_HiltModules;
 import com.cipher.media.ui.search.SearchViewModel_HiltModules;
 import com.cipher.media.ui.settings.SettingsViewModel_HiltModules;
@@ -181,6 +182,7 @@ public final class CIPHERApplication_HiltComponents {
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           LibraryViewModel_HiltModules.KeyModule.class,
+          OnlineMusicViewModel_HiltModules.KeyModule.class,
           PremiumViewModel_HiltModules.KeyModule.class,
           QueueViewModel_HiltModules.KeyModule.class,
           SearchViewModel_HiltModules.KeyModule.class,
@@ -232,6 +234,7 @@ public final class CIPHERApplication_HiltComponents {
           EqualizerViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           LibraryViewModel_HiltModules.BindsModule.class,
+          OnlineMusicViewModel_HiltModules.BindsModule.class,
           PremiumViewModel_HiltModules.BindsModule.class,
           QueueViewModel_HiltModules.BindsModule.class,
           SearchViewModel_HiltModules.BindsModule.class,

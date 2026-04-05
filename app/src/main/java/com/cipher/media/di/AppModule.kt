@@ -13,11 +13,14 @@ import com.cipher.media.data.local.VaultDao
 import com.cipher.media.data.local.IntruderLogDao
 import com.cipher.media.data.repository.EqualizerRepository
 import com.cipher.media.data.repository.MediaRepository
+import com.cipher.media.service.PlayerManager
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
@@ -140,5 +143,26 @@ object AppModule {
     @Singleton
     fun provideQueueRepository(queueDao: com.cipher.media.ui.audio.queue.model.QueueDao): com.cipher.media.ui.audio.queue.QueueRepository {
         return com.cipher.media.ui.audio.queue.QueueRepository(queueDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return Gson()
+    }
+
+    @Provides
+    @Singleton
+    fun providePlayerManager(@ApplicationContext context: Context): PlayerManager {
+        return PlayerManager(context)
     }
 }

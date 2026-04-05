@@ -4,7 +4,7 @@
             "outputFile": "com.cipher.media.app-mergeDebugResources-111:/values-v29/values-v29.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\masth\\.gradle\\caches\\8.13\\transforms\\65e813a8e9044797ffbdced1d5ecfdf5\\transformed\\glance-appwidget-1.0.0\\res\\values-v29\\values-v29.xml",
+                    "source": "C:\\Users\\masth\\.gradle\\caches\\8.14\\transforms\\b2ab2a197a42cd65b7ced93badba8cfd\\transformed\\glance-appwidget-1.0.0\\res\\values-v29\\values-v29.xml",
                     "from": {
                         "startLines": "2,6,10,14,15,16",
                         "startColumns": "4,4,4,4,4,4",

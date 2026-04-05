@@ -8,6 +8,9 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import com.cipher.media.ui.settings.theme.ThemeManager
+import com.cipher.media.ui.settings.theme.model.AccentColor
 
 private val CIPHERColorScheme = darkColorScheme(
     primary = CIPHERPrimary,
@@ -61,11 +64,21 @@ private val CIPHERShapes = Shapes(
 
 @Composable
 fun CIPHERTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeId: String = "dark",
+    accentColorName: String = "SAFFRON",
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) CIPHERColorScheme else CIPHERLightColorScheme
+    val context = LocalContext.current
+    val themeManager = ThemeManager(context)
     
+    val accentColor = try {
+        AccentColor.valueOf(accentColorName)
+    } catch (e: Exception) {
+        AccentColor.SAFFRON
+    }
+    
+    val colorScheme = themeManager.buildColorScheme(themeId, accentColor)
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = CIPHERTypography,

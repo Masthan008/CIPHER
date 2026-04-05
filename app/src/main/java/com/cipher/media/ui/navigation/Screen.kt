@@ -34,4 +34,6 @@ sealed class Screen(val route: String) {
     data object NetworkPlayer : Screen("network_player/{streamUrl}") {
         fun createRoute(streamUrl: String): String = "network_player/$streamUrl"
     }
+    data object OnlineMusic : Screen("online_music")
+    data object OnlinePlayer : Screen("online_player")
 }

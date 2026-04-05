@@ -122,7 +122,7 @@ public final class MediaDao_Impl implements MediaDao {
   }
 
   @Override
-  public Object insertMedia(final MediaEntity media, final Continuation<? super Unit> arg1) {
+  public Object insertMedia(final MediaEntity media, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -136,11 +136,12 @@ public final class MediaDao_Impl implements MediaDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
-  public Object insertAll(final List<MediaEntity> media, final Continuation<? super Unit> arg1) {
+  public Object insertAll(final List<MediaEntity> media,
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -154,11 +155,11 @@ public final class MediaDao_Impl implements MediaDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
-  public Object deleteMedia(final MediaEntity media, final Continuation<? super Unit> arg1) {
+  public Object deleteMedia(final MediaEntity media, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -172,11 +173,11 @@ public final class MediaDao_Impl implements MediaDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
-  public Object deleteById(final long id, final Continuation<? super Unit> arg1) {
+  public Object deleteById(final long id, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -197,12 +198,12 @@ public final class MediaDao_Impl implements MediaDao {
           __preparedStmtOfDeleteById.release(_stmt);
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
   public Object setFavorite(final long id, final boolean isFavorite,
-      final Continuation<? super Unit> arg2) {
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -226,11 +227,11 @@ public final class MediaDao_Impl implements MediaDao {
           __preparedStmtOfSetFavorite.release(_stmt);
         }
       }
-    }, arg2);
+    }, $completion);
   }
 
   @Override
-  public Object getAllMedia(final Continuation<? super List<MediaEntity>> arg0) {
+  public Object getAllMedia(final Continuation<? super List<MediaEntity>> $completion) {
     final String _sql = "SELECT * FROM media_items ORDER BY dateAdded DESC";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
     final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
@@ -309,11 +310,11 @@ public final class MediaDao_Impl implements MediaDao {
           _statement.release();
         }
       }
-    }, arg0);
+    }, $completion);
   }
 
   @Override
-  public Object getVaultedMedia(final Continuation<? super List<MediaEntity>> arg0) {
+  public Object getVaultedMedia(final Continuation<? super List<MediaEntity>> $completion) {
     final String _sql = "SELECT * FROM media_items WHERE isVaulted = 1 ORDER BY dateAdded DESC";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
     final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
@@ -392,11 +393,11 @@ public final class MediaDao_Impl implements MediaDao {
           _statement.release();
         }
       }
-    }, arg0);
+    }, $completion);
   }
 
   @Override
-  public Object getFavoriteMedia(final Continuation<? super List<MediaEntity>> arg0) {
+  public Object getFavoriteMedia(final Continuation<? super List<MediaEntity>> $completion) {
     final String _sql = "SELECT * FROM media_items WHERE isFavorite = 1 ORDER BY dateAdded DESC";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
     final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
@@ -475,11 +476,11 @@ public final class MediaDao_Impl implements MediaDao {
           _statement.release();
         }
       }
-    }, arg0);
+    }, $completion);
   }
 
   @Override
-  public Object isFavorite(final long id, final Continuation<? super Boolean> arg1) {
+  public Object isFavorite(final long id, final Continuation<? super Boolean> $completion) {
     final String _sql = "SELECT isFavorite FROM media_items WHERE id = ?";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
@@ -509,7 +510,7 @@ public final class MediaDao_Impl implements MediaDao {
           _statement.release();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @NonNull

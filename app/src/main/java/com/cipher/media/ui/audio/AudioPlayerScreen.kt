@@ -3,6 +3,7 @@ package com.cipher.media.ui.audio
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -234,7 +235,16 @@ fun AudioPlayerScreen(
 
             // Action row
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                CIPHERIconButton(icon = Icons.Default.Equalizer, onClick = { showEqualizer = true }, tint = CIPHERPrimary)
+                Box(
+                    modifier = Modifier
+                        .clickable { showEqualizer = true }
+                ) {
+                    CIPHERIconButton(
+                        icon = Icons.Default.Equalizer,
+                        onClick = { showEqualizer = true },
+                        tint = CIPHERPrimary
+                    )
+                }
                 CIPHERIconButton(
                     icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     onClick = {

@@ -55,12 +55,14 @@ import com.cipher.media.ui.vault.viewer.EncryptedImageViewer
 import com.cipher.media.ui.vault.viewer.EncryptedVideoPlayer
 import com.cipher.media.ui.video.VideoBrowserScreen
 import com.cipher.media.ui.video.VideoPlayerScreen
+import com.cipher.media.ui.online.OnlineMusicScreen
 
 data class BottomNavItem(val screen: Screen, val label: String, val icon: ImageVector)
 
 val bottomNavItems = listOf(
     BottomNavItem(Screen.VideoBrowser, "Video", Icons.Default.VideoLibrary),
     BottomNavItem(Screen.AudioBrowser, "Music", Icons.Default.MusicNote),
+    BottomNavItem(Screen.OnlineMusic, "Online", Icons.Default.Language),
     BottomNavItem(Screen.VaultAuth, "Vault", Icons.Default.Lock)
 )
 
@@ -221,13 +223,19 @@ fun CIPHERNavigation() {
                         viewModel = audioViewModel
                     )
                 }
-                composable(Screen.AudioPlayer.route) {
-                    AudioPlayerScreen(
-                        viewModel = audioViewModel,
-                        onBack = { navController.popBackStack() }
-                    )
-                }
-                composable(Screen.CloudSync.route) {
+            composable(Screen.AudioPlayer.route) {
+                AudioPlayerScreen(
+                    viewModel = audioViewModel,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            // -- Online Music (Jamendo) --
+            composable(Screen.OnlineMusic.route) {
+                OnlineMusicScreen(
+                    onNavigateToPlayer = { navController.navigate(Screen.OnlinePlayer.route) }
+                )
+            }
+            composable(Screen.CloudSync.route) {
                     com.cipher.media.ui.settings.cloud.CloudSyncScreen(onNavigateBack = { navController.popBackStack() })
                 }
 

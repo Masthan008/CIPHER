@@ -245,16 +245,11 @@ fun SettingsScreen(
                     settings.cloudSync, settings.isPro) { viewModel.setCloudSync(it) }
             }
 
-            // ═══════════════════════════════════════════
-            //  PREMIUM & ABOUT
-            // ═══════════════════════════════════════════
-            SettingsSection(stringResource(R.string.premium_section)) {
-                SettingsItem(Icons.Default.Star, stringResource(R.string.go_premium), stringResource(R.string.go_premium_desc), tint = CIPHERPrimary) {
-                    onNavigateTo("premium")
-                }
-            }
+// ═══════════════════════════════════════════
+// ABOUT
+// ═══════════════════════════════════════════
 
-            SettingsSection(stringResource(R.string.about_section)) {
+SettingsSection(stringResource(R.string.about_section)) {
                 SettingsItem(Icons.Default.Info, stringResource(R.string.version), "1.0.0") {
                     Toast.makeText(context, context.getString(R.string.version_info_toast), Toast.LENGTH_SHORT).show()
                 }

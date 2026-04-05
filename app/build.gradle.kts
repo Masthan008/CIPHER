@@ -175,6 +175,12 @@ dependencies {
 
     // Palette (album art color extraction)
     implementation("androidx.palette:palette-ktx:1.0.0")
+
+    // OkHttp for API calls (Jamendo)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // Gson for JSON parsing
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 kapt {

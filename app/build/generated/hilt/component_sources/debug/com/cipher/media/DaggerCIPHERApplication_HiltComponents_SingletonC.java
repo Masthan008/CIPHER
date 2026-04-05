@@ -21,6 +21,8 @@ import com.cipher.media.data.local.IntruderLogDao;
 import com.cipher.media.data.local.MediaDao;
 import com.cipher.media.data.local.MediaDatabase;
 import com.cipher.media.data.local.VaultDao;
+import com.cipher.media.data.online.OnlineMusicRepository;
+import com.cipher.media.data.online.jamendo.JamendoApi;
 import com.cipher.media.data.repository.EqualizerRepository;
 import com.cipher.media.data.repository.FavoritesRepository;
 import com.cipher.media.data.repository.MediaRepository;
@@ -31,11 +33,14 @@ import com.cipher.media.di.AppModule_ProvideContentResolverFactory;
 import com.cipher.media.di.AppModule_ProvideCryptoUtilFactory;
 import com.cipher.media.di.AppModule_ProvideEncryptedDatabaseFactory;
 import com.cipher.media.di.AppModule_ProvideEqualizerRepositoryFactory;
+import com.cipher.media.di.AppModule_ProvideGsonFactory;
 import com.cipher.media.di.AppModule_ProvideIntruderLogDaoFactory;
 import com.cipher.media.di.AppModule_ProvideKeystoreManagerFactory;
 import com.cipher.media.di.AppModule_ProvideMediaDaoFactory;
 import com.cipher.media.di.AppModule_ProvideMediaDatabaseFactory;
 import com.cipher.media.di.AppModule_ProvideMediaRepositoryFactory;
+import com.cipher.media.di.AppModule_ProvideOkHttpClientFactory;
+import com.cipher.media.di.AppModule_ProvidePlayerManagerFactory;
 import com.cipher.media.di.AppModule_ProvideQueueDaoFactory;
 import com.cipher.media.di.AppModule_ProvideQueueRepositoryFactory;
 import com.cipher.media.di.AppModule_ProvideVaultDaoFactory;
@@ -47,6 +52,7 @@ import com.cipher.media.di.PlayerModule_ProvideExoPlayerBuilderFactory;
 import com.cipher.media.domain.usecase.GetLocalMediaUseCase;
 import com.cipher.media.service.AudioPlaybackService;
 import com.cipher.media.service.AudioPlaybackService_MembersInjector;
+import com.cipher.media.service.PlayerManager;
 import com.cipher.media.ui.audio.AudioPlayerViewModel;
 import com.cipher.media.ui.audio.AudioPlayerViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.cipher.media.ui.audio.audiofx.AudioEffectsManager;
@@ -59,6 +65,8 @@ import com.cipher.media.ui.audio.queue.QueueRepository;
 import com.cipher.media.ui.audio.queue.QueueViewModel;
 import com.cipher.media.ui.audio.queue.QueueViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.cipher.media.ui.audio.queue.model.QueueDao;
+import com.cipher.media.ui.online.OnlineMusicViewModel;
+import com.cipher.media.ui.online.OnlineMusicViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.cipher.media.ui.premium.PremiumViewModel;
 import com.cipher.media.ui.premium.PremiumViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.cipher.media.ui.search.SearchViewModel;
@@ -86,6 +94,7 @@ import com.cipher.media.ui.video.subtitle.SubtitleViewModel_HiltModules_KeyModul
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.gson.Gson;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -108,6 +117,7 @@ import dagger.internal.Provider;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
+import okhttp3.OkHttpClient;
 
 @DaggerGenerated
 @Generated(
@@ -441,7 +451,7 @@ public final class DaggerCIPHERApplication_HiltComponents_SingletonC {
 
     @Override
     public Set<String> getViewModelKeys() {
-      return ImmutableSet.<String>of(AudioPlayerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), CloudSyncViewModel_HiltModules_KeyModule_ProvideFactory.provide(), EqualizerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), LibraryViewModel_HiltModules_KeyModule_ProvideFactory.provide(), PremiumViewModel_HiltModules_KeyModule_ProvideFactory.provide(), QueueViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SearchViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SettingsViewModel_HiltModules_KeyModule_ProvideFactory.provide(), StealthViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SubtitleViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VaultViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VideoBrowserViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VideoEnhancementViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VideoEqualizerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VideoPlayerViewModel_HiltModules_KeyModule_ProvideFactory.provide());
+      return ImmutableSet.<String>of(AudioPlayerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), CloudSyncViewModel_HiltModules_KeyModule_ProvideFactory.provide(), EqualizerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), LibraryViewModel_HiltModules_KeyModule_ProvideFactory.provide(), OnlineMusicViewModel_HiltModules_KeyModule_ProvideFactory.provide(), PremiumViewModel_HiltModules_KeyModule_ProvideFactory.provide(), QueueViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SearchViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SettingsViewModel_HiltModules_KeyModule_ProvideFactory.provide(), StealthViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SubtitleViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VaultViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VideoBrowserViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VideoEnhancementViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VideoEqualizerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), VideoPlayerViewModel_HiltModules_KeyModule_ProvideFactory.provide());
     }
 
     @Override
@@ -480,6 +490,8 @@ public final class DaggerCIPHERApplication_HiltComponents_SingletonC {
     private Provider<EqualizerViewModel> equalizerViewModelProvider;
 
     private Provider<LibraryViewModel> libraryViewModelProvider;
+
+    private Provider<OnlineMusicViewModel> onlineMusicViewModelProvider;
 
     private Provider<PremiumViewModel> premiumViewModelProvider;
 
@@ -524,22 +536,23 @@ public final class DaggerCIPHERApplication_HiltComponents_SingletonC {
       this.cloudSyncViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
       this.equalizerViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
       this.libraryViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
-      this.premiumViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
-      this.queueViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
-      this.searchViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
-      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 7);
-      this.stealthViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 8);
-      this.subtitleViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 9);
-      this.vaultViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 10);
-      this.videoBrowserViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 11);
-      this.videoEnhancementViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 12);
-      this.videoEqualizerViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 13);
-      this.videoPlayerViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 14);
+      this.onlineMusicViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
+      this.premiumViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
+      this.queueViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
+      this.searchViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 7);
+      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 8);
+      this.stealthViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 9);
+      this.subtitleViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 10);
+      this.vaultViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 11);
+      this.videoBrowserViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 12);
+      this.videoEnhancementViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 13);
+      this.videoEqualizerViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 14);
+      this.videoPlayerViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 15);
     }
 
     @Override
     public Map<String, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return ImmutableMap.<String, javax.inject.Provider<ViewModel>>builderWithExpectedSize(15).put("com.cipher.media.ui.audio.AudioPlayerViewModel", ((Provider) audioPlayerViewModelProvider)).put("com.cipher.media.ui.settings.cloud.CloudSyncViewModel", ((Provider) cloudSyncViewModelProvider)).put("com.cipher.media.ui.audio.audiofx.EqualizerViewModel", ((Provider) equalizerViewModelProvider)).put("com.cipher.media.ui.audio.library.LibraryViewModel", ((Provider) libraryViewModelProvider)).put("com.cipher.media.ui.premium.PremiumViewModel", ((Provider) premiumViewModelProvider)).put("com.cipher.media.ui.audio.queue.QueueViewModel", ((Provider) queueViewModelProvider)).put("com.cipher.media.ui.search.SearchViewModel", ((Provider) searchViewModelProvider)).put("com.cipher.media.ui.settings.SettingsViewModel", ((Provider) settingsViewModelProvider)).put("com.cipher.media.ui.stealth.StealthViewModel", ((Provider) stealthViewModelProvider)).put("com.cipher.media.ui.video.subtitle.SubtitleViewModel", ((Provider) subtitleViewModelProvider)).put("com.cipher.media.ui.vault.VaultViewModel", ((Provider) vaultViewModelProvider)).put("com.cipher.media.ui.video.VideoBrowserViewModel", ((Provider) videoBrowserViewModelProvider)).put("com.cipher.media.ui.video.enhancement.VideoEnhancementViewModel", ((Provider) videoEnhancementViewModelProvider)).put("com.cipher.media.ui.video.audio.VideoEqualizerViewModel", ((Provider) videoEqualizerViewModelProvider)).put("com.cipher.media.ui.video.VideoPlayerViewModel", ((Provider) videoPlayerViewModelProvider)).build();
+      return ImmutableMap.<String, javax.inject.Provider<ViewModel>>builderWithExpectedSize(16).put("com.cipher.media.ui.audio.AudioPlayerViewModel", ((Provider) audioPlayerViewModelProvider)).put("com.cipher.media.ui.settings.cloud.CloudSyncViewModel", ((Provider) cloudSyncViewModelProvider)).put("com.cipher.media.ui.audio.audiofx.EqualizerViewModel", ((Provider) equalizerViewModelProvider)).put("com.cipher.media.ui.audio.library.LibraryViewModel", ((Provider) libraryViewModelProvider)).put("com.cipher.media.ui.online.OnlineMusicViewModel", ((Provider) onlineMusicViewModelProvider)).put("com.cipher.media.ui.premium.PremiumViewModel", ((Provider) premiumViewModelProvider)).put("com.cipher.media.ui.audio.queue.QueueViewModel", ((Provider) queueViewModelProvider)).put("com.cipher.media.ui.search.SearchViewModel", ((Provider) searchViewModelProvider)).put("com.cipher.media.ui.settings.SettingsViewModel", ((Provider) settingsViewModelProvider)).put("com.cipher.media.ui.stealth.StealthViewModel", ((Provider) stealthViewModelProvider)).put("com.cipher.media.ui.video.subtitle.SubtitleViewModel", ((Provider) subtitleViewModelProvider)).put("com.cipher.media.ui.vault.VaultViewModel", ((Provider) vaultViewModelProvider)).put("com.cipher.media.ui.video.VideoBrowserViewModel", ((Provider) videoBrowserViewModelProvider)).put("com.cipher.media.ui.video.enhancement.VideoEnhancementViewModel", ((Provider) videoEnhancementViewModelProvider)).put("com.cipher.media.ui.video.audio.VideoEqualizerViewModel", ((Provider) videoEqualizerViewModelProvider)).put("com.cipher.media.ui.video.VideoPlayerViewModel", ((Provider) videoPlayerViewModelProvider)).build();
     }
 
     @Override
@@ -580,37 +593,40 @@ public final class DaggerCIPHERApplication_HiltComponents_SingletonC {
           case 3: // com.cipher.media.ui.audio.library.LibraryViewModel 
           return (T) new LibraryViewModel(singletonCImpl.provideMediaRepositoryProvider.get(), singletonCImpl.tagEditorManagerProvider.get());
 
-          case 4: // com.cipher.media.ui.premium.PremiumViewModel 
+          case 4: // com.cipher.media.ui.online.OnlineMusicViewModel 
+          return (T) new OnlineMusicViewModel(singletonCImpl.onlineMusicRepositoryProvider.get(), singletonCImpl.providePlayerManagerProvider.get());
+
+          case 5: // com.cipher.media.ui.premium.PremiumViewModel 
           return (T) new PremiumViewModel(singletonCImpl.provideBillingManagerProvider.get(), singletonCImpl.provideBillingRepositoryProvider.get());
 
-          case 5: // com.cipher.media.ui.audio.queue.QueueViewModel 
+          case 6: // com.cipher.media.ui.audio.queue.QueueViewModel 
           return (T) new QueueViewModel(singletonCImpl.provideQueueRepositoryProvider.get(), singletonCImpl.provideBillingRepositoryProvider.get());
 
-          case 6: // com.cipher.media.ui.search.SearchViewModel 
+          case 7: // com.cipher.media.ui.search.SearchViewModel 
           return (T) new SearchViewModel(singletonCImpl.provideContentResolverProvider.get());
 
-          case 7: // com.cipher.media.ui.settings.SettingsViewModel 
+          case 8: // com.cipher.media.ui.settings.SettingsViewModel 
           return (T) new SettingsViewModel(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.settingsRepositoryProvider.get(), singletonCImpl.languageManagerProvider.get());
 
-          case 8: // com.cipher.media.ui.stealth.StealthViewModel 
+          case 9: // com.cipher.media.ui.stealth.StealthViewModel 
           return (T) new StealthViewModel(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideIntruderLogDaoProvider.get());
 
-          case 9: // com.cipher.media.ui.video.subtitle.SubtitleViewModel 
+          case 10: // com.cipher.media.ui.video.subtitle.SubtitleViewModel 
           return (T) new SubtitleViewModel(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 10: // com.cipher.media.ui.vault.VaultViewModel 
+          case 11: // com.cipher.media.ui.vault.VaultViewModel 
           return (T) new VaultViewModel(singletonCImpl.provideVaultDaoProvider.get(), singletonCImpl.provideVaultEncryptionManagerProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 11: // com.cipher.media.ui.video.VideoBrowserViewModel 
+          case 12: // com.cipher.media.ui.video.VideoBrowserViewModel 
           return (T) new VideoBrowserViewModel(viewModelCImpl.getLocalMediaUseCase());
 
-          case 12: // com.cipher.media.ui.video.enhancement.VideoEnhancementViewModel 
+          case 13: // com.cipher.media.ui.video.enhancement.VideoEnhancementViewModel 
           return (T) new VideoEnhancementViewModel(singletonCImpl.provideBillingRepositoryProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 13: // com.cipher.media.ui.video.audio.VideoEqualizerViewModel 
+          case 14: // com.cipher.media.ui.video.audio.VideoEqualizerViewModel 
           return (T) new VideoEqualizerViewModel(singletonCImpl.provideBillingRepositoryProvider.get());
 
-          case 14: // com.cipher.media.ui.video.VideoPlayerViewModel 
+          case 15: // com.cipher.media.ui.video.VideoPlayerViewModel 
           return (T) new VideoPlayerViewModel(singletonCImpl.exoPlayerBuilder(), singletonCImpl.provideBillingRepositoryProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
@@ -740,6 +756,16 @@ public final class DaggerCIPHERApplication_HiltComponents_SingletonC {
 
     private Provider<TagEditorManager> tagEditorManagerProvider;
 
+    private Provider<OkHttpClient> provideOkHttpClientProvider;
+
+    private Provider<Gson> provideGsonProvider;
+
+    private Provider<JamendoApi> jamendoApiProvider;
+
+    private Provider<OnlineMusicRepository> onlineMusicRepositoryProvider;
+
+    private Provider<PlayerManager> providePlayerManagerProvider;
+
     private Provider<QueueDao> provideQueueDaoProvider;
 
     private Provider<QueueRepository> provideQueueRepositoryProvider;
@@ -782,12 +808,17 @@ public final class DaggerCIPHERApplication_HiltComponents_SingletonC {
       this.provideVaultSyncEngineProvider = DoubleCheck.provider(new SwitchingProvider<VaultSyncEngine>(singletonCImpl, 8));
       this.audioEffectsManagerProvider = DoubleCheck.provider(new SwitchingProvider<AudioEffectsManager>(singletonCImpl, 16));
       this.tagEditorManagerProvider = DoubleCheck.provider(new SwitchingProvider<TagEditorManager>(singletonCImpl, 17));
-      this.provideQueueDaoProvider = DoubleCheck.provider(new SwitchingProvider<QueueDao>(singletonCImpl, 19));
-      this.provideQueueRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<QueueRepository>(singletonCImpl, 18));
-      this.provideIntruderLogDaoProvider = DoubleCheck.provider(new SwitchingProvider<IntruderLogDao>(singletonCImpl, 20));
-      this.provideCryptoUtilProvider = DoubleCheck.provider(new SwitchingProvider<CryptoUtil>(singletonCImpl, 22));
-      this.provideVaultEncryptionManagerProvider = DoubleCheck.provider(new SwitchingProvider<VaultEncryptionManager>(singletonCImpl, 21));
-      this.provideEqualizerRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<EqualizerRepository>(singletonCImpl, 23));
+      this.provideOkHttpClientProvider = DoubleCheck.provider(new SwitchingProvider<OkHttpClient>(singletonCImpl, 20));
+      this.provideGsonProvider = DoubleCheck.provider(new SwitchingProvider<Gson>(singletonCImpl, 21));
+      this.jamendoApiProvider = DoubleCheck.provider(new SwitchingProvider<JamendoApi>(singletonCImpl, 19));
+      this.onlineMusicRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<OnlineMusicRepository>(singletonCImpl, 18));
+      this.providePlayerManagerProvider = DoubleCheck.provider(new SwitchingProvider<PlayerManager>(singletonCImpl, 22));
+      this.provideQueueDaoProvider = DoubleCheck.provider(new SwitchingProvider<QueueDao>(singletonCImpl, 24));
+      this.provideQueueRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<QueueRepository>(singletonCImpl, 23));
+      this.provideIntruderLogDaoProvider = DoubleCheck.provider(new SwitchingProvider<IntruderLogDao>(singletonCImpl, 25));
+      this.provideCryptoUtilProvider = DoubleCheck.provider(new SwitchingProvider<CryptoUtil>(singletonCImpl, 27));
+      this.provideVaultEncryptionManagerProvider = DoubleCheck.provider(new SwitchingProvider<VaultEncryptionManager>(singletonCImpl, 26));
+      this.provideEqualizerRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<EqualizerRepository>(singletonCImpl, 28));
     }
 
     @Override
@@ -885,22 +916,37 @@ public final class DaggerCIPHERApplication_HiltComponents_SingletonC {
           case 17: // com.cipher.media.ui.audio.library.TagEditorManager 
           return (T) new TagEditorManager(singletonCImpl.provideContentResolverProvider.get());
 
-          case 18: // com.cipher.media.ui.audio.queue.QueueRepository 
+          case 18: // com.cipher.media.data.online.OnlineMusicRepository 
+          return (T) new OnlineMusicRepository(singletonCImpl.jamendoApiProvider.get());
+
+          case 19: // com.cipher.media.data.online.jamendo.JamendoApi 
+          return (T) new JamendoApi(singletonCImpl.provideOkHttpClientProvider.get(), singletonCImpl.provideGsonProvider.get());
+
+          case 20: // okhttp3.OkHttpClient 
+          return (T) AppModule_ProvideOkHttpClientFactory.provideOkHttpClient();
+
+          case 21: // com.google.gson.Gson 
+          return (T) AppModule_ProvideGsonFactory.provideGson();
+
+          case 22: // com.cipher.media.service.PlayerManager 
+          return (T) AppModule_ProvidePlayerManagerFactory.providePlayerManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 23: // com.cipher.media.ui.audio.queue.QueueRepository 
           return (T) AppModule_ProvideQueueRepositoryFactory.provideQueueRepository(singletonCImpl.provideQueueDaoProvider.get());
 
-          case 19: // com.cipher.media.ui.audio.queue.model.QueueDao 
+          case 24: // com.cipher.media.ui.audio.queue.model.QueueDao 
           return (T) AppModule_ProvideQueueDaoFactory.provideQueueDao(singletonCImpl.provideMediaDatabaseProvider.get());
 
-          case 20: // com.cipher.media.data.local.IntruderLogDao 
+          case 25: // com.cipher.media.data.local.IntruderLogDao 
           return (T) AppModule_ProvideIntruderLogDaoFactory.provideIntruderLogDao(singletonCImpl.provideEncryptedDatabaseProvider.get());
 
-          case 21: // com.cipher.media.data.encryption.VaultEncryptionManager 
+          case 26: // com.cipher.media.data.encryption.VaultEncryptionManager 
           return (T) AppModule_ProvideVaultEncryptionManagerFactory.provideVaultEncryptionManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideKeystoreManagerProvider.get(), singletonCImpl.provideCryptoUtilProvider.get());
 
-          case 22: // com.cipher.media.data.encryption.CryptoUtil 
+          case 27: // com.cipher.media.data.encryption.CryptoUtil 
           return (T) AppModule_ProvideCryptoUtilFactory.provideCryptoUtil();
 
-          case 23: // com.cipher.media.data.repository.EqualizerRepository 
+          case 28: // com.cipher.media.data.repository.EqualizerRepository 
           return (T) AppModule_ProvideEqualizerRepositoryFactory.provideEqualizerRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);

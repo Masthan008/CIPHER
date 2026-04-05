@@ -252,7 +252,7 @@ public final class QueueDao_Impl implements QueueDao {
 
   @Override
   public Object insertQueue(final PlaybackQueueEntity queue,
-      final Continuation<? super Unit> arg1) {
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -266,12 +266,12 @@ public final class QueueDao_Impl implements QueueDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
   public Object insertItems(final List<QueueItemEntity> items,
-      final Continuation<? super Unit> arg1) {
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -285,12 +285,12 @@ public final class QueueDao_Impl implements QueueDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
   public Object deleteQueue(final PlaybackQueueEntity queue,
-      final Continuation<? super Unit> arg1) {
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -304,12 +304,12 @@ public final class QueueDao_Impl implements QueueDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
   public Object updateQueue(final PlaybackQueueEntity queue,
-      final Continuation<? super Unit> arg1) {
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -323,17 +323,17 @@ public final class QueueDao_Impl implements QueueDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
   public Object replaceQueueItems(final String queueId, final List<QueueItemEntity> items,
-      final Continuation<? super Unit> arg2) {
-    return RoomDatabaseKt.withTransaction(__db, (__cont) -> QueueDao.DefaultImpls.replaceQueueItems(QueueDao_Impl.this, queueId, items, __cont), arg2);
+      final Continuation<? super Unit> $completion) {
+    return RoomDatabaseKt.withTransaction(__db, (__cont) -> QueueDao.DefaultImpls.replaceQueueItems(QueueDao_Impl.this, queueId, items, __cont), $completion);
   }
 
   @Override
-  public Object deactivateAll(final Continuation<? super Unit> arg0) {
+  public Object deactivateAll(final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -352,11 +352,11 @@ public final class QueueDao_Impl implements QueueDao {
           __preparedStmtOfDeactivateAll.release(_stmt);
         }
       }
-    }, arg0);
+    }, $completion);
   }
 
   @Override
-  public Object setActive(final String id, final Continuation<? super Unit> arg1) {
+  public Object setActive(final String id, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -381,12 +381,12 @@ public final class QueueDao_Impl implements QueueDao {
           __preparedStmtOfSetActive.release(_stmt);
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
   public Object updatePlaybackPosition(final String queueId, final int index, final long positionMs,
-      final long updatedAt, final Continuation<? super Unit> arg4) {
+      final long updatedAt, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -417,12 +417,12 @@ public final class QueueDao_Impl implements QueueDao {
           __preparedStmtOfUpdatePlaybackPosition.release(_stmt);
         }
       }
-    }, arg4);
+    }, $completion);
   }
 
   @Override
   public Object updatePlaybackMode(final String queueId, final String mode,
-      final Continuation<? super Unit> arg2) {
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -453,11 +453,11 @@ public final class QueueDao_Impl implements QueueDao {
           __preparedStmtOfUpdatePlaybackMode.release(_stmt);
         }
       }
-    }, arg2);
+    }, $completion);
   }
 
   @Override
-  public Object clearItems(final String queueId, final Continuation<? super Unit> arg1) {
+  public Object clearItems(final String queueId, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -482,11 +482,11 @@ public final class QueueDao_Impl implements QueueDao {
           __preparedStmtOfClearItems.release(_stmt);
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
-  public Object deleteItem(final long itemId, final Continuation<? super Unit> arg1) {
+  public Object deleteItem(final long itemId, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -507,7 +507,7 @@ public final class QueueDao_Impl implements QueueDao {
           __preparedStmtOfDeleteItem.release(_stmt);
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
@@ -586,7 +586,7 @@ public final class QueueDao_Impl implements QueueDao {
 
   @Override
   public Object getQueueById(final String id,
-      final Continuation<? super PlaybackQueueEntity> arg1) {
+      final Continuation<? super PlaybackQueueEntity> $completion) {
     final String _sql = "SELECT * FROM playback_queues WHERE id = ?";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
@@ -659,11 +659,11 @@ public final class QueueDao_Impl implements QueueDao {
           _statement.release();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
-  public Object getActiveQueue(final Continuation<? super PlaybackQueueEntity> arg0) {
+  public Object getActiveQueue(final Continuation<? super PlaybackQueueEntity> $completion) {
     final String _sql = "SELECT * FROM playback_queues WHERE isActive = 1 LIMIT 1";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
     final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
@@ -730,11 +730,11 @@ public final class QueueDao_Impl implements QueueDao {
           _statement.release();
         }
       }
-    }, arg0);
+    }, $completion);
   }
 
   @Override
-  public Object getQueueCount(final Continuation<? super Integer> arg0) {
+  public Object getQueueCount(final Continuation<? super Integer> $completion) {
     final String _sql = "SELECT COUNT(*) FROM playback_queues";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
     final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
@@ -762,12 +762,12 @@ public final class QueueDao_Impl implements QueueDao {
           _statement.release();
         }
       }
-    }, arg0);
+    }, $completion);
   }
 
   @Override
   public Object getItemsForQueue(final String queueId,
-      final Continuation<? super List<QueueItemEntity>> arg1) {
+      final Continuation<? super List<QueueItemEntity>> $completion) {
     final String _sql = "SELECT * FROM queue_items WHERE queueId = ? ORDER BY position ASC";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
@@ -846,7 +846,7 @@ public final class QueueDao_Impl implements QueueDao {
           _statement.release();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override

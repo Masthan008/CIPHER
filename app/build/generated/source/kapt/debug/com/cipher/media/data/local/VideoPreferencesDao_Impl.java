@@ -104,7 +104,7 @@ public final class VideoPreferencesDao_Impl implements VideoPreferencesDao {
 
   @Override
   public Object insertOrUpdate(final VideoPreferencesEntity preferences,
-      final Continuation<? super Unit> arg1) {
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -118,11 +118,11 @@ public final class VideoPreferencesDao_Impl implements VideoPreferencesDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
-  public Object deletePreferences(final String uri, final Continuation<? super Unit> arg1) {
+  public Object deletePreferences(final String uri, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -147,12 +147,12 @@ public final class VideoPreferencesDao_Impl implements VideoPreferencesDao {
           __preparedStmtOfDeletePreferences.release(_stmt);
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
   public Object updatePlaybackPosition(final String uri, final long position, final long timestamp,
-      final Continuation<? super Unit> arg3) {
+      final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -181,7 +181,7 @@ public final class VideoPreferencesDao_Impl implements VideoPreferencesDao {
           __preparedStmtOfUpdatePlaybackPosition.release(_stmt);
         }
       }
-    }, arg3);
+    }, $completion);
   }
 
   @Override
@@ -284,7 +284,7 @@ public final class VideoPreferencesDao_Impl implements VideoPreferencesDao {
 
   @Override
   public Object getPreferences(final String uri,
-      final Continuation<? super VideoPreferencesEntity> arg1) {
+      final Continuation<? super VideoPreferencesEntity> $completion) {
     final String _sql = "SELECT * FROM video_preferences WHERE videoUri = ?";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
@@ -375,7 +375,7 @@ public final class VideoPreferencesDao_Impl implements VideoPreferencesDao {
           _statement.release();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @NonNull
