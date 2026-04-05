@@ -60,10 +60,11 @@ android {
         jvmTarget = "17"
     }
 
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
+buildFeatures {
+  compose = true
+  buildConfig = true
+  // generateLocaleConfig = true // Disabled for compatibility
+}
 
     secrets {
         propertiesFileName = ".env.properties"

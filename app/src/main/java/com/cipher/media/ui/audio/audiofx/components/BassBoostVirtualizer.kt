@@ -23,7 +23,7 @@ fun BassBoostControl(
             Text("${(strength / 10)}%", style = MaterialTheme.typography.labelMedium)
         }
         Slider(
-            value = strength.toFloat(),
+            value = strength.toFloat().coerceIn(0f, maxAllowed.toFloat()),
             onValueChange = { onValueChange(it.toInt()) },
             valueRange = 0f..maxAllowed.toFloat(),
             enabled = maxAllowed > 0
@@ -54,7 +54,7 @@ fun VirtualizerControl(
             Text(if (isEnabled) "${(strength / 10)}%" else "PRO", style = MaterialTheme.typography.labelMedium)
         }
         Slider(
-            value = strength.toFloat(),
+            value = strength.toFloat().coerceIn(0f, 1000f),
             onValueChange = { onValueChange(it.toInt()) },
             valueRange = 0f..1000f,
             enabled = isEnabled

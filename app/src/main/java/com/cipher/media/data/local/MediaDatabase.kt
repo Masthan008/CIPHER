@@ -9,14 +9,14 @@ import com.cipher.media.ui.audio.queue.model.QueueItemEntity
 import com.cipher.media.ui.audio.queue.model.QueueDao
 
 @Database(
-    entities = [
-        MediaEntity::class,
-        VideoPreferencesEntity::class,
-        PlaybackQueueEntity::class,
-        QueueItemEntity::class
-    ],
-    version = 3,
-    exportSchema = false
+  entities = [
+    MediaEntity::class,
+    VideoPreferencesEntity::class,
+    PlaybackQueueEntity::class,
+    QueueItemEntity::class
+  ],
+  version = 5,
+  exportSchema = false
 )
 abstract class MediaDatabase : RoomDatabase() {
     abstract fun mediaDao(): MediaDao

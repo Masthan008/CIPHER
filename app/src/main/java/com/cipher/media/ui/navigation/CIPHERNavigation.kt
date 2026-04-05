@@ -20,6 +20,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -27,7 +28,6 @@ import com.cipher.media.data.model.VaultItem
 import com.cipher.media.ui.audio.AudioBrowserScreen
 import com.cipher.media.ui.audio.AudioPlayerScreen
 import com.cipher.media.ui.audio.AudioPlayerViewModel
-import com.cipher.media.ui.audio.audiofx.components.EqualizerDialog
 import com.cipher.media.ui.auth.AuthScreen
 import com.cipher.media.ui.auth.OnboardingScreen
 import com.cipher.media.ui.auth.SplashScreen
@@ -111,7 +111,7 @@ fun CIPHERNavigation() {
 
     val hideBottomBarRoutes = listOf(
         Screen.Splash.route, Screen.Onboarding.route, Screen.Auth.route,
-        Screen.AudioPlayer.route, Screen.Equalizer.route,
+        Screen.AudioPlayer.route,
         Screen.VaultSetup.route, Screen.VaultBrowser.route,
         Screen.Calculator.route, Screen.StealthSetup.route, Screen.IntruderLog.route,
         Screen.Settings.route, Screen.Search.route, Screen.Premium.route,
@@ -204,6 +204,7 @@ fun CIPHERNavigation() {
                         },
                         onSearchClick = { navController.navigate(Screen.Search.route) },
                         onSettingsClick = { navController.navigate(Screen.Settings.route) },
+                        onPremiumClick = { navController.navigate(Screen.Premium.route) },
                         onStreamUrl = { url ->
                             val encodedUrl = Uri.encode(url)
                             navController.navigate(Screen.NetworkPlayer.createRoute(encodedUrl))
@@ -223,12 +224,8 @@ fun CIPHERNavigation() {
                 composable(Screen.AudioPlayer.route) {
                     AudioPlayerScreen(
                         viewModel = audioViewModel,
-                        onBack = { navController.popBackStack() },
-                        onOpenEqualizer = { navController.navigate(Screen.Equalizer.route) }
+                        onBack = { navController.popBackStack() }
                     )
-                }
-                composable(Screen.Equalizer.route) {
-                    EqualizerDialog(onDismiss = { navController.popBackStack() })
                 }
                 composable(Screen.CloudSync.route) {
                     com.cipher.media.ui.settings.cloud.CloudSyncScreen(onNavigateBack = { navController.popBackStack() })

@@ -52,9 +52,6 @@ public final class PremiumViewModel extends androidx.lifecycle.ViewModel {
     public final void selectPlan(int index) {
     }
     
-    /**
-     * Launch Razorpay subscription for the selected plan.
-     */
     public final void subscribe(@org.jetbrains.annotations.NotNull()
     android.app.Activity activity) {
     }

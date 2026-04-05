@@ -9,15 +9,16 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "media_items")
 data class MediaEntity(
-    @PrimaryKey
-    val id: Long,
-    val uri: String,
-    val displayName: String,
-    val duration: Long,
-    val size: Long,
-    val dateAdded: Long,
-    val path: String,
-    val mimeType: String = "",
-    val isVaulted: Boolean = false,      // Phase 3: vault flag
-    val encryptedPath: String? = null    // Phase 3: encrypted storage path
+  @PrimaryKey
+  val id: Long,
+  val uri: String,
+  val displayName: String,
+  val duration: Long,
+  val size: Long,
+  val dateAdded: Long,
+  val path: String,
+  val mimeType: String = "",
+  val isVaulted: Boolean = false, // Phase 3: vault flag
+  val encryptedPath: String? = null, // Phase 3: encrypted storage path
+  val isFavorite: Boolean = false // Added: favorites flag
 )

@@ -27,9 +27,6 @@ class PremiumViewModel @Inject constructor(
 
     fun selectPlan(index: Int) { _selectedPlan.value = index }
 
-    /**
-     * Launch Razorpay subscription for the selected plan.
-     */
     fun subscribe(activity: Activity) {
         val (planId, planName) = when (_selectedPlan.value) {
             0 -> Products.PRO_MONTHLY to "Pro Monthly"
@@ -37,11 +34,19 @@ class PremiumViewModel @Inject constructor(
             2 -> Products.POWER_YEARLY to "Power Yearly"
             else -> return
         }
+        
+        val amountInPaise = when (_selectedPlan.value) {
+            0 -> 9900L  // ₹99
+            1 -> 49900L // ₹499
+            2 -> 99900L // ₹999
+            else -> return
+        }
 
-        billingManager.launchSubscription(
+        billingManager.launchOneTimePayment(
             activity = activity,
-            subscriptionId = planId,
-            planName = planName,
+            amountInPaise = amountInPaise,
+            productId = planId,
+            description = "CIPHER $planName Access",
             listener = object : PaymentResultListener {
                 override fun onPaymentSuccess(paymentId: String?) {
                     paymentId?.let { billingManager.onPaymentSuccess(it, planId) }

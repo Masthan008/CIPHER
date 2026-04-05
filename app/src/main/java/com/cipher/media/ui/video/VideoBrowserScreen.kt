@@ -27,6 +27,7 @@ fun VideoBrowserScreen(
     onVideoClick: (MediaItem) -> Unit,
     onSearchClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
+    onPremiumClick: () -> Unit = {},
     onStreamUrl: (String) -> Unit = {},
     viewModel: VideoBrowserViewModel = hiltViewModel()
 ) {
@@ -66,6 +67,7 @@ fun VideoBrowserScreen(
                         fontWeight = FontWeight.Bold, color = CIPHEROnSurface)
                 },
                 actions = {
+                    CIPHERIconButton(icon = Icons.Default.Star, onClick = onPremiumClick)
                     CIPHERIconButton(icon = Icons.Default.Language, onClick = { showStreamDialog = true })
                     CIPHERIconButton(icon = Icons.Default.Search, onClick = onSearchClick)
                     CIPHERIconButton(icon = Icons.Default.Settings, onClick = onSettingsClick)

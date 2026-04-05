@@ -38,16 +38,16 @@ public final class MediaDatabase_Impl extends MediaDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(3) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(5) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS `media_items` (`id` INTEGER NOT NULL, `uri` TEXT NOT NULL, `displayName` TEXT NOT NULL, `duration` INTEGER NOT NULL, `size` INTEGER NOT NULL, `dateAdded` INTEGER NOT NULL, `path` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `isVaulted` INTEGER NOT NULL, `encryptedPath` TEXT, PRIMARY KEY(`id`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `media_items` (`id` INTEGER NOT NULL, `uri` TEXT NOT NULL, `displayName` TEXT NOT NULL, `duration` INTEGER NOT NULL, `size` INTEGER NOT NULL, `dateAdded` INTEGER NOT NULL, `path` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `isVaulted` INTEGER NOT NULL, `encryptedPath` TEXT, `isFavorite` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `video_preferences` (`videoUri` TEXT NOT NULL, `playbackSpeed` REAL NOT NULL, `pitchCorrection` INTEGER NOT NULL, `subtitleSyncOffsetMs` INTEGER NOT NULL, `selectedSubtitleTrackId` TEXT, `selectedAudioTrackId` TEXT, `audioDelayMs` INTEGER NOT NULL, `cropMode` TEXT NOT NULL, `zoomLevel` REAL NOT NULL, `panX` REAL NOT NULL, `panY` REAL NOT NULL, `pointA` INTEGER NOT NULL, `pointB` INTEGER NOT NULL, `lastPlaybackPositionMs` INTEGER NOT NULL, `lastUpdatedTimestamp` INTEGER NOT NULL, PRIMARY KEY(`videoUri`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `playback_queues` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `iconName` TEXT NOT NULL, `currentIndex` INTEGER NOT NULL, `currentPositionMs` INTEGER NOT NULL, `playbackMode` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `isActive` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `queue_items` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `queueId` TEXT NOT NULL, `position` INTEGER NOT NULL, `uri` TEXT NOT NULL, `title` TEXT NOT NULL, `artist` TEXT NOT NULL, `album` TEXT NOT NULL, `albumArtUri` TEXT, `durationMs` INTEGER NOT NULL, FOREIGN KEY(`queueId`) REFERENCES `playback_queues`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_queue_items_queueId` ON `queue_items` (`queueId`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7cb627045ce15ec7a3665fcfae5f564b')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7f310c039a211058825521878e487174')");
       }
 
       @Override
@@ -100,7 +100,7 @@ public final class MediaDatabase_Impl extends MediaDatabase {
       @NonNull
       public RoomOpenHelper.ValidationResult onValidateSchema(
           @NonNull final SupportSQLiteDatabase db) {
-        final HashMap<String, TableInfo.Column> _columnsMediaItems = new HashMap<String, TableInfo.Column>(10);
+        final HashMap<String, TableInfo.Column> _columnsMediaItems = new HashMap<String, TableInfo.Column>(11);
         _columnsMediaItems.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMediaItems.put("uri", new TableInfo.Column("uri", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMediaItems.put("displayName", new TableInfo.Column("displayName", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -111,6 +111,7 @@ public final class MediaDatabase_Impl extends MediaDatabase {
         _columnsMediaItems.put("mimeType", new TableInfo.Column("mimeType", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMediaItems.put("isVaulted", new TableInfo.Column("isVaulted", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMediaItems.put("encryptedPath", new TableInfo.Column("encryptedPath", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMediaItems.put("isFavorite", new TableInfo.Column("isFavorite", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysMediaItems = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesMediaItems = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoMediaItems = new TableInfo("media_items", _columnsMediaItems, _foreignKeysMediaItems, _indicesMediaItems);
@@ -187,7 +188,7 @@ public final class MediaDatabase_Impl extends MediaDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "7cb627045ce15ec7a3665fcfae5f564b", "23bcd41cffb16b8c4851c65a1ca48374");
+    }, "7f310c039a211058825521878e487174", "b940b6c231580cff821436e3ed40d009");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

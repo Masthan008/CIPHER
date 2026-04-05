@@ -17,9 +17,12 @@ import javax.inject.Inject
 class CIPHERApplication : Application(), ImageLoaderFactory {
 
     @Inject lateinit var adManager: AdManager
+    @Inject lateinit var languageManager: com.cipher.media.ui.settings.LanguageManager
 
     override fun onCreate() {
         super.onCreate()
+        // Re-apply saved locale on cold start (critical for Android < 13)
+        languageManager.applyOnStartup()
         // Initialize AdMob so interstitials are preloaded
         adManager.initialize()
     }

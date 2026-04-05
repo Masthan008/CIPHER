@@ -23,14 +23,13 @@ import com.cipher.media.data.model.audiofx.Tier
 @Composable
 fun EqualizerDialog(
     onDismiss: () -> Unit,
-    viewModel: com.cipher.media.ui.audio.audiofx.EqualizerViewModel = hiltViewModel()
+    viewModel: com.cipher.media.ui.audio.audiofx.EqualizerViewModel
 ) {
     val settings by viewModel.settings.collectAsState()
     val userTier by viewModel.userTier.collectAsState()
 
     Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        onDismissRequest = onDismiss
     ) {
         Surface(
             modifier = Modifier
@@ -109,7 +108,7 @@ fun EqualizerDialog(
                         
                         BandSlider(
                             label = mappedLabel,
-                            value = settings.customBands[bandIdx].toFloat(),
+                            value = settings.customBands[bandIdx].toFloat().coerceIn(-15f, 15f),
                             onValueChange = { viewModel.setBandGain(bandIdx, it.toInt()) }
                         )
                     }

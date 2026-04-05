@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.cipher.media.ui.settings.ThemeMode
+
 import com.cipher.media.ui.theme.*
 
 @Composable
@@ -88,4 +88,8 @@ private fun ThemeOption(
             )
         }
     }
+}
+
+enum class ThemeMode {
+    DARK, LIGHT, SYSTEM
 }

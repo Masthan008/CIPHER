@@ -28,6 +28,7 @@ import com.cipher.media.ui.audio.components.AlbumArtPager
 import com.cipher.media.ui.audio.components.QueueBottomSheet
 import com.cipher.media.ui.components.*
 import com.cipher.media.ui.theme.*
+import androidx.hilt.navigation.compose.hiltViewModel
 
 /**
  * FREE FEATURE: Full-screen audio player with gesture controls.
@@ -45,8 +46,7 @@ import com.cipher.media.ui.theme.*
 @Composable
 fun AudioPlayerScreen(
     viewModel: AudioPlayerViewModel,
-    onBack: () -> Unit,
-    onOpenEqualizer: () -> Unit
+    onBack: () -> Unit
 ) {
     val currentAudio by viewModel.currentAudio.collectAsState()
     val isPlaying by viewModel.isPlaying.collectAsState()
@@ -55,15 +55,19 @@ fun AudioPlayerScreen(
     val shuffleEnabled by viewModel.shuffleEnabled.collectAsState()
     val repeatMode by viewModel.repeatMode.collectAsState()
     val audioList by viewModel.audioList.collectAsState()
+    val isFavorite by viewModel.isFavorite.collectAsState()
 
     val context = LocalContext.current
 
     val audio = currentAudio ?: return
     val progress = if (duration > 0) currentPosition.toFloat() / duration.toFloat() else 0f
 
+    // Resolve EQ ViewModel at screen level where Hilt ViewModelStoreOwner is available
+    val eqViewModel: com.cipher.media.ui.audio.audiofx.EqualizerViewModel = hiltViewModel()
+
     // FREE FEATURE: Queue management
     var showQueueSheet by remember { mutableStateOf(false) }
-    var isFavourite by remember { mutableStateOf(false) }
+    var showEqualizer by remember { mutableStateOf(false) }
     var showLyricsToast by remember { mutableStateOf(false) }
     var isFullscreenArt by remember { mutableStateOf(false) }
 
@@ -230,18 +234,18 @@ fun AudioPlayerScreen(
 
             // Action row
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                CIPHERIconButton(icon = Icons.Default.Equalizer, onClick = onOpenEqualizer, tint = CIPHERPrimary)
+                CIPHERIconButton(icon = Icons.Default.Equalizer, onClick = { showEqualizer = true }, tint = CIPHERPrimary)
                 CIPHERIconButton(
-                    icon = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     onClick = {
-                        isFavourite = !isFavourite
+                        viewModel.toggleFavorite()
                         Toast.makeText(
                             context,
-                            if (isFavourite) "Added to favourites" else "Removed from favourites",
+                            if (!isFavorite) "Added to favourites" else "Removed from favourites",
                             Toast.LENGTH_SHORT
                         ).show()
                     },
-                    tint = if (isFavourite) CIPHERPrimary else CIPHEROnSurfaceVariant
+                    tint = if (isFavorite) CIPHERPrimary else CIPHEROnSurfaceVariant
                 )
                 CIPHERIconButton(
                     icon = Icons.Default.Share,
@@ -262,6 +266,13 @@ fun AudioPlayerScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(Spacing.md))
+        }
+
+        if (showEqualizer) {
+            com.cipher.media.ui.audio.audiofx.components.EqualizerDialog(
+                onDismiss = { showEqualizer = false },
+                viewModel = eqViewModel
+            )
         }
     }
 }

@@ -24,20 +24,31 @@ import javax.inject.Provider;
 public final class SettingsViewModel_Factory implements Factory<SettingsViewModel> {
   private final Provider<Context> contextProvider;
 
-  public SettingsViewModel_Factory(Provider<Context> contextProvider) {
+  private final Provider<SettingsRepository> repoProvider;
+
+  private final Provider<LanguageManager> languageManagerProvider;
+
+  public SettingsViewModel_Factory(Provider<Context> contextProvider,
+      Provider<SettingsRepository> repoProvider,
+      Provider<LanguageManager> languageManagerProvider) {
     this.contextProvider = contextProvider;
+    this.repoProvider = repoProvider;
+    this.languageManagerProvider = languageManagerProvider;
   }
 
   @Override
   public SettingsViewModel get() {
-    return newInstance(contextProvider.get());
+    return newInstance(contextProvider.get(), repoProvider.get(), languageManagerProvider.get());
   }
 
-  public static SettingsViewModel_Factory create(Provider<Context> contextProvider) {
-    return new SettingsViewModel_Factory(contextProvider);
+  public static SettingsViewModel_Factory create(Provider<Context> contextProvider,
+      Provider<SettingsRepository> repoProvider,
+      Provider<LanguageManager> languageManagerProvider) {
+    return new SettingsViewModel_Factory(contextProvider, repoProvider, languageManagerProvider);
   }
 
-  public static SettingsViewModel newInstance(Context context) {
-    return new SettingsViewModel(context);
+  public static SettingsViewModel newInstance(Context context, SettingsRepository repo,
+      LanguageManager languageManager) {
+    return new SettingsViewModel(context, repo, languageManager);
   }
 }

@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cipher.media.security.IntruderCameraManager
 import com.cipher.media.ui.components.*
+
 import com.cipher.media.ui.stealth.StealthViewModel
 import com.cipher.media.ui.theme.*
 import com.cipher.media.ui.vault.components.PinPad
@@ -39,10 +40,10 @@ import kotlin.random.Random
  */
 @Composable
 fun VaultAuthScreen(
-    onAuthenticated: () -> Unit,
-    onDecoyAuthenticated: () -> Unit = {},
-    viewModel: VaultViewModel,
-    stealthViewModel: StealthViewModel = hiltViewModel()
+onAuthenticated: () -> Unit,
+onDecoyAuthenticated: () -> Unit = {},
+viewModel: VaultViewModel,
+stealthViewModel: StealthViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     var pin by remember { mutableStateOf("") }
@@ -56,6 +57,10 @@ fun VaultAuthScreen(
     }
     val storedPinHash = remember { prefs.getString("vault_pin_hash", null) }
     val decoyPinHash = stealthViewModel.decoyPinHash
+    val settingsPrefs = remember {
+        context.getSharedPreferences("cipher_settings", android.content.Context.MODE_PRIVATE)
+    }
+    val isBiometricEnabled = remember { settingsPrefs.getBoolean("key_biometric", true) }
 
     val intruderCamera = remember { IntruderCameraManager(context) }
     val maxAttempts = stealthViewModel.selfDestructAttempts
@@ -90,7 +95,7 @@ fun VaultAuthScreen(
 
     // Auto-launch biometric if mode switches
     LaunchedEffect(authMode) {
-        if (authMode == "biometric") launchBiometric()
+        if (authMode == "biometric" && isBiometricEnabled) launchBiometric()
     }
 
     val circuitPoints = remember {
@@ -238,23 +243,25 @@ fun VaultAuthScreen(
                 }
             }
 
-            Spacer(Modifier.weight(0.1f))
+Spacer(Modifier.weight(0.1f))
 
-            TextButton(onClick = { authMode = if (authMode == "biometric") "pin" else "biometric" }) {
-                Icon(
-                    if (authMode == "biometric") Icons.Default.Dialpad else Icons.Default.Fingerprint,
-                    contentDescription = null,
-                    tint = CIPHERPrimary,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(Spacing.xs))
-                Text(
-                    if (authMode == "biometric") "Use PIN" else "Use Biometric",
-                    color = CIPHERPrimary
-                )
-            }
+    if (isBiometricEnabled) {
+      TextButton(onClick = { authMode = if (authMode == "biometric") "pin" else "biometric" }) {
+        Icon(
+          if (authMode == "biometric") Icons.Default.Dialpad else Icons.Default.Fingerprint,
+          contentDescription = null,
+          tint = CIPHERPrimary,
+          modifier = Modifier.size(20.dp)
+        )
+        Spacer(Modifier.width(Spacing.xs))
+        Text(
+          if (authMode == "biometric") "Use PIN" else "Use Biometric",
+          color = CIPHERPrimary
+        )
+      }
 
-            Spacer(Modifier.height(Spacing.md))
+      Spacer(Modifier.height(Spacing.md))
+    }
         }
     }
 }

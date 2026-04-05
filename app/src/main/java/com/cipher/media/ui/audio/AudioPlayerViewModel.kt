@@ -12,6 +12,7 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.cipher.media.data.model.AudioItem
 import com.cipher.media.data.repository.MediaRepository
+import com.cipher.media.data.repository.FavoritesRepository
 import com.cipher.media.service.AudioPlaybackService
 import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AudioPlayerViewModel @Inject constructor(
     private val mediaRepository: MediaRepository,
+    private val favoritesRepository: FavoritesRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -37,6 +39,9 @@ class AudioPlayerViewModel @Inject constructor(
 
     private val _currentAudio = MutableStateFlow<AudioItem?>(null)
     val currentAudio: StateFlow<AudioItem?> = _currentAudio.asStateFlow()
+
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
@@ -125,6 +130,7 @@ class AudioPlayerViewModel @Inject constructor(
     fun playAudio(audio: AudioItem, playlist: List<AudioItem>) {
         val controller = mediaController ?: return
         _currentAudio.value = audio
+        checkFavoriteState(audio.id)
 
         // Build media items for gapless playback
         val mediaItems = playlist.map { item ->
@@ -200,7 +206,22 @@ class AudioPlayerViewModel @Inject constructor(
         val currentIndex = controller.currentMediaItemIndex
         val list = _audioList.value
         if (currentIndex in list.indices) {
-            _currentAudio.value = list[currentIndex]
+            val audioItem = list[currentIndex]
+            _currentAudio.value = audioItem
+            checkFavoriteState(audioItem.id)
+        }
+    }
+
+    private fun checkFavoriteState(mediaId: Long) {
+        viewModelScope.launch {
+            _isFavorite.value = favoritesRepository.isFavorite(mediaId)
+        }
+    }
+
+    fun toggleFavorite() {
+        val currentAudio = _currentAudio.value ?: return
+        viewModelScope.launch {
+            _isFavorite.value = favoritesRepository.toggleFavorite(currentAudio)
         }
     }
 

@@ -126,6 +126,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideMediaDao(database: MediaDatabase): com.cipher.media.data.local.MediaDao {
+        return database.mediaDao()
+    }
+
+    @Provides
+    @Singleton
     fun provideQueueDao(database: MediaDatabase): com.cipher.media.ui.audio.queue.model.QueueDao {
         return database.queueDao()
     }
