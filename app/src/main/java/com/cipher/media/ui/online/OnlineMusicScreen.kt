@@ -165,7 +165,7 @@ fun OnlineMusicScreen(
                 items(genres) { genre ->
                     GenreChip(
                         genre = genre,
-                        onClick = { viewModel.searchSongs(genre) }
+                        onClick = { viewModel.searchByGenre(genre) }
                     )
                 }
             }
@@ -429,73 +429,6 @@ private fun ErrorMessage(
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = onRetry) {
             Text("Retry")
-        }
-    }
-}
-
-@Composable
-private fun OnlineMiniPlayer(
-    viewModel: OnlineMusicViewModel = hiltViewModel(),
-    onExpand: () -> Unit
-) {
-    val currentTrack by viewModel.currentTrack.collectAsState()
-    val isPlaying by viewModel.isPlaying.collectAsState()
-
-    if (currentTrack == null) return
-
-    Surface(
-        onClick = onExpand,
-        color = CIPHERSurface,
-        tonalElevation = 8.dp,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(currentTrack?.mediaMetadata?.artworkUri)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(4.dp))
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = currentTrack?.mediaMetadata?.title?.toString() ?: "",
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = currentTrack?.mediaMetadata?.artist?.toString() ?: "",
-                    color = Color.Gray,
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-            IconButton(onClick = { viewModel.playPause() }) {
-                Icon(
-                    imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                    contentDescription = null,
-                    tint = CIPHERPrimary
-                )
-            }
-            IconButton(onClick = { viewModel.playNext() }) {
-                Icon(
-                    imageVector = Icons.Default.SkipNext,
-                    contentDescription = null,
-                    tint = CIPHEROnSurface
-                )
-            }
         }
     }
 }

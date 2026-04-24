@@ -49,7 +49,6 @@ fun SettingsScreen(
 
     // Dialog states
     var showLanguageDialog by remember { mutableStateOf(false) }
-    var showRestartDialog by remember { mutableStateOf(false) }
     var showSpeedDialog by remember { mutableStateOf(false) }
     var showSubtitleDialog by remember { mutableStateOf(false) }
     var showTabDialog by remember { mutableStateOf(false) }
@@ -288,33 +287,22 @@ SettingsSection(stringResource(R.string.about_section)) {
             settings.languageCode,
             { showLanguageDialog = false }
         ) { code ->
-            val needsRestart = viewModel.setLanguage(code)
-            showLanguageDialog = false
-            if (needsRestart) showRestartDialog = true
+            if (code != settings.languageCode) {
+                viewModel.setLanguage(code)
+                showLanguageDialog = false
+                // Full app restart to apply language everywhere
+                val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+                intent?.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                context.startActivity(intent)
+                Runtime.getRuntime().exit(0)
+            } else {
+                showLanguageDialog = false
+            }
         }
     }
 
-    // Restart confirmation (for language change)
-    if (showRestartDialog) {
-        AlertDialog(
-            onDismissRequest = { showRestartDialog = false },
-            title = { Text(stringResource(R.string.language_changed), color = CIPHEROnSurface) },
-            text = { Text(stringResource(R.string.language_changed_desc), color = CIPHEROnSurfaceVariant) },
-            confirmButton = {
-                TextButton(onClick = {
-                    showRestartDialog = false
-                    val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                    intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    context.startActivity(intent)
-                    Runtime.getRuntime().exit(0)
-                }) { Text(stringResource(R.string.restart), color = CIPHERPrimary, fontWeight = FontWeight.Bold) }
-            },
-            dismissButton = {
-                TextButton(onClick = { showRestartDialog = false }) { Text(stringResource(R.string.later), color = CIPHEROnSurfaceVariant) }
-            },
-            containerColor = CIPHERSurface
-        )
-    }
+    // Restart confirmation (for language change) - REMOVED: Now auto-restarts
+    // Language changes trigger immediate activity recreation in the dialog handler above
 
     // Default tab
     if (showTabDialog) {

@@ -235,16 +235,12 @@ fun AudioPlayerScreen(
 
             // Action row
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                Box(
-                    modifier = Modifier
-                        .clickable { showEqualizer = true }
-                ) {
-                    CIPHERIconButton(
-                        icon = Icons.Default.Equalizer,
-                        onClick = { showEqualizer = true },
-                        tint = CIPHERPrimary
-                    )
-                }
+                // EQ Button - removed double clickable wrapper
+                CIPHERIconButton(
+                    icon = Icons.Default.Equalizer,
+                    onClick = { showEqualizer = true },
+                    tint = CIPHERPrimary
+                )
                 CIPHERIconButton(
                     icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     onClick = {

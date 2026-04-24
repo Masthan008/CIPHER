@@ -46,6 +46,9 @@ import com.cipher.media.ui.video.audio.components.EqualizerDialog
 import com.cipher.media.ui.video.enhancement.VideoEnhancementViewModel
 import com.cipher.media.ui.video.enhancement.ScreenshotManager
 import com.cipher.media.ui.video.enhancement.components.*
+import com.cipher.media.ui.video.hdr.HDRManager
+import com.cipher.media.ui.video.quality.VideoQuality
+import com.cipher.media.ui.video.quality.QualitySelectorDialog
 import com.cipher.media.ui.video.subtitle.SubtitleRenderer
 import com.cipher.media.ui.video.subtitle.SubtitleViewModel
 import com.cipher.media.ui.video.subtitle.components.SubtitleBottomSheet
@@ -69,6 +72,15 @@ fun VideoPlayerScreen(
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
+
+    // ═══════════ HDR MANAGER (Pro Feature) ═══════════
+
+    val hdrManager = remember {
+        HDRManager(activity?.window, com.cipher.media.billing.ProFeatureGate()).apply {
+            setUserTier(enhancementState.userTier)
+        }
+    }
+
     val uiState by viewModel.uiState.collectAsState()
     val subtitleUiState by subtitleViewModel.uiState.collectAsState()
     val audioUiState by audioViewModel.uiState.collectAsState()
@@ -120,7 +132,7 @@ fun VideoPlayerScreen(
         subtitleViewModel.autoLoadSubtitle(Uri.parse(videoUri))
     }
 
-    // Player listener for state updates
+    // Player listener for state updates and HDR detection
     DisposableEffect(player) {
         val listener = object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -132,12 +144,21 @@ fun VideoPlayerScreen(
                     viewModel.updatePlayingState(false)
                 }
             }
+
+            @OptIn(androidx.media3.common.util.UnstableApi::class)
+            override fun onVideoInputFormatChanged(
+                inputFormat: androidx.media3.common.Format
+            ) {
+                // Configure HDR when video format changes
+                hdrManager.configureHDR(inputFormat)
+            }
         }
         player.addListener(listener)
 
         onDispose {
             player.removeListener(listener)
             player.release()
+            hdrManager.reset() // Reset HDR window settings
         }
     }
 
@@ -320,7 +341,7 @@ fun VideoPlayerScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(Icons.Default.Lock, null, tint = CIPHERPrimary, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.Lock, "Screen Locked", tint = CIPHERPrimary, modifier = Modifier.size(20.dp))
                         Text("Screen Locked", color = Color.White, fontSize = 13.sp)
                     }
                 }
@@ -382,6 +403,15 @@ fun VideoPlayerScreen(
                             Icons.Default.Subtitles,
                             "Subtitles",
                             tint = if (subtitleUiState.isLoaded) CIPHERPrimary else Color.White
+                        )
+                    }
+
+                    // Quality Selector Button (Pro Feature)
+                    IconButton(onClick = { enhancementViewModel.showQualitySelector() }) {
+                        Icon(
+                            Icons.Default.HighQuality,
+                            "Video Quality",
+                            tint = if (enhancementState.currentQuality != VideoQuality.AUTO) CIPHERPrimary else Color.White
                         )
                     }
 
@@ -661,6 +691,22 @@ fun VideoPlayerScreen(
             currentCropMode = enhancementState.cropMode,
             viewModel = enhancementViewModel,
             onDismiss = { enhancementViewModel.hideCropZoomDialog() }
+        )
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // ── Quality Selector Dialog (Pro Feature) ──
+    // ═══════════════════════════════════════════════════════════════
+
+    if (enhancementState.showQualitySelector) {
+        QualitySelectorDialog(
+            currentQuality = enhancementState.currentQuality,
+            onQualitySelected = { quality ->
+                enhancementViewModel.setQuality(quality)
+            },
+            onDismiss = { enhancementViewModel.hideQualitySelector() },
+            userTier = enhancementState.userTier,
+            onShowPaywall = { enhancementViewModel.showPaywall(ProVideoFeature.UHD_4K) }
         )
     }
 }

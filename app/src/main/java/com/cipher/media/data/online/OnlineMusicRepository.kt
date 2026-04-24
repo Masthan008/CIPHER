@@ -39,13 +39,11 @@ class OnlineMusicRepository @Inject constructor(
 
     suspend fun searchSongs(
         query: String,
-        language: String? = null,
-        genre: String? = null
+        language: String? = null
     ): Result<List<JamendoTrack>> {
         return jamendoApi.searchTracks(
             query = query,
-            language = language,
-            genre = genre
+            language = language ?: "all"
         )
     }
 

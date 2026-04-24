@@ -2,6 +2,12 @@ package com.cipher.media.ui.navigation
 
 import android.net.Uri
 import androidx.compose.animation.*
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.EaseInBack
+import androidx.compose.animation.core.EaseInCubic
+import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.EaseOutBack
+import androidx.compose.animation.core.EaseOutCubic
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -56,6 +62,9 @@ import com.cipher.media.ui.vault.viewer.EncryptedVideoPlayer
 import com.cipher.media.ui.video.VideoBrowserScreen
 import com.cipher.media.ui.video.VideoPlayerScreen
 import com.cipher.media.ui.online.OnlineMusicScreen
+import com.cipher.media.ui.online.OnlineMusicViewModel
+import com.cipher.media.ui.online.OnlinePlayerScreen
+import com.cipher.media.ui.online.OnlineMiniPlayer
 
 data class BottomNavItem(val screen: Screen, val label: String, val icon: ImageVector)
 
@@ -66,15 +75,18 @@ val bottomNavItems = listOf(
     BottomNavItem(Screen.VaultAuth, "Vault", Icons.Default.Lock)
 )
 
-// Nav transition specs
-private val enterAnim: EnterTransition = fadeIn(tween(300, easing = FastOutSlowInEasing)) +
-    slideInHorizontally(initialOffsetX = { it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
-private val exitAnim: ExitTransition = fadeOut(tween(300, easing = FastOutSlowInEasing)) +
-    slideOutHorizontally(targetOffsetX = { -it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
-private val popEnterAnim: EnterTransition = fadeIn(tween(300, easing = FastOutSlowInEasing)) +
-    slideInHorizontally(initialOffsetX = { -it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
-private val popExitAnim: ExitTransition = fadeOut(tween(300, easing = FastOutSlowInEasing)) +
-    slideOutHorizontally(targetOffsetX = { it / 6 }, animationSpec = tween(300, easing = FastOutSlowInEasing))
+// Custom liquid easing curve - MUST be defined before use
+private val LiquidEasing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
+
+// Liquid Swipe transition specs - REPLACING standard transitions
+private val liquidEnterAnim: EnterTransition = fadeIn(tween(300, easing = EaseOutCubic)) +
+    slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(600, easing = LiquidEasing))
+private val liquidExitAnim: ExitTransition = fadeOut(tween(250, easing = EaseInCubic)) +
+    slideOutHorizontally(targetOffsetX = { -it / 3 }, animationSpec = tween(500, easing = LiquidEasing))
+private val liquidPopEnterAnim: EnterTransition = fadeIn(tween(300, easing = EaseOutCubic)) +
+    slideInHorizontally(initialOffsetX = { -it / 3 }, animationSpec = tween(500, easing = LiquidEasing))
+private val liquidPopExitAnim: ExitTransition = fadeOut(tween(250, easing = EaseInCubic)) +
+    slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(600, easing = LiquidEasing))
 
 @Composable
 fun CIPHERNavigation() {
@@ -86,6 +98,10 @@ fun CIPHERNavigation() {
     val audioViewModel: AudioPlayerViewModel = hiltViewModel()
     val currentAudio by audioViewModel.currentAudio.collectAsState(initial = null)
     val isPlaying by audioViewModel.isPlaying.collectAsState(initial = false)
+
+    val onlineViewModel: OnlineMusicViewModel = hiltViewModel()
+    val currentOnlineTrack by onlineViewModel.currentTrack.collectAsState(initial = null)
+    val isOnlinePlaying by onlineViewModel.isPlaying.collectAsState(initial = false)
 
     val stealthViewModel: StealthViewModel = hiltViewModel()
 
@@ -113,7 +129,7 @@ fun CIPHERNavigation() {
 
     val hideBottomBarRoutes = listOf(
         Screen.Splash.route, Screen.Onboarding.route, Screen.Auth.route,
-        Screen.AudioPlayer.route,
+        Screen.AudioPlayer.route, Screen.OnlinePlayer.route,
         Screen.VaultSetup.route, Screen.VaultBrowser.route,
         Screen.Calculator.route, Screen.StealthSetup.route, Screen.IntruderLog.route,
         Screen.Settings.route, Screen.Search.route, Screen.Premium.route,
@@ -126,8 +142,9 @@ fun CIPHERNavigation() {
         !route.startsWith("vault_video")
     } ?: false
 
-    val showMiniPlayer = currentAudio != null &&
+    val showMiniPlayer = (currentAudio != null || currentOnlineTrack != null) &&
         currentDestination?.route != Screen.AudioPlayer.route &&
+        currentDestination?.route != Screen.OnlinePlayer.route &&
         currentDestination?.route?.startsWith("video_player") != true
 
     Scaffold(
@@ -152,10 +169,10 @@ fun CIPHERNavigation() {
             NavHost(
                 navController = navController,
                 startDestination = startDest,
-                enterTransition = { enterAnim },
-                exitTransition = { exitAnim },
-                popEnterTransition = { popEnterAnim },
-                popExitTransition = { popExitAnim }
+                enterTransition = { liquidEnterAnim },
+                exitTransition = { liquidExitAnim },
+                popEnterTransition = { liquidPopEnterAnim },
+                popExitTransition = { liquidPopExitAnim }
             ) {
                 // -- Auth Flow --
                 composable(Screen.Splash.route) {
@@ -189,8 +206,14 @@ fun CIPHERNavigation() {
                     })
                 }
 
-                // -- Main Tabs --
-                composable(Screen.VideoBrowser.route) {
+                // -- Main Tabs with Liquid Transitions --
+                composable(
+                    Screen.VideoBrowser.route,
+                    enterTransition = { liquidEnterAnim },
+                    exitTransition = { liquidExitAnim },
+                    popEnterTransition = { liquidPopEnterAnim },
+                    popExitTransition = { liquidPopExitAnim }
+                ) {
                     val adManager = remember {
                         (context.applicationContext as com.cipher.media.CIPHERApplication).adManager
                     }
@@ -213,7 +236,13 @@ fun CIPHERNavigation() {
                         }
                     )
                 }
-                composable(Screen.AudioBrowser.route) {
+                composable(
+                    Screen.AudioBrowser.route,
+                    enterTransition = { liquidEnterAnim },
+                    exitTransition = { liquidExitAnim },
+                    popEnterTransition = { liquidPopEnterAnim },
+                    popExitTransition = { liquidPopExitAnim }
+                ) {
                     AudioBrowserScreen(
                         onAudioClick = { audio, playlist ->
                             audioViewModel.playAudio(audio, playlist)
@@ -223,17 +252,50 @@ fun CIPHERNavigation() {
                         viewModel = audioViewModel
                     )
                 }
-            composable(Screen.AudioPlayer.route) {
+            composable(
+                Screen.AudioPlayer.route,
+                enterTransition = { liquidEnterAnim },
+                exitTransition = { liquidExitAnim },
+                popEnterTransition = { liquidPopEnterAnim },
+                popExitTransition = { liquidPopExitAnim }
+            ) {
                 AudioPlayerScreen(
                     viewModel = audioViewModel,
                     onBack = { navController.popBackStack() }
                 )
             }
-            // -- Online Music (Jamendo) --
-            composable(Screen.OnlineMusic.route) {
+            // -- Online Music (Jamendo) with Liquid Transitions --
+            composable(
+                Screen.OnlineMusic.route,
+                enterTransition = { liquidEnterAnim },
+                exitTransition = { liquidExitAnim },
+                popEnterTransition = { liquidPopEnterAnim },
+                popExitTransition = { liquidPopExitAnim }
+            ) {
                 OnlineMusicScreen(
                     onNavigateToPlayer = { navController.navigate(Screen.OnlinePlayer.route) }
                 )
+            }
+            composable(Screen.OnlinePlayer.route) {
+                val onlineViewModel: OnlineMusicViewModel = hiltViewModel()
+                val onlinePlayerManager = remember { com.cipher.media.service.OnlinePlayerManager.getInstance(context) }
+                OnlinePlayerScreen(
+                    viewModel = onlineViewModel,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToLyrics = { navController.navigate(Screen.OnlineLyrics.route) }
+                )
+            }
+            // -- Online Lyrics Screen --
+            composable(Screen.OnlineLyrics.route) {
+                val onlinePlayerManager = remember { com.cipher.media.service.OnlinePlayerManager.getInstance(context) }
+                val currentTrack by onlinePlayerManager.currentTrack.collectAsState()
+                currentTrack?.let { track ->
+                    com.cipher.media.ui.online.lyrics.LyricsScreen(
+                        track = track,
+                        onBack = { navController.popBackStack() },
+                        playerManager = onlinePlayerManager
+                    )
+                }
             }
             composable(Screen.CloudSync.route) {
                     com.cipher.media.ui.settings.cloud.CloudSyncScreen(onNavigateBack = { navController.popBackStack() })
@@ -394,13 +456,22 @@ fun CIPHERNavigation() {
             }
 
             if (showMiniPlayer) {
-                MiniPlayer(
-                    currentAudio = currentAudio, isPlaying = isPlaying,
-                    onTap = { navController.navigate(Screen.AudioPlayer.route) },
-                    onPlayPause = { audioViewModel.togglePlayPause() },
-                    onDismiss = { audioViewModel.stopPlayback() },
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                )
+                if (currentOnlineTrack != null) {
+                    // Show online mini player
+                    OnlineMiniPlayer(
+                        viewModel = onlineViewModel,
+                        onExpand = { navController.navigate(Screen.OnlinePlayer.route) }
+                    )
+                } else if (currentAudio != null) {
+                    // Show local mini player
+                    MiniPlayer(
+                        currentAudio = currentAudio, isPlaying = isPlaying,
+                        onTap = { navController.navigate(Screen.AudioPlayer.route) },
+                        onPlayPause = { audioViewModel.togglePlayPause() },
+                        onDismiss = { audioViewModel.stopPlayback() },
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
+                }
             }
         }
     }

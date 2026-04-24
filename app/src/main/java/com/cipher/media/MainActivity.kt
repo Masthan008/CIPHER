@@ -1,5 +1,6 @@
 package com.cipher.media
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,13 @@ class MainActivity : AppCompatActivity() {
     
     @Inject
     lateinit var settingsRepository: SettingsRepository
+
+    override fun attachBaseContext(newBase: Context) {
+        // Apply saved locale before super attaches base context
+        val languageManager = com.cipher.media.ui.settings.LanguageManager(newBase)
+        val localeContext = languageManager.updateLocale(newBase)
+        super.attachBaseContext(localeContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

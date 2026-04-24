@@ -55,7 +55,11 @@ data class EnhancementUiState(
     // Screenshot
     val screenshotInProgress: Boolean = false,
     val lastScreenshotPath: String? = null,
-    val showScreenshotFeedback: Boolean = false
+    val showScreenshotFeedback: Boolean = false,
+
+    // Quality Selector
+    val currentQuality: com.cipher.media.ui.video.quality.VideoQuality = com.cipher.media.ui.video.quality.VideoQuality.AUTO,
+    val showQualitySelector: Boolean = false
 ) {
     val sleepTimerMinutesRemaining: Int
         get() = ((sleepTimerRemainingMs / 1000) / 60).toInt()
@@ -151,6 +155,22 @@ class VideoEnhancementViewModel @Inject constructor(
 
     fun showSpeedSelector() { _uiState.value = _uiState.value.copy(showSpeedSelector = true) }
     fun hideSpeedSelector() { _uiState.value = _uiState.value.copy(showSpeedSelector = false) }
+
+    // ═══════════ QUALITY SELECTOR ═══════════
+
+    fun showQualitySelector() { _uiState.value = _uiState.value.copy(showQualitySelector = true) }
+    fun hideQualitySelector() { _uiState.value = _uiState.value.copy(showQualitySelector = false) }
+
+    fun setQuality(quality: com.cipher.media.ui.video.quality.VideoQuality) {
+        _uiState.value = _uiState.value.copy(
+            currentQuality = quality,
+            showQualitySelector = false
+        )
+        // Apply quality to player via TrackSelector if available
+        player?.let { exoPlayer ->
+            // Quality will be applied through VideoQualityManager
+        }
+    }
 
     // ═══════════ SLEEP TIMER ═══════════
 

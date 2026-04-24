@@ -1,10 +1,13 @@
 package com.cipher.media.ui.settings
 
 import android.content.Context
+import android.content.res.Configuration
+import android.os.LocaleList
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,6 +22,10 @@ class LanguageManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repo: SettingsRepository
 ) {
+
+    // Secondary constructor for non-DI usage (e.g., in attachBaseContext)
+    constructor(context: Context) : this(context, SettingsRepository(context))
+
     companion object {
         val SUPPORTED_LANGUAGES = listOf(
             "en" to "English",
@@ -69,6 +76,27 @@ class LanguageManager @Inject constructor(
     fun getCurrentCode(): String = repo.languageCode
 
     fun getCurrentDisplayName(): String = codeToDisplayName(repo.languageCode)
+
+    /**
+     * Create a context wrapper with the saved locale applied.
+     * Call this from attachBaseContext() in your Activity.
+     */
+    fun updateLocale(context: Context): Context {
+        val locale = Locale(repo.languageCode)
+        Locale.setDefault(locale)
+
+        val config = Configuration(context.resources.configuration)
+        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            config.setLocale(locale)
+            val localeList = LocaleList(locale)
+            LocaleList.setDefault(localeList)
+            config.setLocales(localeList)
+            context.createConfigurationContext(config)
+        } else {
+            config.setLocale(locale)
+            context.createConfigurationContext(config)
+        }
+    }
 
     /**
      * Called from Application.onCreate() to re-apply saved locale on cold start.

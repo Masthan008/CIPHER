@@ -1,6 +1,7 @@
 package com.cipher.media.ui.online
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -73,9 +74,37 @@ class OnlineMusicViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSearching = true, error = null)
+            // Don't pass language to search - let it search globally for more results
             repository.searchSongs(
                 query = query,
-                language = _selectedLanguage.value
+                language = null  // Remove language restriction for text search
+            ).fold(
+                onSuccess = { tracks ->
+                    _uiState.value = _uiState.value.copy(
+                        searchResults = tracks.map { it.toOnlineTrack() },
+                        isSearching = false,
+                        error = null
+                    )
+                },
+                onFailure = { error ->
+                    _uiState.value = _uiState.value.copy(
+                        isSearching = false,
+                        error = error.message
+                    )
+                }
+            )
+        }
+    }
+
+    // FIXED: Search by genre tag - don't add language to get more results
+    fun searchByGenre(genre: String) {
+        _searchQuery.value = genre
+        
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSearching = true, error = null)
+            repository.searchSongs(
+                query = genre.lowercase(),  // Pass genre as query
+                language = null
             ).fold(
                 onSuccess = { tracks ->
                     _uiState.value = _uiState.value.copy(
@@ -113,24 +142,50 @@ class OnlineMusicViewModel @Inject constructor(
             currentTrackIndex = 0
         }
 
-        // Build media items for entire playlist
-        val mediaItems = currentPlaylist.map { onlineTrack ->
+        // Build media items for entire playlist - filter out tracks with missing stream URLs
+        val mediaItems = currentPlaylist.mapNotNull { onlineTrack ->
+            // Skip tracks with missing stream URLs
+            if (onlineTrack.streamUrl.isNullOrBlank()) {
+                Log.w("OnlineMusicViewModel", "Skipping track with missing streamUrl: ${onlineTrack.id}")
+                return@mapNotNull null
+            }
+            
+            val artworkUri = try {
+                if (!onlineTrack.artworkUrl.isNullOrBlank()) {
+                    Uri.parse(onlineTrack.artworkUrl)
+                } else null
+            } catch (e: Exception) {
+                Log.w("OnlineMusicViewModel", "Failed to parse artworkUrl: ${onlineTrack.artworkUrl}")
+                null
+            }
+            
             MediaItem.Builder()
                 .setMediaId(onlineTrack.id)
                 .setUri(onlineTrack.streamUrl)
                 .setMediaMetadata(
                     MediaMetadata.Builder()
-                        .setTitle(onlineTrack.title)
-                        .setArtist(onlineTrack.artist)
-                        .setAlbumTitle(onlineTrack.album)
-                        .setArtworkUri(Uri.parse(onlineTrack.artworkUrl))
+                        .setTitle(onlineTrack.title ?: "Unknown")
+                        .setArtist(onlineTrack.artist ?: "Unknown Artist")
+                        .setAlbumTitle(onlineTrack.album ?: "")
+                        .apply {
+                            artworkUri?.let { setArtworkUri(it) }
+                        }
                         .build()
                 )
                 .build()
         }
 
+        if (mediaItems.isEmpty()) {
+            Log.e("OnlineMusicViewModel", "No valid media items to play")
+            return
+        }
+
+        // Find the index of the clicked track in the filtered list
+        val filteredIndex = mediaItems.indexOfFirst { it.mediaId == track.id }
+        val startIndex = if (filteredIndex >= 0) filteredIndex else 0
+
         // Set entire playlist and play from selected index
-        playerManager.playOnlinePlaylist(mediaItems, currentTrackIndex)
+        playerManager.playOnlinePlaylist(mediaItems, startIndex)
     }
 
     // FIXED: Play next in playlist
